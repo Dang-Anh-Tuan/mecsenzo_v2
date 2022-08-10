@@ -22,11 +22,9 @@ export const uploadImage = function (folder, fileImage, handleUploadComplete) {
     (snapshot) => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
       if (snapshot.state === 'running') {
-        console.log(progress)
       }
     },
     (error) => {
-      console.log(error)
     },
     async () => {
       const urlNewImage = await getDownloadURL(uploadTask.snapshot.ref)
