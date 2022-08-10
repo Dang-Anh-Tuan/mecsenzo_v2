@@ -89,8 +89,4 @@ sw.*
 # Vim swap files
 *.swp
 
-components/Button.vue
-components/RenderCLassTailwind.vue
-components/ModalProfile.vue
-components/FormField.vue
 
