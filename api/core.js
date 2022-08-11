@@ -11,7 +11,7 @@ import { db } from '~/firebase/config'
 
 const useFirestoreQueryCondition = async function (
   collectionName,
-  condition,
+  conditions,
   orderby = null,
   limitValue = null
 ) {
@@ -28,10 +28,13 @@ const useFirestoreQueryCondition = async function (
     value "asc" | "desc"
   } */
   // limit : number
-  const arr = [
-    collectionRef,
-    where(condition.field, condition.operator, condition.value),
-  ]
+  const arr = [collectionRef]
+
+  if (conditions) {
+    conditions.forEach((condition) => {
+      arr.push(where(condition.field, condition.operator, condition.value))
+    })
+  }
 
   if (orderby) {
     arr.push(orderBy(orderby.field, orderby.value))

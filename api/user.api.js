@@ -21,11 +21,13 @@ export const getAllUser = function () {
 export const getUserByEmail = async function (email) {
   const data = await useFirestoreQueryCondition(
     'users',
-    {
-      field: 'email',
-      operator: '==',
-      value: email,
-    },
+    [
+      {
+        field: 'email',
+        operator: '==',
+        value: email,
+      },
+    ],
     null,
     1
   )
