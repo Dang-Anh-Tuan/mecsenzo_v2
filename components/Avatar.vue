@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
-<!-- eslint-disable vue/no-parsing-error -->
 <template>
   <div :class="`rounded-full select-none ${getClassSize}`">
     <div v-if="isHaveAvatar" class="w-full h-full">
