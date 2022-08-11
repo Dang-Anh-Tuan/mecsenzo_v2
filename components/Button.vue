@@ -31,7 +31,7 @@ export default {
     },
     color: {
       type: String,
-      default: () => '#007bff ',
+      default: () => '#ff7200',
     },
     variant: {
       type: String,
