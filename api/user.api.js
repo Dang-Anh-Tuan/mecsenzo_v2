@@ -36,6 +36,18 @@ export const getUserByEmail = async function (email) {
   return user
 }
 
+export const getUsersByEmails = async function (emails) {
+  const data = await useFirestoreQueryCondition('users', [
+    {
+      field: 'email',
+      operator: 'in',
+      value: emails,
+    },
+  ])
+
+  return data
+}
+
 export const getUserByEmailAndFullname = async function (keyword) {
   const usersGetByEmail = await useFirestoreQueryCondition('users', [
     {
@@ -62,7 +74,7 @@ export const setActiveUser = async function (valueActive) {
 
   const docRef = doc(db, 'users', currentUser.id)
 
-  setDoc(docRef, { ...currentUser, isActive: valueActive })
+  await setDoc(docRef, { ...currentUser, isActive: valueActive })
 }
 
 export const setAvatarUser = async function (avatarUrl) {
@@ -90,6 +102,19 @@ export const addNewFriend = async function (user, email) {
   const newUser = {
     ...user,
     friend: [...user.friend, email],
+  }
+
+  await setDoc(docRef, newUser)
+}
+
+export const unfriend = async function (user, email) {
+  const docRef = doc(db, 'users', user.id)
+
+  const newArrFriend = user.friend.filter((item) => item !== email)
+
+  const newUser = {
+    ...user,
+    friend: newArrFriend,
   }
 
   await setDoc(docRef, newUser)

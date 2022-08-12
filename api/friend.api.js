@@ -6,9 +6,11 @@ import {
   getDoc,
   setDoc,
 } from '@firebase/firestore'
+import { getUsersByEmails } from './user.api'
 import { useFirestoreQueryCondition } from '~/api/core'
 import { db } from '~/firebase/config'
 import { addTimeStamp } from '~/helper/FirebaseHelper'
+import { mapInvitationUser } from '~/helper/mapInvitationUser'
 
 export const getPendingInvitationSent = async function (email) {
   const result = await useFirestoreQueryCondition('friend', [
@@ -99,4 +101,54 @@ export const acceptInvitation = function (invitation) {
     ...invitation,
     status: 'accept',
   })
+}
+
+export const getAcceptInvitation = async function (email) {
+  const invitationSent = await useFirestoreQueryCondition('friend', [
+    {
+      field: 'senderEmail',
+      operator: '==',
+      value: email,
+    },
+    {
+      field: 'status',
+      operator: '==',
+      value: 'accept',
+    },
+  ])
+
+  const emailReceiverInvitation = invitationSent.map(
+    (invitation) => invitation.receiverEmail
+  )
+  if (emailReceiverInvitation.length > 0) {
+    const receiverInvitation = await getUsersByEmails(emailReceiverInvitation)
+
+    mapInvitationUser(invitationSent, receiverInvitation)
+  }
+
+  const invitationReceived = await useFirestoreQueryCondition('friend', [
+    {
+      field: 'receiverEmail',
+      operator: '==',
+      value: email,
+    },
+    {
+      field: 'status',
+      operator: '==',
+      value: 'accept',
+    },
+  ])
+
+  const emailSenderInvitation = invitationReceived.map(
+    (invitation) => invitation.senderEmail
+  )
+  if (emailSenderInvitation.length > 0) {
+    const senderInvitation = await getUsersByEmails(emailSenderInvitation)
+
+    mapInvitationUser(invitationReceived, senderInvitation)
+  }
+
+  const result = [...invitationSent, ...invitationReceived]
+
+  return result
 }
