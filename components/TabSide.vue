@@ -18,7 +18,9 @@
       ></div>
     </div>
     <div class="mt-[50px] flex justify-center">
-      <component :is="currentComponent"></component>
+      <keep-alive>
+        <component :is="currentComponent"></component>
+      </keep-alive>
     </div>
   </div>
 </template>
