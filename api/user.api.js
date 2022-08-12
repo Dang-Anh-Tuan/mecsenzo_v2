@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { addDoc, collection, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase/config'
 import { useFirestoreQueryCondition } from '~/api/core'
@@ -37,6 +36,26 @@ export const getUserByEmail = async function (email) {
   return user
 }
 
+export const getUserByEmailAndFullname = async function (keyword) {
+  const usersGetByEmail = await useFirestoreQueryCondition('users', [
+    {
+      field: 'email',
+      operator: '==',
+      value: keyword,
+    },
+  ])
+
+  const usersGetByEFullname = await useFirestoreQueryCondition('users', [
+    {
+      field: 'fullName',
+      operator: '==',
+      value: keyword,
+    },
+  ])
+
+  return [...usersGetByEmail, ...usersGetByEFullname]
+}
+
 export const setActiveUser = async function (valueActive) {
   const currentEmail = localStorage.getItem('email')
   const currentUser = await getUserByEmail(currentEmail)
@@ -54,12 +73,24 @@ export const setAvatarUser = async function (avatarUrl) {
 
   const newUser = { ...currentUser, avatar: avatarUrl }
   localStorage.setItem('user', JSON.stringify(newUser))
-  console.log(newUser)
-  setDoc(docRef, newUser)
+  await setDoc(docRef, newUser)
 }
 
-export const updateUser = function (user) {
+export const updateUser = async function (user) {
   const docRef = doc(db, 'users', user.id)
 
-  setDoc(docRef, user)
+  await setDoc(docRef, user)
+}
+
+export const addNewFriend = async function (user, email) {
+  const docRef = doc(db, 'users', user.id)
+
+  user.friend = user.friend ? user.friend : []
+
+  const newUser = {
+    ...user,
+    friend: [...user.friend, email],
+  }
+
+  await setDoc(docRef, newUser)
 }

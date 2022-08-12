@@ -39,7 +39,7 @@ const useFirestoreQueryCondition = async function (
   if (orderby) {
     arr.push(orderBy(orderby.field, orderby.value))
   }
-  if (limit) {
+  if (limitValue) {
     arr.push(limit(limitValue))
   }
 

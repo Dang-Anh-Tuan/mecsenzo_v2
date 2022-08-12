@@ -34,8 +34,8 @@ export default {
 
   data() {
     return {
-      currentTab: 1,
-      currentComponent: this.tabItems && this.tabItems[1].component,
+      currentTab: 0,
+      currentComponent: this.tabItems && this.tabItems[0].component,
     }
   },
 

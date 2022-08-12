@@ -19,10 +19,11 @@ export default {
     search: 'Tìm kiếm',
     invitation: 'Lời mời',
     searchTab: {
-      inputPlaceholder: 'Nhập tên bạn muốn tìm kiếm',
+      inputPlaceholder: 'Nhập tên, email muốn tìm kiếm',
       invite: 'Kết bạn',
       friend: 'Bạn bè',
       cancel: 'Hủy',
+      accept: 'Chấp nhận',
     },
     invitationTab: {
       sent: 'Đã gửi',
