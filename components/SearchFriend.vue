@@ -144,7 +144,7 @@ export default {
       this.pendingInvitationReceived = pendingInvitationReceived
 
       const currentUser = await getUserByEmail(this.getCurrentEmail)
-      this.friendOfCurrentUser = currentUser.friend
+      this.friendOfCurrentUser = currentUser.friend ? currentUser.friend : []
     },
 
     async handleCancelInvitation(receiver) {

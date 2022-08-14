@@ -2,7 +2,7 @@
   <div
     v-if="type == 'button'"
     class="flex p-3 items-center border-b-[1px] cursor-pointer border-b-[#939496] hover:border-b-[#ff7200] group transition-all duration-300"
-    @click="handleClickSubMenuItem"
+    @click.prevent="handleClickBtn"
   >
     <div
       class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
@@ -11,7 +11,7 @@
     </div>
     <div>
       <p
-        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
+        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 select-none"
       >
         {{ content }}
       </p>
@@ -29,7 +29,7 @@
     v-else-if="type == 'nuxt-link'"
     class="flex p-3 items-center border-b-[1px] cursor-pointer border-b-[#939496] hover:border-b-[#ff7200] group transition-all duration-300"
     :to="to"
-    @click="handleClickSubMenuItem"
+    @click.native="handleCloseNotify"
   >
     <div
       class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
@@ -81,6 +81,19 @@ export default {
     to: {
       type: String,
       default: () => '#',
+    },
+  },
+
+  emit: ['closeNotify'],
+
+  methods: {
+    handleCloseNotify() {
+      this.$emit('closeNotify')
+    },
+
+    handleClickBtn() {
+      this.handleCloseNotify()
+      this.handleClickSubMenuItem()
     },
   },
 }

@@ -14,12 +14,12 @@ export default {
     return {
       tabItems: [
         {
-          title: this.$t('addFriendTab.search'),
-          component: SearchFriend,
-        },
-        {
           title: this.$t('addFriendTab.invitation'),
           component: Invitation,
+        },
+        {
+          title: this.$t('addFriendTab.search'),
+          component: SearchFriend,
         },
       ],
     }
