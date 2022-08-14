@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/this-in-template -->
 <template>
-  <header class="w-full h-[68px] bg-white fixed shadow-xl">
+  <header class="w-full h-[68px] bg-white fixed shadow-xl z-[1000]">
     <div
       class="flex justify-center items-center max-w-[1200px] m-auto h-full lg:justify-between"
     >
@@ -28,7 +28,7 @@
           </p>
           <fa icon="caret-down" class="text-dark_bg text-[1.2rem] ml-2" />
           <div
-            class="sub-menu hidden absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent"
+            class="sub-menu hidden absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100]"
           >
             <SubMenuItem
               icon="user"

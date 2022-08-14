@@ -15,4 +15,22 @@ export default {
     edit: 'Sửa',
     close: 'Đóng',
   },
+  addFriendTab: {
+    search: 'Tìm kiếm',
+    invitation: 'Lời mời',
+    searchTab: {
+      inputPlaceholder: 'Nhập tên bạn muốn tìm kiếm',
+      invite: 'Kết bạn',
+      friend: 'Bạn bè',
+      cancel: 'Hủy',
+    },
+    invitationTab: {
+      sent: 'Đã gửi',
+      pending: 'Lời mời',
+      approved: 'Bạn bè',
+      cancel: 'Hủy',
+      accept: 'Chấp nhận',
+      unfriend: 'Hủy kết bạn',
+    },
+  },
 }
