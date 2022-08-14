@@ -2,12 +2,12 @@
 <template>
   <header class="w-full h-[68px] bg-white fixed shadow-xl z-[1000]">
     <div
-      class="flex justify-center items-center max-w-[1200px] m-auto h-full lg:justify-between"
+      class="flex items-center max-w-[1200px] m-auto h-full justify-between px-4 xl:px-0"
     >
       <nuxt-link
         to="/"
         class="flex items-center"
-        @click.native="handleCloseNotify"
+        @click.native="handleCloseNotifyAndMenu"
       >
         <img
           src="@/assets/images/logo.png"
@@ -33,27 +33,34 @@
           </div>
           <div
             v-if="isShowNotify"
-            class="absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-40px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[scaleDown_0.15s_ease-in-out]"
+            class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-40px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
           >
-            <NotifyItem />
-            <NotifyItem />
-            <NotifyItem />
-            <NotifyItem />
+            <NotifyItem @closeNotify="handleCloseNotify" />
+            <NotifyItem @closeNotify="handleCloseNotify" />
+            <NotifyItem @closeNotify="handleCloseNotify" />
+            <NotifyItem @closeNotify="handleCloseNotify" />
           </div>
           <div
-            class="main-menu flex justify-center items-center cursor-pointer"
+            ref="mainMenu"
+            class="main-menu flex justify-center items-center md:cursor-pointer shadow-xl md:shadow-none"
           >
-            <avatar
-              :is-have-avatar="!!avatar"
-              :src-image="avatar"
-              :first-char="user && user.fullName.charAt(0)"
-            />
-            <p
-              class="text-dark_bg leading-[1.4rem] text-[1.2rem] h-[1.4rem] ml-4 select-none"
-            >
-              {{ user && user.fullName }}
-            </p>
-            <fa icon="caret-down" class="text-dark_bg text-[1.2rem] ml-2" />
+            <div class="flex justify-center items-center py-3 md:py-0">
+              <avatar
+                :is-have-avatar="!!avatar"
+                :src-image="avatar"
+                :first-char="user && user.fullName.charAt(0)"
+              />
+              <p
+                class="text-dark_bg leading-[1.4rem] text-[1.2rem] h-[1.4rem] ml-4 select-none"
+              >
+                {{ user && user.fullName }}
+              </p>
+              <fa
+                icon="caret-down"
+                class="hidden text-dark_bg text-[1.2rem] ml-2 md:block"
+              />
+            </div>
+
             <div
               class="sub-menu absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out"
             >
@@ -62,37 +69,46 @@
                 :content="$t('nav.profile')"
                 type="button"
                 :handle-click-sub-menu-item="handleShowProfile"
-                @closeNotify="handleCloseNotify"
+                @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
                 icon="plus"
                 :content="$t('nav.addFriend')"
                 to="/add-friend"
                 type="nuxt-link"
-                @closeNotify="handleCloseNotify"
+                @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
                 icon="chart-line"
                 :content="$t('nav.statistic')"
                 to="/statistic"
                 type="nuxt-link"
-                @closeNotify="handleCloseNotify"
+                @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
                 icon="moon"
                 :content="$t('nav.darkMode')"
                 :is-dark-mode="true"
                 type="button"
-                @closeNotify="handleCloseNotify"
+                @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
                 icon="arrow-right-from-bracket"
                 :content="$t('nav.logout')"
                 type="button"
                 :handle-click-sub-menu-item="handleLogout"
-                @closeNotify="handleCloseNotify"
+                @closeNotify="handleCloseNotifyAndMenu"
               />
             </div>
+          </div>
+          <div
+            ref="btnHamburger"
+            class="btn-hamburger flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-200 rounded-full md:hidden cursor-pointer"
+            @click="handleToggleMenu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
@@ -154,6 +170,17 @@ export default {
       this.$router.push('/login')
     },
 
+    handleToggleMenu() {
+      this.handleCloseNotify()
+      this.$refs.mainMenu.classList.toggle('main-menu--show')
+      this.$refs.btnHamburger.classList.toggle('btn-hamburger--active')
+    },
+
+    handleCloseMenu() {
+      this.$refs.mainMenu.classList.remove('main-menu--show')
+      this.$refs.btnHamburger.classList.remove('btn-hamburger--active')
+    },
+
     handleShowProfile() {
       this.isShowModalProfile = true
     },
@@ -171,10 +198,16 @@ export default {
     },
 
     handleToggleNotify() {
+      this.handleCloseMenu()
       this.isShowNotify = !this.isShowNotify
     },
 
     handleCloseNotify() {
+      this.isShowNotify = false
+    },
+
+    handleCloseNotifyAndMenu() {
+      this.handleCloseMenu()
       this.isShowNotify = false
     },
   },
@@ -187,5 +220,63 @@ export default {
 }
 .main-menu:hover .sub-menu {
   transform: scaleY(1);
+}
+
+.btn-hamburger > span {
+  width: 24px;
+  height: 3px;
+  background-color: #000;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-hamburger > span:nth-child(2) {
+  margin: 3px 0;
+}
+
+.btn-hamburger--active > span:nth-child(2) {
+  opacity: 0;
+}
+.btn-hamburger--active > span:nth-child(1) {
+  transform: rotate(45deg) translate(4px, 4px);
+}
+
+.btn-hamburger--active > span:nth-child(3) {
+  transform: rotate(-45deg) translate(4px, -4px);
+}
+
+@media screen and (max-width: 768px) {
+  .main-menu {
+    position: absolute;
+    top: 110%;
+    width: 100vw;
+    background-color: #fff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom: solid 1px #939496;
+    right: -16px;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+  }
+  .sub-menu {
+    transform: scaleY(1);
+    width: 100%;
+    height: 80vh;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    top: 100%;
+  }
+  .sub-menu::after {
+    display: none;
+  }
+  .main-menu--show {
+    transform: translateX(0);
+  }
+
+  .notify-container {
+    width: 100vw;
+    height: 100vh;
+    right: -16px;
+  }
 }
 </style>

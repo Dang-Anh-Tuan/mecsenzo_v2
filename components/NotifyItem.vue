@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link to="/">
+  <nuxt-link to="/" @click.native="handleCloseNotify">
     <div class="py-3 px-1 cursor-pointer border-b-[1px] border-b-[#939496]">
       <p class="leading-[1.4rem]">
         <span class="font-semibold"> Dang Anh Moi </span>
@@ -11,5 +11,13 @@
 </template>
 
 <script>
-export default {}
+export default {
+  emit: ['closeNotify'],
+
+  methods: {
+    handleCloseNotify() {
+      this.$emit('closeNotify')
+    },
+  },
+}
 </script>
