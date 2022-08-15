@@ -22,7 +22,7 @@
     </div>
 
     <div
-      class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full h-[400px] my-6 overflow-auto"
+      class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-6 overflow-auto"
     >
       <div
         v-for="invitation in getInvitations"
@@ -73,9 +73,9 @@ import Avatar from './Avatar.vue'
 import {
   acceptInvitation,
   deleteInvitation,
-  getPendingInvitationReceived,
   getPendingInvitationSent,
   getAcceptInvitation,
+  getPendingInvitationReceived,
 } from '~/api/friend.api'
 import {
   addNewFriend,
@@ -87,6 +87,7 @@ import { mapInvitationUser } from '~/helper/mapInvitationUser'
 
 export default {
   components: { Avatar },
+
   data() {
     return {
       filter: 'pending',
@@ -94,6 +95,7 @@ export default {
       invitationsSent: [],
       invitationsReceived: [],
       currentUser: null,
+      unsubscribeQueryPendingReceived: null,
     }
   },
 

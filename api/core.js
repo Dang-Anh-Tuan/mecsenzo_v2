@@ -5,29 +5,18 @@ import {
   where,
   limit,
   getDocs,
+  onSnapshot,
 } from 'firebase/firestore'
 
 import { db } from '~/firebase/config'
 
-const useFirestoreQueryCondition = async function (
+const renderQuery = function (
   collectionName,
   conditions,
   orderby = null,
   limitValue = null
 ) {
   const collectionRef = collection(db, collectionName)
-  const results = []
-
-  /* Condition {
-    filed, --------- ex : "name", "age" , ...
-    operator, ------ ex : ==, >, < ...
-    value, --------- ex : "Tuan", 18
-  } */
-  /* Condition {
-    filed, --------- ex : "name", "age" , ...
-    value "asc" | "desc"
-  } */
-  // limit : number
   const arr = [collectionRef]
 
   if (conditions) {
@@ -43,8 +32,28 @@ const useFirestoreQueryCondition = async function (
     arr.push(limit(limitValue))
   }
 
-  const q = query(...arr)
+  return query(...arr)
+}
 
+const useFirestoreQueryCondition = async function (
+  collectionName,
+  conditions,
+  orderby = null,
+  limitValue = null
+) {
+  /* Condition {
+    filed, --------- ex : "name", "age" , ...
+    operator, ------ ex : ==, >, < ...
+    value, --------- ex : "Tuan", 18
+  } */
+  /* Condition {
+    filed, --------- ex : "name", "age" , ...
+    value "asc" | "desc"
+  } */
+  // limit : number
+
+  const results = []
+  const q = renderQuery(collectionName, conditions, orderby, limitValue)
   const querySnapshot = await getDocs(q)
 
   querySnapshot.forEach((doc) => {
@@ -57,4 +66,24 @@ const useFirestoreQueryCondition = async function (
   return results
 }
 
-export { useFirestoreQueryCondition }
+const useFirestoreRealtimeQuery = function (
+  collectionName,
+  conditions,
+  orderby = null,
+  limitValue = null,
+  callback
+) {
+  const q = renderQuery(collectionName, conditions, orderby, limitValue)
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const result = []
+    querySnapshot.forEach((doc) => {
+      result.push(doc.data())
+    })
+    callback(result)
+  })
+
+  return unsubscribe
+}
+
+export { useFirestoreQueryCondition, useFirestoreRealtimeQuery }
