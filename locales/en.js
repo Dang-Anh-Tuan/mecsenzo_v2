@@ -34,4 +34,16 @@ export default {
       unfriend: 'Unfriend',
     },
   },
+  notify: {
+    acceptFriend: 'accepted your invitation',
+    inviteFriend: 'sent you invitation to add friend',
+  },
+  time: {
+    minute: 'minutes',
+    hour: 'hours',
+    day: 'days',
+    month: 'months',
+    year: 'years',
+    ago: 'ago',
+  },
 }

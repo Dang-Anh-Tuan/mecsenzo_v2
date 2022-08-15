@@ -25,20 +25,27 @@
             @click="handleToggleNotify"
           >
             <div
+              v-if="getNumberNewNotify > 0"
               class="absolute top-[-4px] right-[-4px] w-[16px] h-[16px] bg-red-500 rounded-full text-white text-[0.8rem] flex items-center justify-center"
             >
-              3
+              {{ getNumberNewNotify }}
             </div>
             <fa icon="bell" class="text-[1.2rem]" />
           </div>
           <div
             v-if="isShowNotify"
             class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-40px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
+            @scroll="handleScroll"
           >
-            <NotifyItem @closeNotify="handleCloseNotify" />
-            <NotifyItem @closeNotify="handleCloseNotify" />
-            <NotifyItem @closeNotify="handleCloseNotify" />
-            <NotifyItem @closeNotify="handleCloseNotify" />
+            <div v-for="(notify, index) in notifies" :key="index">
+              <NotifyItem
+                :sender="notify.senderFullname"
+                :type="notify.type"
+                :timestamp="notify.timestamp"
+                :link="notify.link"
+                @closeNotify="handleCloseNotify"
+              />
+            </div>
           </div>
           <div
             ref="mainMenu"
@@ -131,6 +138,7 @@ import SubMenuItem from './SubMenuItem.vue'
 import ModalProfile from './ModalProfile.vue'
 import NotifyItem from './NotifyItem.vue'
 import { getUserByEmail, setActiveUser } from '~/api/user.api'
+import { getNotify, seenNotifies } from '~/api/notify'
 
 export default {
   components: { Avatar, SubMenuItem, ModalProfile, NotifyItem },
@@ -141,6 +149,8 @@ export default {
       avatar: null,
       isShowModalProfile: false,
       isShowNotify: false,
+      notifies: null,
+      lastDocNotify: null,
     }
   },
 
@@ -152,10 +162,29 @@ export default {
         return localStorage.getItem('email')
       }
     },
+
+    getNumberNewNotify() {
+      let count = 0
+      this.notifies &&
+        this.notifies.forEach((notify) => {
+          if (notify.seen === false) {
+            count++
+          }
+        })
+      return count
+    },
   },
   async created() {
     await this.setUser()
     this.avatar = this.user && this.user.avatar
+
+    getNotify(
+      this.getCurrentEmail,
+      (notifies) => {
+        this.setNotifies(notifies)
+      },
+      this.lastDocNotify
+    )
   },
 
   methods: {
@@ -197,9 +226,13 @@ export default {
       }
     },
 
-    handleToggleNotify() {
+    async handleToggleNotify() {
       this.handleCloseMenu()
+      if (!this.isShowNotify) {
+        await seenNotifies(this.user.email)
+      }
       this.isShowNotify = !this.isShowNotify
+      this.currentLoadNotify = 1
     },
 
     handleCloseNotify() {
@@ -209,6 +242,39 @@ export default {
     handleCloseNotifyAndMenu() {
       this.handleCloseMenu()
       this.isShowNotify = false
+    },
+
+    setNotifies(notifiesDoc) {
+      const notifies = notifiesDoc.map((doc) => ({ ...doc.data(), id: doc.id }))
+      this.notifies = notifies
+      this.lastDocNotify = notifiesDoc[notifiesDoc.length - 1]
+    },
+
+    loadMoreNotify(notifiesDoc) {
+      const notifiesMore = notifiesDoc.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
+      const lastDoc = notifiesDoc[notifiesDoc.length - 1]
+      if (lastDoc && lastDoc.id !== this.lastDocNotify.id) {
+        this.lastDocNotify = lastDoc
+        this.notifies = [...this.notifies, ...notifiesMore]
+      }
+    },
+
+    handleScroll(e) {
+      if (
+        Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
+        e.target.scrollHeight
+      ) {
+        getNotify(
+          this.getCurrentEmail,
+          (notifies) => {
+            this.loadMoreNotify(notifies)
+          },
+          this.lastDocNotify
+        )
+      }
     },
   },
 }

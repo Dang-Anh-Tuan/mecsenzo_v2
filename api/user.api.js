@@ -110,6 +110,7 @@ export const addNewFriend = async function (user, email) {
 export const unfriend = async function (user, email) {
   const docRef = doc(db, 'users', user.id)
 
+  user.friend = user.friend ? user.friend : []
   const newArrFriend = user.friend.filter((item) => item !== email)
 
   const newUser = {
