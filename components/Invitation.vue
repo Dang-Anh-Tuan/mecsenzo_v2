@@ -95,7 +95,6 @@ export default {
       invitationsSent: [],
       invitationsReceived: [],
       currentUser: null,
-      unsubscribeQueryPendingReceived: null,
     }
   },
 
