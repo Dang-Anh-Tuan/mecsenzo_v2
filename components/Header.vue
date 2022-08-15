@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/this-in-template -->
 <template>
   <header class="w-full h-[68px] bg-white fixed shadow-xl z-[1000]">
     <div
