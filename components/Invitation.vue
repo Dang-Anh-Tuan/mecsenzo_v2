@@ -84,6 +84,8 @@ import {
   unfriend,
 } from '~/api/user.api'
 import { mapInvitationUser } from '~/helper/mapInvitationUser'
+import { createNotify } from '~/api/notify'
+import { routers } from '~/constants/router'
 
 export default {
   components: { Avatar },
@@ -154,9 +156,17 @@ export default {
 
       acceptInvitation(invitation)
       await addNewFriend(this.currentUser, invitationUser.email)
+      await addNewFriend(invitationUser, this.currentUser.email)
 
       this.invitationsReceived = this.invitationsReceived.filter(
         (item) => item.id !== invitation.id
+      )
+
+      await createNotify(
+        invitationUser.email,
+        this.currentUser.fullName,
+        'acceptFriend',
+        routers.ADD_FRIEND_PAGE
       )
     },
 
@@ -169,6 +179,7 @@ export default {
 
     async handleUnfriend(invitation) {
       await unfriend(this.currentUser, invitation.user.email)
+      await unfriend(invitation.user, this.currentUser.email)
       await deleteInvitation(invitation.id)
       this.friends = this.friends.filter((item) => item.id !== invitation.id)
     },

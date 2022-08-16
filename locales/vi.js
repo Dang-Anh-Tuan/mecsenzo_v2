@@ -34,4 +34,16 @@ export default {
       unfriend: 'Hủy kết bạn',
     },
   },
+  notify: {
+    acceptFriend: 'đã đồng ý lời mời kết bạn',
+    inviteFriend: 'đã gửi yêu cầu kết bạn',
+  },
+  time: {
+    minute: 'phút',
+    hour: 'giờ',
+    day: 'ngày',
+    month: 'tháng',
+    year: 'năm',
+    ago: 'trước',
+  },
 }

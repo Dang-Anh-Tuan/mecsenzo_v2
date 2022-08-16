@@ -80,6 +80,8 @@ import {
   getInvitationById,
   acceptInvitation,
 } from '~/api/friend.api'
+import { createNotify } from '~/api/notify'
+import { routers } from '~/constants/router'
 
 export default {
   components: { Button, Avatar },
@@ -178,6 +180,13 @@ export default {
         this.friendOfCurrentUser.length,
         sender
       )
+
+      await createNotify(
+        sender,
+        currentUser.fullName,
+        'acceptFriend',
+        routers.ADD_FRIEND_PAGE
+      )
     },
 
     async handleSendInvitation(receiver) {
@@ -186,6 +195,15 @@ export default {
         receiver
       )
       this.pendingInvitationSent.push(await getInvitationById(newInvitation.id))
+
+      const currentUser = await getUserByEmail(this.getCurrentEmail)
+
+      await createNotify(
+        receiver,
+        currentUser.fullName,
+        'inviteFriend',
+        routers.ADD_FRIEND_PAGE
+      )
     },
   },
 }

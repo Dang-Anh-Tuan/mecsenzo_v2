@@ -6,6 +6,7 @@ import {
   limit,
   getDocs,
   onSnapshot,
+  startAfter,
 } from 'firebase/firestore'
 
 import { db } from '~/firebase/config'
@@ -14,7 +15,8 @@ const renderQuery = function (
   collectionName,
   conditions,
   orderby = null,
-  limitValue = null
+  limitValue = null,
+  start = null
 ) {
   const collectionRef = collection(db, collectionName)
   const arr = [collectionRef]
@@ -28,6 +30,10 @@ const renderQuery = function (
   if (orderby) {
     arr.push(orderBy(orderby.field, orderby.value))
   }
+  if (start) {
+    arr.push(startAfter(start))
+  }
+
   if (limitValue) {
     arr.push(limit(limitValue))
   }
@@ -39,7 +45,8 @@ const useFirestoreQueryCondition = async function (
   collectionName,
   conditions,
   orderby = null,
-  limitValue = null
+  limitValue = null,
+  start = null
 ) {
   /* Condition {
     filed, --------- ex : "name", "age" , ...
@@ -53,7 +60,7 @@ const useFirestoreQueryCondition = async function (
   // limit : number
 
   const results = []
-  const q = renderQuery(collectionName, conditions, orderby, limitValue)
+  const q = renderQuery(collectionName, conditions, orderby, limitValue, start)
   const querySnapshot = await getDocs(q)
 
   querySnapshot.forEach((doc) => {
@@ -71,14 +78,15 @@ const useFirestoreRealtimeQuery = function (
   conditions,
   orderby = null,
   limitValue = null,
+  start = null,
   callback
 ) {
-  const q = renderQuery(collectionName, conditions, orderby, limitValue)
+  const q = renderQuery(collectionName, conditions, orderby, limitValue, start)
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const result = []
     querySnapshot.forEach((doc) => {
-      result.push(doc.data())
+      result.push(doc)
     })
     callback(result)
   })
