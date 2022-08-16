@@ -19,10 +19,11 @@ export default {
     search: 'Search',
     invitation: 'Invitation',
     searchTab: {
-      inputPlaceholder: 'Enter name you want to search',
+      inputPlaceholder: 'Enter name, email want to search',
       invite: 'Invite',
       friend: 'Friend',
       cancel: 'Cancel',
+      accept: 'Accept',
     },
     invitationTab: {
       sent: 'Sent',

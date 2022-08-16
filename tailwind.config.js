@@ -17,6 +17,16 @@ module.exports = {
         dark_primary_light: '#f49548',
         dark_bg: '#212332',
       },
+      keyframes: {
+        scaleDown: {
+          '0%': { transform: 'scaleY(0)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
+        leftIn: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
     },
   },
   plugins: [],
