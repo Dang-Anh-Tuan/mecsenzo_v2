@@ -16,6 +16,7 @@ module.exports = {
         dark_primary: '#ff7200',
         dark_primary_light: '#f49548',
         dark_bg: '#212332',
+        success: '#00c24e',
       },
       keyframes: {
         scaleDown: {

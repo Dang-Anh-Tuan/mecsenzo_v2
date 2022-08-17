@@ -35,7 +35,7 @@ export default {
     },
   },
 
-  emit: ['closeNotify'],
+  emits: ['closeNotify'],
 
   computed: {
     getQueryTextNotifyContent() {
