@@ -1,7 +1,9 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
+    "Biệt",
     "cuộc",
+    "danh",
     "động",
     "hoạt",
     "Không",
@@ -9,6 +11,7 @@
     "ngày",
     "nhắn",
     "Nhóm",
+    "phòng",
     "tháng"
   ]
 }

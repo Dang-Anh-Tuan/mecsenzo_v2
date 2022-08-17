@@ -57,4 +57,13 @@ export default {
     sent: 'Đã gửi',
     inputPlaceholder: 'Nhập tin nhắn',
   },
+  conversationModal: {
+    headingEdit: 'Sửa thông tin cuộc trò chuyện',
+    headingCreate: 'Tạo phòng chat',
+    roomName: 'Tên phòng',
+    yourNickname: 'Biệt danh của bạn',
+    partnerNickname: "'s' biệt danh",
+    color: 'Màu',
+    create: 'Tạo phòng',
+  },
 }

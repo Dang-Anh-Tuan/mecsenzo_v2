@@ -57,4 +57,12 @@ export default {
     sent: 'sent',
     inputPlaceholder: 'Enter message',
   },
+  conversationModal: {
+    headingEdit: "Edit conversations's info",
+    headingCreate: 'Create room chat',
+    roomName: 'Room Name',
+    yourNickname: 'Your nickname',
+    partnerNickname: "'s' nickname",
+    color: 'Color',
+  },
 }
