@@ -46,4 +46,15 @@ export default {
     year: 'năm',
     ago: 'trước',
   },
+  sidebarConversation: {
+    inputPlaceholder: 'Tìm kiếm cuộc trò chuyện',
+    spaces: 'Nhóm trò chuyện',
+  },
+  chatSide: {
+    active: 'Đang hoạt động',
+    offline: 'Không hoạt động',
+    seen: 'Đã xem',
+    sent: 'Đã gửi',
+    inputPlaceholder: 'Nhập tin nhắn',
+  },
 }

@@ -46,4 +46,15 @@ export default {
     year: 'years',
     ago: 'ago',
   },
+  sidebarConversation: {
+    inputPlaceholder: 'Find conversation ...',
+    spaces: 'Spaces',
+  },
+  chatSide: {
+    active: 'Active',
+    offline: 'Offline',
+    seen: 'seen',
+    sent: 'sent',
+    inputPlaceholder: 'Enter message',
+  },
 }

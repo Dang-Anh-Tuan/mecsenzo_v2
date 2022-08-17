@@ -1,21 +1,18 @@
 <template>
-  <div>
-    <h1 class="text-red-500 text-[1.6rem] bg-[#ccc] dark:text-[#fff]">
-      Hello user : {{ getCurrentAccount }}
-    </h1>
+  <div class="flex max-w-[1200px] m-auto mt-[100px] h-[80vh]">
+    <SidebarConversation />
+    <ChatSide />
   </div>
 </template>
 
 <script>
+import SidebarConversation from '../components/SidebarConversation.vue'
+import ChatSide from '../components/ChatSide.vue'
 export default {
   name: 'IndexPage',
 
+  components: { SidebarConversation, ChatSide },
+
   middleware: ['check-auth', 'auth-required'],
-  computed: {
-    getCurrentAccount() {
-      const currentAccount = this.$store.getters['account/getAccount']
-      return currentAccount || 'Not login'
-    },
-  },
 }
 </script>
