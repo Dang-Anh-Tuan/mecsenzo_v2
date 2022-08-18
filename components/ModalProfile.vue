@@ -137,7 +137,6 @@ export default {
       this.user[fieldChange] = newValue[1]
     },
     closeModal() {
-      this.isShowModal = false
       this.$emit('closeModal')
     },
     handleChangeAvatar(fileImage) {
