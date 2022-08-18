@@ -15,78 +15,47 @@
         <fa icon="magnifying-glass" />
       </button>
     </div>
-    <div class="container-conversation my-5 overflow-y-auto overflow-x-hidden">
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <div class="relative">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://firebasestorage.googleapis.com/v0/b/mecsenzo.appspot.com/o/user-avatar%2Fxedoisong_novitec_torado_lamborghini_aventador_roadster_h3_orff.jpg074e6d51-750a-4a56-8e8a-49b87877e184?alt=media&token=6b347c93-5c03-43db-90b6-39c32d84e2b7"
-            first-char="D"
-          />
-          <div
-            class="absolute w-[12px] h-[12px] rounded-full bg-success bottom-0 right-0"
-          ></div>
-        </div>
-        <div class="conversation-content ml-4">
-          <p
-            class="select-none font-medium truncate text-ellipsis max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]"
-          >
-            Dang Anh Tuan
-          </p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] text-dark_primary font-medium"
-          >
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti
-            doloremque voluptates, non rem voluptas blanditiis animi vel porro
-            ratione dolorem laborum atque dolore sed amet odio iste culpa, omnis
-            unde?
-          </p>
-        </div>
-      </div>
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <div class="relative">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://icdn.dantri.com.vn/thumb_w/640/2020/12/16/ngam-dan-hot-girl-xinh-dep-noi-bat-nhat-nam-2020-docx-1608126694049.jpeg"
-            first-char="D"
-          />
-          <div
-            class="absolute w-[12px] h-[12px] rounded-full bg-gray-300 bottom-0 right-0"
-          ></div>
-        </div>
-        <div class="conversation-content ml-4">
-          <p class="select-none">Nguyen Van Nam</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] text-gray-500"
-          >
-            Hello
-          </p>
-        </div>
-      </div>
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <div class="relative">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://wecsaigon.com/wp-content/uploads/2021/11/good-girl.jpg"
-            first-char="D"
-          />
-          <div
-            class="absolute w-[12px] h-[12px] rounded-full bg-success bottom-0 right-0"
-          ></div>
-        </div>
-        <div class="conversation-content ml-4">
-          <p class="select-none">Nguyen Van C</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] text-gray-500"
-          >
-            Are you free to9 ?
-          </p>
+    <div
+      class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
+      @scroll="handleScroll($event, handleLoadMoreIndividual)"
+    >
+      <div v-if="conversationIndividual">
+        <div
+          v-for="conversation in conversationIndividual"
+          :key="conversation.id"
+          class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+        >
+          <div class="relative">
+            <avatar
+              :is-have-avatar="!!conversation.partnerUser.avatar"
+              :src-image="
+                conversation.partnerUser.avatar &&
+                conversation.partnerUser.avatar
+              "
+              :first-char="conversation.partnerUser.fullName.charAt(0)"
+            />
+            <div
+              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 ${getClassIsOnline(
+                conversation.partnerUser
+              )}`"
+            ></div>
+          </div>
+          <div class="conversation-content ml-4">
+            <p
+              :class="`select-none truncate text-ellipsis max-w-[180px] m
+              d:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              ${getClassNameNotSeen(conversation)}`"
+            >
+              {{ conversation.partnerUser.fullName }}
+            </p>
+            <p
+              :class="`select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] 
+              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              ${getClassNewMsgNotSeen(conversation)}`"
+            >
+              {{ getLastMessage(conversation).content }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -104,7 +73,7 @@
     </div>
     <div
       class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
-      @scroll="handleScroll"
+      @scroll="handleScroll($event, handleLoadMoreSpaces)"
     >
       <div
         v-for="conversation in conversationSpace"
@@ -117,15 +86,19 @@
           :first-char="conversation.name.charAt(0)"
         />
         <div class="conversation-content ml-4">
-          <p :class="`select-none ${getClassNameNotSeen(conversation)}`">
+          <p
+            :class="`select-none truncate 
+            text-ellipsis max-w-[180px] 
+            md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+            ${getClassNameNotSeen(conversation)}`"
+          >
             {{ conversation.name }}
           </p>
           <p
             v-if="getLastMessage(conversation)"
             :class="`select-none truncate text-ellipsis text-[0.9rem] 
-            max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] ${getClassNewMsgNotSeen(
-              conversation
-            )} `"
+            max-w-[180px] md:max-w-[120px] lg:max-w-[180px]
+            h-[1.4rem] ${getClassNewMsgNotSeen(conversation)}`"
           >
             {{ getLastMessage(conversation).content }}
           </p>
@@ -138,7 +111,11 @@
 <script>
 import Avatar from './Avatar.vue'
 import Separation from './Separation.vue'
-import { getConversationsSpace } from '~/api/conversation'
+import {
+  getConversationsIndividual,
+  getConversationsSpace,
+} from '~/api/conversation'
+import { getUserByEmail } from '~/api/user.api'
 export default {
   components: { Avatar, Separation },
 
@@ -148,6 +125,8 @@ export default {
     return {
       conversationSpace: null,
       lastDocConversationsSpace: null,
+      conversationIndividual: null,
+      lastDocConversationIndividual: null,
     }
   },
 
@@ -179,12 +158,24 @@ export default {
     getClassNewMsgNotSeen() {
       return (conversation) =>
         conversation.seen.includes(this.getCurrentEmail)
-          ? ''
+          ? 'text-gray-400'
           : 'text-dark_primary font-medium'
+    },
+
+    getClassIsOnline() {
+      return (partnerUser) => {
+        return partnerUser.isActive ? 'bg-success' : 'bg-gray-300'
+      }
     },
   },
 
   created() {
+    getConversationsIndividual(
+      this.getCurrentEmail,
+      this.setConversationIndividual,
+      this.lastDocConversationIndividual
+    )
+
     getConversationsSpace(
       this.getCurrentEmail,
       this.setConversationSpace,
@@ -197,7 +188,7 @@ export default {
       this.$emit('open-modal-add-space')
     },
 
-    compileDocsToConversationSpace(conversationSpaceDocs) {
+    compileDocsToConversation(conversationSpaceDocs) {
       return conversationSpaceDocs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
@@ -205,7 +196,7 @@ export default {
     },
 
     setConversationSpace(conversationSpaceDocs) {
-      const conversationSpace = this.compileDocsToConversationSpace(
+      const conversationSpace = this.compileDocsToConversation(
         conversationSpaceDocs
       )
 
@@ -216,7 +207,9 @@ export default {
     },
 
     loadMoreConversationSpace(conversationSpaceDocs) {
-      const conversationSpaceNew = this.compileDocsToConversationSpace(conversationSpaceDocs)
+      const conversationSpaceNew = this.compileDocsToConversation(
+        conversationSpaceDocs
+      )
 
       const lastDoc = conversationSpaceDocs[conversationSpaceDocs.length - 1]
 
@@ -229,17 +222,74 @@ export default {
       }
     },
 
-    handleScroll(e) {
+    handleLoadMoreSpaces() {
+      getConversationsSpace(
+        this.getCurrentEmail,
+        this.loadMoreConversationSpace,
+        this.lastDocConversationsSpace
+      )
+    },
+
+    handleScroll(e, handleLoadMore) {
       if (
         Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
         e.target.scrollHeight
       ) {
-        getConversationsSpace(
-          this.getCurrentEmail,
-          this.loadMoreConversationSpace,
-          this.lastDocConversationsSpace
-        )
+        handleLoadMore()
       }
+    },
+
+    async mergeUserForIndividualConversation(conversationIndividual) {
+      for (const conversation of conversationIndividual) {
+        const emailPartner = conversation.member.filter(
+          (email) => email !== this.getCurrentEmail
+        )[0]
+
+        const currentUser = await getUserByEmail(this.getCurrentEmail)
+        const partnerUser = await getUserByEmail(emailPartner)
+
+        conversation.currentUser = currentUser
+        conversation.partnerUser = partnerUser
+      }
+    },
+
+    async setConversationIndividual(conversationSpaceDocs) {
+      const conversationIndividual = this.compileDocsToConversation(
+        conversationSpaceDocs
+      )
+
+      await this.mergeUserForIndividualConversation(conversationIndividual)
+
+      this.conversationIndividual = conversationIndividual
+      this.lastDocConversationIndividual =
+        conversationSpaceDocs[conversationSpaceDocs.length - 1]
+    },
+
+    async loadMoreConversationIndividual(conversationIndividualDocs) {
+      const conversationIndividualNew = this.compileDocsToConversation(
+        conversationIndividualDocs
+      )
+
+      await this.mergeUserForIndividualConversation(conversationIndividualNew)
+
+      const lastDoc =
+        conversationIndividualDocs[conversationIndividualDocs.length - 1]
+
+      if (lastDoc && lastDoc.id !== this.lastDocConversationIndividual.id) {
+        this.lastDocConversationIndividual = lastDoc
+        this.conversationIndividual = [
+          ...this.conversationIndividual,
+          ...conversationIndividualNew,
+        ]
+      }
+    },
+
+    handleLoadMoreIndividual() {
+      getConversationsIndividual(
+        this.getCurrentEmail,
+        this.loadMoreConversationIndividual,
+        this.lastDocConversationIndividual
+      )
     },
   },
 }

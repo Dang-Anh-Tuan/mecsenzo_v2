@@ -86,6 +86,7 @@ import {
 import { mapInvitationUser } from '~/helper/mapInvitationUser'
 import { createNotify } from '~/api/notify'
 import { routers } from '~/constants/router'
+import { createConversation } from '~/api/conversation'
 
 export default {
   components: { Avatar },
@@ -168,6 +169,22 @@ export default {
         'acceptFriend',
         routers.ADD_FRIEND_PAGE
       )
+
+      await createConversation({
+        type: 'individual',
+        member: [this.getCurrentEmail, invitationUser.email],
+        seen: ['abc@gmai.com'],
+        isTyping: false,
+        colorChat: '#0084ff',
+        messages: [
+          {
+            content : "Hello"
+          }
+        ],
+        thumb: null,
+        name: '',
+        accountHost: null,
+      })
     },
 
     async handleCancelInvitation(invitation) {

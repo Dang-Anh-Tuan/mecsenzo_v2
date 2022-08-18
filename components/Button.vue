@@ -2,7 +2,7 @@
   <button
     v-if="type === 'button'"
     :type="type"
-    :class="`outline-none min-w-[120px] text-[1.2rem] rounded-[20px] ${renderClassSize} ${renderClassColor}`"
+    :class="`outline-none min-w-[120px] text-[1.2rem] rounded-[20px] select-none ${renderClassSize} ${renderClassColor}`"
     @click="handleClick"
   >
     <slot></slot>
