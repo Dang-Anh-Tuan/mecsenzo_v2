@@ -97,6 +97,7 @@
       </p>
       <button
         class="btn-add-space w-[36px] h-[36px] text-[1.1rem] text-success rounded-full bg-slate-200 md:bg-transparent hover:bg-slate-200 transition-colors"
+        @click="showModalAddSpace"
       >
         <fa icon="plus" />
       </button>
@@ -186,7 +187,17 @@
 <script>
 import Avatar from './Avatar.vue'
 import Separation from './Separation.vue'
-export default { components: { Avatar, Separation } }
+export default {
+  components: { Avatar, Separation },
+
+  emits: ['open-modal-add-space'],
+
+  methods: {
+    showModalAddSpace() {
+      this.$emit('open-modal-add-space')
+    },
+  },
+}
 </script>
 
 <style scoped>

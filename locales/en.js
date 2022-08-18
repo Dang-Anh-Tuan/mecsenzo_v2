@@ -64,5 +64,6 @@ export default {
     yourNickname: 'Your nickname',
     partnerNickname: "'s' nickname",
     color: 'Color',
+    create: 'Create',
   },
 }

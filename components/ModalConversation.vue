@@ -10,24 +10,29 @@
         </h3>
       </div>
       <ValidationObserver v-slot="{ handleSubmit }">
-        <form @submit.prevent="handleSubmit()">
+        <form @submit.prevent="handleSubmit(handleSubmitForm)">
           <div>
-            <div v-if="!conversation || conversation.type === 'group'">
+            <div v-if="conversationBinding.type === 'group'">
               <FormField
                 name="name"
                 :label-field="$t('conversationModal.roomName')"
-                :value-field="conversation && conversation.name"
+                :value-field="conversationBinding.name"
                 rule="required|maximumLen:30"
+                @onChangeField="handleChangeFiled"
               />
             </div>
             <div v-else>
-              <div v-for="(member, index) in conversation.members" :key="index">
+              <div
+                v-for="(member, index) in conversationBinding.members"
+                :key="index"
+              >
                 <div v-if="member.email === getCurrentEmail">
                   <FormField
                     name="yourNickname"
                     :label-field="`$t('conversationModal.yourNickname')`"
                     :value-field="member && member.nickname"
                     rule="required|maximumLen:30"
+                    @onChangeField="handleChangeFiled"
                   />
                 </div>
                 <div v-else>
@@ -36,6 +41,7 @@
                     :label-field="`${member.email}$t('conversationModal.partnerNickname')`"
                     :value-field="member && member.nickname"
                     rule="required|maximumLen:30"
+                    @onChangeField="handleChangeFiled"
                   />
                 </div>
               </div>
@@ -45,21 +51,23 @@
                 <p class="text-[1.2rem] font-semibold text-dark_primary">
                   {{ $t('conversationModal.color') }}
                 </p>
-                <div
-                  class="relative w-[26px] h-[26px] rounded-full bg-primary cursor-pointer ml-[68px]"
-                  @click="toggleChooseColor"
-                >
+                <div class="relative">
+                  <div
+                    ref="btnColorConversation"
+                    class="w-[26px] h-[26px] rounded-full cursor-pointer ml-[68px]"
+                    @click="toggleChooseColor"
+                  ></div>
                   <div
                     v-if="isShowChooseColor"
                     class="absolute grid grid-cols-5 gap-3 w-[200px] h-[100px] bg-white rounded-[20px] shadow-xl top-[100%] left-[100%] p-4"
                   >
                     <button
                       v-for="(value, key) in colorsConversation"
+                      ref="btnChooseColorItem"
                       :key="key"
                       :value="value"
-                      :class="`btn-choose-color-item w-[26px] h-[26px] rounded-full cursor-pointer ${getBgBtnChooseColorItem(
-                        value
-                      )}`"
+                      class="btn-choose-color-item w-[26px] h-[26px] rounded-full cursor-pointer"
+                      @click="selectColorConversation"
                     ></button>
                   </div>
                 </div>
@@ -69,6 +77,7 @@
               :label-field="$t('profileModal.avatar')"
               type-input="file"
               :value-field="avatar"
+              @onChangeFile="handleChangeAvatar"
             />
             <div class="flex items-center justify-center">
               <Avatar
@@ -77,7 +86,9 @@
                   avatar ||
                   'https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg'
                 "
-                :first-char="conversation && conversation.name.charAt(0)"
+                :first-char="
+                  conversationBinding && conversationBinding.name.charAt(0)
+                "
                 size="large"
               />
             </div>
@@ -115,6 +126,8 @@ import FormField from './FormField.vue'
 import Avatar from './Avatar.vue'
 import Button from './Button.vue'
 import { colorConversation } from '~/constants/colorConversation'
+import { uploadImage } from '~/helper/FirebaseHelper'
+import { createConversation } from '~/api/conversation'
 
 extend('required', {
   validate(value) {
@@ -139,6 +152,7 @@ export default {
   components: { FormField, Avatar, Button },
 
   props: {
+    isCreate: Boolean,
     isShow: Boolean,
     conversation: {
       type: Object,
@@ -150,9 +164,11 @@ export default {
 
   data() {
     return {
+      fileAvatar: null,
       avatar: null,
       isShowChooseColor: false,
       colorsConversation: colorConversation,
+      conversationBinding: this.conversation,
     }
   },
 
@@ -174,10 +190,25 @@ export default {
       if (this.conversation) return !!this.conversation.thumb
       return true
     },
+  },
 
-    getBgBtnChooseColorItem() {
-      return (color) => `bg-[${color}]`
-    },
+  created() {
+    if (this.isCreate)
+      this.conversationBinding = {
+        type: 'group',
+        member: [],
+        seen: [],
+        isTyping: false,
+        colorChat: '#0084ff',
+        thumb: null,
+        name: '',
+        accountHost: null,
+      }
+  },
+
+  mounted() {
+    this.$refs.btnColorConversation.style.backgroundColor =
+      this.conversationBinding.colorChat
   },
 
   methods: {
@@ -185,8 +216,73 @@ export default {
       this.$emit('closeModal')
     },
 
+    handleChangeFiled(newValue) {
+      const fieldChange = newValue[0]
+      this.conversationBinding[fieldChange] = newValue[1]
+    },
+
+    setColorForChooseBtn() {
+      this.$nextTick(() => {
+        this.$refs.btnChooseColorItem.forEach(
+          (btn) => (btn.style.backgroundColor = btn.value)
+        )
+      })
+    },
+
     toggleChooseColor() {
       this.isShowChooseColor = !this.isShowChooseColor
+      if (this.isShowChooseColor) {
+        this.setColorForChooseBtn()
+      }
+    },
+
+    closeChooseColor() {
+      this.isShowChooseColor = false
+    },
+
+    selectColorConversation(e) {
+      this.conversationBinding.colorChat = e.target.value
+      this.$nextTick(() => {
+        this.$refs.btnColorConversation.style.backgroundColor =
+          this.conversationBinding.colorChat
+      })
+      this.closeChooseColor()
+    },
+
+    handleChangeAvatar(fileImage) {
+      this.avatar = fileImage.preview
+      this.fileAvatar = fileImage
+    },
+
+    handleCreateConversation() {
+      this.conversationBinding.accountHost = this.getCurrentEmail
+      this.conversationBinding.member = [this.getCurrentEmail]
+      createConversation(this.conversationBinding)
+    },
+
+    handleUpdateConversation() {},
+
+    handleImageUpdateComplete(urlAvatar) {
+      if (this.isCreate) {
+        this.conversationBinding.thumb = urlAvatar
+        this.handleCreateConversation()
+        this.closeModal()
+      }
+    },
+
+    handleSubmitForm() {
+      if (this.fileAvatar) {
+        uploadImage(
+          `room-chat-thumb`,
+          this.fileAvatar,
+          this.handleImageUpdateComplete
+        )
+      } else if (this.isCreate) {
+        this.handleCreateConversation()
+        this.closeModal()
+      } else {
+        this.handleUpdateConversation()
+      }
     },
   },
 }
