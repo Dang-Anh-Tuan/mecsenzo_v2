@@ -46,7 +46,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex justify-between items-center w-full mt-2">
+            <div class="flex justify-between items-center w-full mt-4">
               <div class="flex items-center">
                 <p class="text-[1.2rem] font-semibold text-dark_primary">
                   {{ $t('conversationModal.color') }}
@@ -73,24 +73,26 @@
                 </div>
               </div>
             </div>
-            <FormField
-              :label-field="$t('profileModal.avatar')"
-              type-input="file"
-              :value-field="avatar"
-              @onChangeFile="handleChangeAvatar"
-            />
-            <div class="flex items-center justify-center">
-              <Avatar
-                :is-have-avatar="getIsHaveAvatar"
-                :src-image="
-                  avatar ||
-                  'https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg'
-                "
-                :first-char="
-                  conversationBinding && conversationBinding.name.charAt(0)
-                "
-                size="large"
+            <div class="mt-[54px]">
+              <FormField
+                :label-field="$t('profileModal.avatar')"
+                type-input="file"
+                :value-field="avatar"
+                @onChangeFile="handleChangeAvatar"
               />
+              <div class="flex items-center justify-center">
+                <Avatar
+                  :is-have-avatar="getIsHaveAvatar"
+                  :src-image="
+                    avatar ||
+                    'https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg'
+                  "
+                  :first-char="
+                    conversationBinding && conversationBinding.name.charAt(0)
+                  "
+                  size="large"
+                />
+              </div>
             </div>
           </div>
 
