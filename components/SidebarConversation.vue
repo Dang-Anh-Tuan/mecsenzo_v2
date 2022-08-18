@@ -104,79 +104,30 @@
     </div>
     <div
       class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
+      @scroll="handleScroll"
     >
       <div
+        v-for="conversation in conversationSpace"
+        :key="conversation.id"
         class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
       >
         <avatar
-          :is-have-avatar="true"
-          src-image="https://nghenghiep.vieclam24h.vn/wp-content/uploads/2022/08/dev-la-gi-1.jpg"
-          first-char="D"
+          :is-have-avatar="!!conversation.thumb"
+          :src-image="conversation.thumb"
+          :first-char="conversation.name.charAt(0)"
         />
         <div class="conversation-content ml-4">
-          <p class="select-none font-medium">Fresher F6</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] text-dark_primary font-medium"
-          >
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti
-            doloremque voluptates, non rem voluptas blanditiis animi vel porro
-            ratione dolorem laborum atque dolore sed amet odio iste culpa, omnis
-            unde?
+          <p :class="`select-none ${getClassNameNotSeen(conversation)}`">
+            {{ conversation.name }}
           </p>
-        </div>
-      </div>
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <avatar
-          :is-have-avatar="true"
-          src-image="https://profilenghesi.com/wp-content/uploads/2021/08/dev-nguyen-la-ai-tieu-su-4.jpg"
-          first-char="D"
-        />
-        <div class="conversation-content ml-4">
-          <p class="select-none">F6 Vue JS</p>
           <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]"
+            v-if="getLastMessage(conversation)"
+            :class="`select-none truncate text-ellipsis text-[0.9rem] 
+            max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] ${getClassNewMsgNotSeen(
+              conversation
+            )} `"
           >
-            non rem voluptas blanditiis animi vel porro ratione dolorem laborum
-            atque dolore sed amet odio iste culpa, omnis unde?
-          </p>
-        </div>
-      </div>
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <avatar
-          :is-have-avatar="true"
-          src-image="https://firebasestorage.googleapis.com/v0/b/mecsenzo.appspot.com/o/user-avatar%2Fxedoisong_novitec_torado_lamborghini_aventador_roadster_h3_orff.jpg074e6d51-750a-4a56-8e8a-49b87877e184?alt=media&token=6b347c93-5c03-43db-90b6-39c32d84e2b7"
-          first-char="D"
-        />
-        <div class="conversation-content ml-4">
-          <p class="select-none">Dang Anh Tuan</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]"
-          >
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti
-            doloremque voluptates, non rem voluptas blanditiis animi vel porro
-            ratione dolorem laborum atque dolore sed amet odio iste culpa, omnis
-            unde?
-          </p>
-        </div>
-      </div>
-      <div
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
-      >
-        <avatar
-          :is-have-avatar="true"
-          src-image="https://images.discotech.me/artists/1510/8ddafc28-37c6-478a-aa6f-58b473be0242.png?auto=format%2Ccompress&w=1000"
-          first-char="D"
-        />
-        <div class="conversation-content ml-4">
-          <p class="select-none">Nghe nhac</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]"
-          >
-            omnis unde?
+            {{ getLastMessage(conversation).content }}
           </p>
         </div>
       </div>
@@ -187,14 +138,108 @@
 <script>
 import Avatar from './Avatar.vue'
 import Separation from './Separation.vue'
+import { getConversationsSpace } from '~/api/conversation'
 export default {
   components: { Avatar, Separation },
 
   emits: ['open-modal-add-space'],
 
+  data() {
+    return {
+      conversationSpace: null,
+      lastDocConversationsSpace: null,
+    }
+  },
+
+  computed: {
+    getCurrentEmail() {
+      if (process.server) {
+        return this.$store.getters['account/getAccount']
+      } else {
+        return localStorage.getItem('email')
+      }
+    },
+
+    getLastMessage() {
+      return (conversation) => {
+        const lenMessage = conversation.messages.length
+
+        if (lenMessage > 0) {
+          return conversation.messages[lenMessage - 1]
+        }
+        return false
+      }
+    },
+
+    getClassNameNotSeen() {
+      return (conversation) =>
+        conversation.seen.includes(this.getCurrentEmail) ? '' : 'font-medium'
+    },
+
+    getClassNewMsgNotSeen() {
+      return (conversation) =>
+        conversation.seen.includes(this.getCurrentEmail)
+          ? ''
+          : 'text-dark_primary font-medium'
+    },
+  },
+
+  created() {
+    getConversationsSpace(
+      this.getCurrentEmail,
+      this.setConversationSpace,
+      this.lastDocConversationsSpace
+    )
+  },
+
   methods: {
     showModalAddSpace() {
       this.$emit('open-modal-add-space')
+    },
+
+    compileDocsToConversationSpace(conversationSpaceDocs) {
+      return conversationSpaceDocs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
+    },
+
+    setConversationSpace(conversationSpaceDocs) {
+      const conversationSpace = this.compileDocsToConversationSpace(
+        conversationSpaceDocs
+      )
+
+      this.conversationSpace = conversationSpace
+
+      const lengthDocs = conversationSpaceDocs.length
+      this.lastDocConversationsSpace = conversationSpaceDocs[lengthDocs - 1]
+    },
+
+    loadMoreConversationSpace(conversationSpaceDocs) {
+      const conversationSpaceNew = this.compileDocsToConversationSpace(conversationSpaceDocs)
+
+      const lastDoc = conversationSpaceDocs[conversationSpaceDocs.length - 1]
+
+      if (lastDoc && lastDoc.id !== this.lastDocConversationsSpace.id) {
+        this.lastDocConversationsSpace = lastDoc
+        this.conversationSpace = [
+          ...this.conversationSpace,
+          ...conversationSpaceNew,
+        ]
+      }
+    },
+
+    handleScroll(e) {
+      if (
+        Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
+        e.target.scrollHeight
+      ) {
+        getConversationsSpace(
+          this.getCurrentEmail,
+          this.loadMoreConversationSpace,
+          this.lastDocConversationsSpace
+        )
+      }
     },
   },
 }

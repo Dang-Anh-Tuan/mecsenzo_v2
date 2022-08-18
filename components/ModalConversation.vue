@@ -202,6 +202,7 @@ export default {
         seen: [],
         isTyping: false,
         colorChat: '#0084ff',
+        messages: [],
         thumb: null,
         name: '',
         accountHost: null,
