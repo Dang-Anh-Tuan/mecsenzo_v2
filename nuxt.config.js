@@ -22,6 +22,7 @@ export default {
     '@/plugins/global-components.js',
     '@/plugins/global-detective.js',
     '@/plugins/v-tooltip.js',
+    '@/plugins/v-emoji.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

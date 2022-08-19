@@ -158,13 +158,40 @@
           <fa icon="microphone" class="text-blue-600 text-[1.2rem]" />
         </button>
       </div>
-      <form class="flex-1 flex items-center">
-        <input
-          v-focus
-          type="text"
-          class="flex-1 px-3 py-2 appearance-none outline-none rounded-full bg-slate-200"
-          :placeholder="$t('chatSide.inputPlaceholder')"
-        />
+      <form
+        class="flex-1 flex items-center"
+        @submit.prevent="handleSendMessage"
+      >
+        <div class="relative flex-1 h-full">
+          <input
+            ref="inputMessage"
+            v-model="inputMessage"
+            v-focus
+            type="text"
+            class="w-full px-3 py-2 appearance-none outline-none rounded-full bg-slate-200"
+            :placeholder="$t('chatSide.inputPlaceholder')"
+          />
+          <div
+            class="absolute right-0 top-0 h-full w-[50px] flex justify-center items-center cursor-pointer"
+            @click="toggleEmojiPicker"
+          >
+            <img
+              src="@/assets/images/icon.png"
+              alt="emoji"
+              class="w-[32px] object-fill select-none"
+            />
+            <div
+              v-if="checkIsClientSide && isShowIconPicker"
+              class="absolute w-[50px] h-[50px]"
+            >
+              <VEmojiPicker
+                ref="emojiPicker"
+                class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[350px]"
+                @select="handleSelectEmoji"
+              />
+            </div>
+          </div>
+        </div>
         <button
           type="submit"
           class="h-[40px] w-[40px] ml-2 rounded-full flex items-center justify-center hover:bg-slate-200"
@@ -177,9 +204,23 @@
 </template>
 
 <script>
+import { VEmojiPicker } from 'v-emoji-picker'
 import Separation from './Separation.vue'
 export default {
-  components: { Separation },
+  components: { Separation, VEmojiPicker },
+
+  data() {
+    return {
+      inputMessage: '',
+      isShowIconPicker: false,
+    }
+  },
+
+  computed: {
+    checkIsClientSide() {
+      return !process.server
+    },
+  },
 
   mounted() {
     const containerMessage = document.getElementById('container-msg')
@@ -187,6 +228,21 @@ export default {
       top: containerMessage.scrollHeight,
       behavior: 'smooth',
     })
+  },
+
+  methods: {
+    toggleEmojiPicker() {
+      this.isShowIconPicker = !this.isShowIconPicker
+    },
+
+    handleSelectEmoji(emoji) {
+      this.inputMessage = this.inputMessage + emoji.data
+      this.$refs.inputMessage.focus()
+    },
+
+    handleSendMessage() {
+      console.log(this.inputMessage)
+    },
   },
 }
 </script>
