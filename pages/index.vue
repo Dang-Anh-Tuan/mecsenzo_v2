@@ -38,12 +38,15 @@ export default {
   },
 
   middleware: ['check-auth', 'auth-required'],
-
   data() {
     return {
       isShowModalConversation: false,
       isCreateConversation: true,
     }
+  },
+
+  created() {
+    this.$store.dispatch('conversation/initConversation')
   },
 
   methods: {

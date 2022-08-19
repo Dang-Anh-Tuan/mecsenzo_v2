@@ -110,5 +110,11 @@ export const actions = {
     Cookies.remove('token')
     Cookies.remove('email')
     Cookies.remove('tokenExpiration')
+
+    localStorage.removeItem('currentConversationId')
+    Cookies.remove('currentConversationId')
+    context.dispatch('conversation/clearCurrentConversation', null, {
+      root: true,
+    })
   },
 }

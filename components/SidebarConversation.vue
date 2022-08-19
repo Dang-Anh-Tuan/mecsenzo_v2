@@ -22,10 +22,12 @@
       <div v-if="conversationIndividual">
         <div
           v-for="conversation in conversationIndividual"
+          :id="conversation.id"
           :key="conversation.id"
           class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+          @click="setCurrentConversation(conversation.id)"
         >
-          <div class="relative">
+          <div class="relative pointer-events-none">
             <avatar
               :is-have-avatar="!!conversation.partnerUser.avatar"
               :src-image="
@@ -35,12 +37,12 @@
               :first-char="conversation.partnerUser.fullName.charAt(0)"
             />
             <div
-              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 ${getClassIsOnline(
+              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 pointer-events-none ${getClassIsOnline(
                 conversation.partnerUser
               )}`"
             ></div>
           </div>
-          <div class="conversation-content ml-4">
+          <div class="conversation-content ml-4 pointer-events-none">
             <p
               :class="`select-none truncate text-ellipsis max-w-[180px] m
               d:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
@@ -77,8 +79,10 @@
     >
       <div
         v-for="conversation in conversationSpace"
+        :id="conversation.id"
         :key="conversation.id"
         class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+        @click="setCurrentConversation(conversation.id)"
       >
         <avatar
           :is-have-avatar="!!conversation.thumb"
@@ -300,6 +304,13 @@ export default {
         this.getCurrentEmail,
         this.loadMoreConversationIndividual,
         this.lastDocConversationIndividual
+      )
+    },
+
+    async setCurrentConversation(idConversation) {
+      await this.$store.dispatch(
+        'conversation/setCurrentConversation',
+        idConversation
       )
     },
   },

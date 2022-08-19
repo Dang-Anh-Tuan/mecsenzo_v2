@@ -178,7 +178,7 @@
             <img
               src="@/assets/images/icon.png"
               alt="emoji"
-              class="w-[32px] object-fill select-none"
+              class="w-[28px] object-fill select-none"
             />
             <div
               v-if="checkIsClientSide && isShowIconPicker"
@@ -186,7 +186,8 @@
             >
               <VEmojiPicker
                 ref="emojiPicker"
-                class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[350px]"
+                class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[330px]"
+                :show-search = "false"
                 @select="handleSelectEmoji"
               />
             </div>
