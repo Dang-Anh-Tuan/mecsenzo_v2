@@ -1,6 +1,7 @@
 <template>
   <div class="flex max-w-[1200px] m-auto mt-[100px] h-[80vh]">
-    <SidebarConversation @open-modal-add-space="openModalAddConversation" />
+    <AsyncSidebarConversation />
+
     <ChatSide />
     <div
       v-if="isShowModalConversation"
@@ -15,13 +16,26 @@
 </template>
 
 <script>
-import SidebarConversation from '../components/SidebarConversation.vue'
 import ChatSide from '../components/ChatSide.vue'
 import ModalConversation from '~/components/ModalConversation.vue'
+import LoaderSideConversation from '~/components/LoaderSideConversation.vue'
+
+const AsyncSidebarConversation = () => ({
+  component: import('@/components/SidebarConversation.vue'),
+  loading: LoaderSideConversation,
+  error: LoaderSideConversation,
+  delay: 0,
+  timeout: 3000,
+})
+
 export default {
   name: 'IndexPage',
 
-  components: { SidebarConversation, ChatSide, ModalConversation },
+  components: {
+    AsyncSidebarConversation,
+    ChatSide,
+    ModalConversation,
+  },
 
   middleware: ['check-auth', 'auth-required'],
 

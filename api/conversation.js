@@ -1,5 +1,5 @@
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { useFirestoreRealtimeQuery } from './core'
+import { useFirestoreQueryCondition, useFirestoreRealtimeQuery } from './core'
 import { db } from '@/firebase/config'
 import { constant } from '~/constants/constant'
 
@@ -12,14 +12,36 @@ const createConversation = async function (conversation) {
   })
 }
 
+const getIndividualConversationByMember = async function (member) {
+  const result = await useFirestoreQueryCondition('conversation', [
+    {
+      field: 'type',
+      operator: '==',
+      value: 'individual',
+    },
+    {
+      field: 'member',
+      operator: 'array-contains-all',
+      value: member,
+    },
+  ])
+
+  return result[0]
+}
+
 const getConversationsSpace = function (currentEmail, callback, lastDoc) {
-  useFirestoreRealtimeQuery(
+  const unsubscribe = useFirestoreRealtimeQuery(
     'conversation',
     [
       {
         field: 'member',
         operator: 'array-contains',
         value: currentEmail,
+      },
+      {
+        field: 'type',
+        operator: '==',
+        value: 'group',
       },
     ],
     {
@@ -30,6 +52,40 @@ const getConversationsSpace = function (currentEmail, callback, lastDoc) {
     lastDoc,
     callback
   )
+
+  return unsubscribe
 }
 
-export { createConversation, getConversationsSpace }
+const getConversationsIndividual = function (currentEmail, callback, lastDoc) {
+  const unsubscribe = useFirestoreRealtimeQuery(
+    'conversation',
+    [
+      {
+        field: 'member',
+        operator: 'array-contains',
+        value: currentEmail,
+      },
+      {
+        field: 'type',
+        operator: '==',
+        value: 'individual',
+      },
+    ],
+    {
+      field: 'timeEnd',
+      value: 'desc',
+    },
+    constant.SIZE_LOAD_CONVERSATION_SPACE,
+    lastDoc,
+    callback
+  )
+
+  return unsubscribe
+}
+
+export {
+  createConversation,
+  getIndividualConversationByMember,
+  getConversationsSpace,
+  getConversationsIndividual,
+}

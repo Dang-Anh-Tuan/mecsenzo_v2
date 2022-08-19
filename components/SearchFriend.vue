@@ -82,6 +82,7 @@ import {
 } from '~/api/friend.api'
 import { createNotify } from '~/api/notify'
 import { routers } from '~/constants/router'
+import { createConversation } from '~/api/conversation'
 
 export default {
   components: { Button, Avatar },
@@ -187,6 +188,18 @@ export default {
         'acceptFriend',
         routers.ADD_FRIEND_PAGE
       )
+
+      await createConversation({
+        type: 'individual',
+        member: [this.getCurrentEmail, sender],
+        seen: [],
+        isTyping: false,
+        colorChat: '#0084ff',
+        messages: [],
+        thumb: null,
+        name: '',
+        accountHost: null,
+      })
     },
 
     async handleSendInvitation(receiver) {
