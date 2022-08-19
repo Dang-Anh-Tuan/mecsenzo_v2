@@ -127,6 +127,10 @@ export default {
       lastDocConversationsSpace: null,
       conversationIndividual: null,
       lastDocConversationIndividual: null,
+      unsubscribeGetSpaces() {},
+      unsubscribeGetIndividual() {},
+      unsubscribeLoadMoreSpaces() {},
+      unsubscribeLoadMoreIndividual() {},
     }
   },
 
@@ -170,17 +174,29 @@ export default {
   },
 
   created() {
-    getConversationsIndividual(
+    this.unsubscribeGetIndividual = getConversationsIndividual(
       this.getCurrentEmail,
       this.setConversationIndividual,
       this.lastDocConversationIndividual
     )
 
-    getConversationsSpace(
+    this.unsubscribeGetSpaces = getConversationsSpace(
       this.getCurrentEmail,
       this.setConversationSpace,
       this.lastDocConversationsSpace
     )
+  },
+
+  beforeDestroy() {
+    console.log(this.unsubscribeGetIndividual)
+    console.log(this.unsubscribeGetSpaces)
+    console.log(this.unsubscribeLoadMoreIndividual)
+    console.log(this.unsubscribeLoadMoreSpaces)
+
+    this.unsubscribeGetIndividual()
+    this.unsubscribeGetSpaces()
+    this.unsubscribeLoadMoreIndividual()
+    this.unsubscribeLoadMoreSpaces()
   },
 
   methods: {
@@ -223,7 +239,7 @@ export default {
     },
 
     handleLoadMoreSpaces() {
-      getConversationsSpace(
+      this.unsubscribeLoadMoreSpaces = getConversationsSpace(
         this.getCurrentEmail,
         this.loadMoreConversationSpace,
         this.lastDocConversationsSpace
@@ -285,7 +301,7 @@ export default {
     },
 
     handleLoadMoreIndividual() {
-      getConversationsIndividual(
+      this.unsubscribeLoadMoreIndividual = getConversationsIndividual(
         this.getCurrentEmail,
         this.loadMoreConversationIndividual,
         this.lastDocConversationIndividual

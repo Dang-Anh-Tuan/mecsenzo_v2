@@ -30,7 +30,7 @@ const getIndividualConversationByMember = async function (member) {
 }
 
 const getConversationsSpace = function (currentEmail, callback, lastDoc) {
-  useFirestoreRealtimeQuery(
+  const unsubscribe = useFirestoreRealtimeQuery(
     'conversation',
     [
       {
@@ -52,10 +52,12 @@ const getConversationsSpace = function (currentEmail, callback, lastDoc) {
     lastDoc,
     callback
   )
+
+  return unsubscribe
 }
 
 const getConversationsIndividual = function (currentEmail, callback, lastDoc) {
-  useFirestoreRealtimeQuery(
+  const unsubscribe = useFirestoreRealtimeQuery(
     'conversation',
     [
       {
@@ -77,6 +79,8 @@ const getConversationsIndividual = function (currentEmail, callback, lastDoc) {
     lastDoc,
     callback
   )
+
+  return unsubscribe
 }
 
 export {
