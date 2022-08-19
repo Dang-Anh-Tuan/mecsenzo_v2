@@ -3,24 +3,58 @@
     class="flex-1 ml-4 bg-white shadow-2xl rounded-[20px] p-[36px] pl-[100px] md:pl-[36px]"
   >
     <div class="flex justify-between items-center">
-      <div class="flex items-center">
-        <div class="relative z-[10]">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://icdn.dantri.com.vn/thumb_w/640/2020/12/16/ngam-dan-hot-girl-xinh-dep-noi-bat-nhat-nam-2020-docx-1608126694049.jpeg"
-            first-char="D"
-          />
-          <div
-            class="absolute w-[12px] h-[12px] rounded-full bg-success bottom-0 right-0"
-          ></div>
+      <div class="h-[50px] w-full flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="relative z-[10]">
+            <avatar
+              :is-have-avatar="!!getConversationInfo[1]"
+              :src-image="getConversationInfo[1]"
+              :first-char="
+                getConversationInfo[0] && getConversationInfo[0].charAt(0)
+              "
+            />
+            <div
+              v-if="getCurrentConversationType === 'individual'"
+              :class="`absolute w-[12px] h-[12px] rounded-full  bottom-0 right-0
+              ${getStatusPartner ? 'bg-success' : 'bg-gray-300'}`"
+            ></div>
+          </div>
+          <div class="conversation-content ml-4">
+            <p class="select-none font-semibold">
+              {{ getConversationInfo[0] }}
+            </p>
+            <p
+              v-if="getCurrentConversationType === 'individual'"
+              class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] h-[1.4rem] text-gray-500"
+            >
+              {{
+                getStatusPartner
+                  ? $t('chatSide.active')
+                  : $t('chatSide.offline')
+              }}
+            </p>
+          </div>
         </div>
-        <div class="conversation-content ml-4">
-          <p class="select-none font-semibold">Nguyen Van Nam</p>
-          <p
-            class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] h-[1.4rem] text-gray-500"
+        <div v-for="n in 1" :key="n" class="flex items-center">
+          <button
+            v-if="getCurrentConversationType === 'group'"
+            ref="btnHeader"
+            class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
           >
-            {{ $t('chatSide.active') }}
-          </p>
+            <fa icon="user-plus" />
+          </button>
+          <button
+            ref="btnHeader"
+            class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+          >
+            <fa icon="video" />
+          </button>
+          <button
+            ref="btnHeader"
+            class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+          >
+            <fa icon="circle-info" />
+          </button>
         </div>
       </div>
       <div></div>
@@ -187,7 +221,7 @@
               <VEmojiPicker
                 ref="emojiPicker"
                 class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[330px]"
-                :show-search = "false"
+                :show-search="false"
                 @select="handleSelectEmoji"
               />
             </div>
@@ -205,6 +239,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { VEmojiPicker } from 'v-emoji-picker'
 import Separation from './Separation.vue'
 export default {
@@ -214,12 +249,69 @@ export default {
     return {
       inputMessage: '',
       isShowIconPicker: false,
+      currentConversation: this.getCurrentConversation,
     }
   },
 
   computed: {
+    ...mapGetters({
+      getCurrentConversation: 'conversation/getCurrentConversation',
+    }),
+
     checkIsClientSide() {
       return !process.server
+    },
+
+    getCurrentEmail() {
+      if (process.server) {
+        return this.$store.getters['account/getAccount']
+      } else {
+        return localStorage.getItem('email')
+      }
+    },
+
+    getCurrentConversationType() {
+      const currentConversation =
+        this.$store.getters['conversation/getCurrentConversation']
+
+      return currentConversation ? currentConversation.type : ''
+    },
+
+    getConversationInfo() {
+      const currentConversation =
+        this.$store.getters['conversation/getCurrentConversation']
+
+      if (currentConversation) {
+        if (currentConversation.type === 'group')
+          return [currentConversation.name, currentConversation.thumb]
+
+        const currentMembers =
+          this.$store.getters['conversation/getCurrentMembers']
+
+        const partnerUser = currentMembers.filter(
+          (user) => user.email !== this.getCurrentEmail
+        )[0]
+
+        return partnerUser
+          ? [partnerUser.fullName, partnerUser.avatar]
+          : ['', null]
+      }
+
+      return ['', null]
+    },
+
+    getStatusPartner() {
+      const currentMembers =
+        this.$store.getters['conversation/getCurrentMembers']
+
+      const partnerUser = currentMembers.filter(
+        (user) => user.email !== this.getCurrentEmail
+      )[0]
+
+      if (partnerUser) {
+        return partnerUser.isActive
+      }
+      return false
     },
   },
 
@@ -229,6 +321,17 @@ export default {
       top: containerMessage.scrollHeight,
       behavior: 'smooth',
     })
+
+    this.setColorBtnHeader()
+  },
+
+  created() {
+    this.currentConversation = this.getCurrentConversation
+  },
+
+  updated() {
+    this.currentConversation = this.getCurrentConversation
+    this.setColorBtnHeader()
   },
 
   methods: {
@@ -239,6 +342,16 @@ export default {
     handleSelectEmoji(emoji) {
       this.inputMessage = this.inputMessage + emoji.data
       this.$refs.inputMessage.focus()
+    },
+
+    setColorBtnHeader() {
+      if (this.currentConversation) {
+        this.$refs.btnHeader.forEach(
+          (btn) => (btn.style.color = this.getCurrentConversation.colorChat)
+        )
+      } else {
+        this.$refs.btnHeader.forEach((btn) => (btn.style.color = '#0084ff'))
+      }
     },
 
     handleSendMessage() {

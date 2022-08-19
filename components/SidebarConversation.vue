@@ -24,10 +24,11 @@
           v-for="conversation in conversationIndividual"
           :id="conversation.id"
           :key="conversation.id"
-          class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+          :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+                  ${getClassBgCurrentConversation(conversation.id)}`"
           @click="setCurrentConversation(conversation.id)"
         >
-          <div class="relative pointer-events-none">
+          <div class="relative">
             <avatar
               :is-have-avatar="!!conversation.partnerUser.avatar"
               :src-image="
@@ -37,12 +38,11 @@
               :first-char="conversation.partnerUser.fullName.charAt(0)"
             />
             <div
-              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 pointer-events-none ${getClassIsOnline(
-                conversation.partnerUser
-              )}`"
+              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 
+              ${getClassIsOnline(conversation.partnerUser)}`"
             ></div>
           </div>
-          <div class="conversation-content ml-4 pointer-events-none">
+          <div class="conversation-content ml-4">
             <p
               :class="`select-none truncate text-ellipsis max-w-[180px] m
               d:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
@@ -81,7 +81,8 @@
         v-for="conversation in conversationSpace"
         :id="conversation.id"
         :key="conversation.id"
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+        :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+        ${getClassBgCurrentConversation(conversation.id)}`"
         @click="setCurrentConversation(conversation.id)"
       >
         <avatar
@@ -173,6 +174,21 @@ export default {
     getClassIsOnline() {
       return (partnerUser) => {
         return partnerUser.isActive ? 'bg-success' : 'bg-gray-300'
+      }
+    },
+
+    getCurrentConversationId() {
+      const currentConversation =
+        this.$store.getters['conversation/getCurrentConversation']
+
+      return currentConversation ? currentConversation.id : null
+    },
+
+    getClassBgCurrentConversation() {
+      return (idConversation) => {
+        return idConversation === this.getCurrentConversationId
+          ? 'bg-[#eaf3ff]'
+          : ''
       }
     },
   },
