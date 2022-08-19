@@ -42,7 +42,13 @@
                 est enim?
               </p>
             </div>
-            <div class="ml-2 p-2 bg-blue-600 rounded-[10px] w-fit">
+            <div
+              v-tooltip.top-start="{
+                content: '19/08/2022',
+                classes: 'tooltip tooltip--left',
+              }"
+              class="ml-2 p-2 bg-blue-600 rounded-[10px] w-fit"
+            >
               <p class="text-[1.1rem] text-white">
                 suscipit quam rem illo eius molestiae adipisci nisi deleniti,
                 est enim?
@@ -99,13 +105,27 @@
             </button>
           </div>
         </div>
-        <div class="flex items-end justify-end mt-3">
+        <div class="flex flex-row-reverse items-end justify-start mt-3">
           <div
-            class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-blue-600 rounded-[10px]"
+            v-tooltip.top-start="{
+              content: '19/08/2022',
+              classes: 'tooltip tooltip--left',
+            }"
+            class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-blue-600 rounded-[10px] peer"
           >
             <p class="text-[1.1rem] text-white">Lorem ipsum dolor sit</p>
           </div>
+          <div
+            class="relative hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block right-2 before:left-[100%]"
+          >
+            <button
+              class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+            >
+              <fa icon="reply" />
+            </button>
+          </div>
         </div>
+
         <div class="flex items-end justify-end mt-3">
           <div
             class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-blue-600 rounded-[10px]"

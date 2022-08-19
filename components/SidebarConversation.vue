@@ -188,11 +188,6 @@ export default {
   },
 
   beforeDestroy() {
-    console.log(this.unsubscribeGetIndividual)
-    console.log(this.unsubscribeGetSpaces)
-    console.log(this.unsubscribeLoadMoreIndividual)
-    console.log(this.unsubscribeLoadMoreSpaces)
-
     this.unsubscribeGetIndividual()
     this.unsubscribeGetSpaces()
     this.unsubscribeLoadMoreIndividual()
