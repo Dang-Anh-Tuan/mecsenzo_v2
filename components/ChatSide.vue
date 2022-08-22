@@ -57,7 +57,6 @@
           </button>
         </div>
       </div>
-      <div></div>
     </div>
     <Separation />
     <div
@@ -203,7 +202,7 @@
             v-model="inputMessage"
             v-focus
             type="text"
-            class="w-full px-3 py-2 appearance-none outline-none rounded-full bg-slate-200"
+            class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200"
             :placeholder="$t('chatSide.inputPlaceholder')"
           />
           <div
@@ -242,9 +241,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import { VEmojiPicker } from 'v-emoji-picker'
+import { serverTimestamp } from '@firebase/firestore'
 import Separation from './Separation.vue'
 import { saveMessage, getMessageByConversation } from '~/api/message.api'
-import { updateLastMessage } from '~/api/conversation'
+import {
+  getConversationByIdRealTime,
+  getConversationById,
+  updateConversation,
+} from '~/api/conversation'
 import { formatDateForMessage } from '~/helper/date'
 
 export default {
@@ -252,7 +256,7 @@ export default {
 
   data() {
     return {
-      currentConversation: this.getCurrentConversation,
+      currentConversation: null,
       listMessage: null,
       lastDocMessage: null,
       unsubscribeSnapMessage: null,
@@ -261,12 +265,13 @@ export default {
       inputMessage: '',
       replyMessage: null,
       isScrollToBottom: true,
+      conversationRealtime: null,
+      unsubscribeGetConversationRealtime: null,
     }
   },
 
   computed: {
     ...mapGetters({
-      getCurrentConversation: 'conversation/getCurrentConversation',
       getCurrentMembers: 'conversation/getCurrentMembers',
     }),
 
@@ -283,22 +288,17 @@ export default {
     },
 
     getCurrentConversationType() {
-      const currentConversation =
-        this.$store.getters['conversation/getCurrentConversation']
+      const currentConversation = this.currentConversation
 
       return currentConversation ? currentConversation.type : ''
     },
 
     getConversationInfo() {
-      const currentConversation =
-        this.$store.getters['conversation/getCurrentConversation']
+      if (this.currentConversation) {
+        if (this.currentConversation.type === 'group')
+          return [this.currentConversation.name, this.currentConversation.thumb]
 
-      if (currentConversation) {
-        if (currentConversation.type === 'group')
-          return [currentConversation.name, currentConversation.thumb]
-
-        const currentMembers =
-          this.$store.getters['conversation/getCurrentMembers']
+        const currentMembers = this.getCurrentMembers
 
         const partnerUser = currentMembers.filter(
           (user) => user.email !== this.getCurrentEmail
@@ -313,8 +313,7 @@ export default {
     },
 
     getStatusPartner() {
-      const currentMembers =
-        this.$store.getters['conversation/getCurrentMembers']
+      const currentMembers = this.getCurrentMembers
 
       const partnerUser = currentMembers.filter(
         (user) => user.email !== this.getCurrentEmail
@@ -352,28 +351,37 @@ export default {
           this.setListMessage,
           this.lastDocMessage
         )
+
+        this.unsubscribeGetConversationRealtime = getConversationByIdRealTime(
+          newValue.id,
+          this.setConversationRealtime
+        )
       }
     },
   },
 
-  created() {
-    this.currentConversation = this.getCurrentConversation
-  },
+  async created() {
+    const idConversation = this.$route.params.id
+    this.currentConversation = await getConversationById(idConversation)
 
-  mounted() {
-    this.setColorBtnHeader()
+    this.$store.dispatch(
+      'conversation/setCurrentMembers',
+      this.currentConversation.member
+    )
   },
 
   updated() {
-    this.currentConversation = this.getCurrentConversation
     this.setColorBtnHeader()
-
     this.scrollTopBottomContainerChat()
   },
 
   beforeDestroy() {
     if (this.unsubscribeSnapMessage) {
       this.unsubscribeSnapMessage()
+    }
+
+    if (this.unsubscribeGetConversationRealtime) {
+      this.unsubscribeGetConversationRealtime()
     }
   },
 
@@ -400,13 +408,15 @@ export default {
     },
 
     setColorBtnHeader() {
-      if (this.currentConversation) {
-        this.$refs.btnHeader.forEach(
-          (btn) => (btn.style.color = this.getCurrentConversation.colorChat)
-        )
-      } else {
-        this.$refs.btnHeader.forEach((btn) => (btn.style.color = '#0084ff'))
-      }
+      this.$nextTick(() => {
+        if (this.currentConversation) {
+          this.$refs.btnHeader.forEach(
+            (btn) => (btn.style.color = this.currentConversation.colorChat)
+          )
+        } else {
+          this.$refs.btnHeader.forEach((btn) => (btn.style.color = '#0084ff'))
+        }
+      })
     },
 
     handleDocsMessage(listMessageDocs) {
@@ -450,7 +460,11 @@ export default {
         'text'
       )
 
-      updateLastMessage(this.currentConversation, newMessage)
+      await updateConversation({
+        ...this.currentConversation,
+        lastMessage: newMessage,
+        timeEnd: serverTimestamp(),
+      })
 
       this.inputMessage = ''
       this.replyMessage = null
@@ -480,6 +494,10 @@ export default {
         this.isScrollToBottom = false
         this.handleLoadMoreMessage()
       }
+    },
+
+    setConversationRealtime(doc) {
+      this.conversationRealtime = { id: doc.id, ...doc.data() }
     },
   },
 }

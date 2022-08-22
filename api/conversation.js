@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   getDoc,
+  onSnapshot,
   serverTimestamp,
   setDoc,
 } from 'firebase/firestore'
@@ -98,13 +99,16 @@ const getConversationById = async function (id) {
   return { ...docSnap.data(), id: docSnap.id }
 }
 
-const updateLastMessage = async function (conversation, lastMessage) {
-  const docRef = doc(db, 'conversation', conversation.id)
+const getConversationByIdRealTime = function (id, callback) {
+  const unsubscribe = onSnapshot(doc(db, 'conversation', id), (doc) => {
+    callback(doc)
+  })
 
-  conversation = {
-    ...conversation,
-    lastMessage,
-  }
+  return unsubscribe
+}
+
+const updateConversation = async function (conversation) {
+  const docRef = doc(db, 'conversation', conversation.id)
 
   await setDoc(docRef, conversation)
 }
@@ -115,5 +119,6 @@ export {
   getConversationsSpace,
   getConversationsIndividual,
   getConversationById,
-  updateLastMessage,
+  getConversationByIdRealTime,
+  updateConversation,
 }

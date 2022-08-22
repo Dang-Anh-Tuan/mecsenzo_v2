@@ -57,6 +57,7 @@ export default {
     sent: 'Đã gửi',
     inputPlaceholder: 'Nhập tin nhắn',
     reply: 'Đang trả lời',
+    noConversation: 'Chưa có cuộc trò chuyện hiện tại',
   },
   conversationModal: {
     headingEdit: 'Sửa thông tin cuộc trò chuyện',

@@ -173,17 +173,13 @@ export default {
       await createConversation({
         type: 'individual',
         member: [this.getCurrentEmail, invitationUser.email],
-        seen: ['abc@gmai.com'],
+        seen: [],
         isTyping: false,
         colorChat: '#0084ff',
-        messages: [
-          {
-            content : "Hello"
-          }
-        ],
         thumb: null,
         name: '',
         accountHost: null,
+        lastMessage: null,
       })
     },
 

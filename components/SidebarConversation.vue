@@ -20,13 +20,13 @@
       @scroll="handleScroll($event, handleLoadMoreIndividual)"
     >
       <div v-if="conversationIndividual">
-        <div
+        <nuxt-link
           v-for="conversation in conversationIndividual"
           :id="conversation.id"
           :key="conversation.id"
+          :to="`/${conversation.id}`"
           :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
                   ${getClassBgCurrentConversation(conversation.id)}`"
-          @click="setCurrentConversation(conversation.id)"
         >
           <div class="relative">
             <avatar
@@ -58,7 +58,7 @@
               {{ getLastMessage(conversation).content }}
             </p>
           </div>
-        </div>
+        </nuxt-link>
       </div>
     </div>
     <Separation />
@@ -77,13 +77,13 @@
       class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
       @scroll="handleScroll($event, handleLoadMoreSpaces)"
     >
-      <div
+      <nuxt-link
         v-for="conversation in conversationSpace"
         :id="conversation.id"
         :key="conversation.id"
+        :to="`/${conversation.id}`"
         :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
         ${getClassBgCurrentConversation(conversation.id)}`"
-        @click="setCurrentConversation(conversation.id)"
       >
         <avatar
           :is-have-avatar="!!conversation.thumb"
@@ -108,7 +108,7 @@
             {{ getLastMessage(conversation).content }}
           </p>
         </div>
-      </div>
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -315,13 +315,6 @@ export default {
         this.getCurrentEmail,
         this.loadMoreConversationIndividual,
         this.lastDocConversationIndividual
-      )
-    },
-
-    async setCurrentConversation(idConversation) {
-      await this.$store.dispatch(
-        'conversation/setCurrentConversation',
-        idConversation
       )
     },
   },
