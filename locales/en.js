@@ -56,6 +56,7 @@ export default {
     seen: 'seen',
     sent: 'sent',
     inputPlaceholder: 'Enter message',
+    reply: 'Reply',
   },
   conversationModal: {
     headingEdit: "Edit conversations's info",

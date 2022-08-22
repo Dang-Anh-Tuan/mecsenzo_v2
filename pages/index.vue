@@ -1,6 +1,8 @@
 <template>
   <div class="flex max-w-[1200px] m-auto mt-[100px] h-[80vh]">
-    <AsyncSidebarConversation />
+    <AsyncSidebarConversation
+      @open-modal-add-space="openModalAddConversation"
+    />
 
     <ChatSide />
     <div

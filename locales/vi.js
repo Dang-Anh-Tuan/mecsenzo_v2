@@ -56,6 +56,7 @@ export default {
     seen: 'Đã xem',
     sent: 'Đã gửi',
     inputPlaceholder: 'Nhập tin nhắn',
+    reply: 'Đang trả lời',
   },
   conversationModal: {
     headingEdit: 'Sửa thông tin cuộc trò chuyện',

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex-1 ml-4 bg-white shadow-2xl rounded-[20px] p-[36px] pl-[100px] md:pl-[36px]"
+    class="flex-1 flex flex-col ml-4 bg-white shadow-2xl rounded-[20px] p-[36px] pl-[100px] md:pl-[36px]"
   >
     <div class="flex justify-between items-center">
       <div class="h-[50px] w-full flex items-center justify-between">
@@ -60,7 +60,7 @@
       <div></div>
     </div>
     <Separation />
-    <div id="container-msg" class="h-[74%] overflow-y-auto p-2">
+    <div id="container-msg" class="flex-1 overflow-y-auto p-2">
       <div class="h-[90%] flex flex-col-reverse justify-end">
         <div class="flex justify-end text-gray-500">
           <div class="flex items-center select-none">
@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="flex flex-row-reverse items-end justify-start mt-3">
-          <div class="max-w-[80%] md:max-w-[40%] rounded-[10px] peer">
+          <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
             <div class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px]">
               <p class="text-[1rem] text-gray-500 w-fit">
                 suscipit quam rem illo eius molestiae adipisci nisi deleniti,
@@ -108,7 +108,7 @@
             size="small"
           />
           <div
-            class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-gray-200 rounded-[10px]"
+            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-gray-200 rounded-[10px]"
           >
             <p class="text-[1.1rem]">Hello</p>
           </div>
@@ -120,7 +120,7 @@
             first-char="D"
             size="small"
           />
-          <div class="max-w-[80%] md:max-w-[40%] rounded-[10px] peer">
+          <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
             <div class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px] w-fit">
               <p class="text-[1rem] text-gray-500">suscipit</p>
             </div>
@@ -134,6 +134,7 @@
           >
             <button
               class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+              @click="handleSetReplyMessage"
             >
               <fa icon="reply" />
             </button>
@@ -145,7 +146,7 @@
               content: '19/08/2022',
               classes: 'tooltip tooltip--left',
             }"
-            class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-blue-600 rounded-[10px] peer"
+            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-blue-600 rounded-[10px] peer"
           >
             <p class="text-[1.1rem] text-white">Lorem ipsum dolor sit</p>
           </div>
@@ -162,7 +163,7 @@
 
         <div class="flex items-end justify-end mt-3">
           <div
-            class="max-w-[80%] md:max-w-[40%] ml-2 p-2 bg-blue-600 rounded-[10px]"
+            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-blue-600 rounded-[10px]"
           >
             <p class="text-[1.1rem] text-white">
               suscipit quam rem illo eius molestiae adipisci nisi deleniti, est
@@ -171,6 +172,23 @@
           </div>
         </div>
       </div>
+    </div>
+    <div
+      v-if="replyMessage"
+      class="flex justify-between h-[50px] border-t-[1px] border-black mt-2"
+    >
+      <div class="w-[50%]">
+        <p class="text-[0.9rem]">
+          Đang trả lời
+          <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
+        </p>
+        <p class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis">
+          {{ replyMessage.content }}
+        </p>
+      </div>
+      <button class="w-[50px] h-full" @click="clearReplyMessage">
+        <fa icon="xmark" />
+      </button>
     </div>
     <div class="h-[10%] w-full flex items-center">
       <div class="flex justify-center items-center">
@@ -250,12 +268,14 @@ export default {
       inputMessage: '',
       isShowIconPicker: false,
       currentConversation: this.getCurrentConversation,
+      replyMessage: null,
     }
   },
 
   computed: {
     ...mapGetters({
       getCurrentConversation: 'conversation/getCurrentConversation',
+      getCurrentMembers: 'conversation/getCurrentMembers',
     }),
 
     checkIsClientSide() {
@@ -354,8 +374,29 @@ export default {
       }
     },
 
+    handleSetReplyMessage() {
+      this.replyMessage = {
+        user: {
+          fullName: 'Tuấn Nghiện',
+        },
+        content: 'nesciunt inventore nostrum',
+      }
+    },
+
+    clearReplyMessage() {
+      this.replyMessage = null
+    },
+
     handleSendMessage() {
+      const currentMembers = this.getCurrentMembers
+      const userSendMessage = currentMembers.filter(
+        (user) => user.email === this.getCurrentEmail
+      )[0]
+
+      console.log(userSendMessage)
       console.log(this.inputMessage)
+
+      this.inputMessage = ''
     },
   },
 }
