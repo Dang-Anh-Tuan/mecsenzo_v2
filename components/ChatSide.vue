@@ -60,7 +60,12 @@
       <div></div>
     </div>
     <Separation />
-    <div id="container-msg" class="flex-1 overflow-y-auto p-2">
+    <div
+      id="container-msg"
+      ref="containerMsg"
+      class="flex-1 overflow-y-auto p-2"
+      @scroll="onScrollContainerMessage"
+    >
       <div class="h-[90%] flex flex-col-reverse justify-end">
         <div class="flex justify-end text-gray-500">
           <div class="flex items-center select-none">
@@ -68,107 +73,85 @@
             <fa icon="check" class="ml-1" />
           </div>
         </div>
-        <div class="flex flex-row-reverse items-end justify-start mt-3">
-          <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
-            <div class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px]">
-              <p class="text-[1rem] text-gray-500 w-fit">
-                suscipit quam rem illo eius molestiae adipisci nisi deleniti,
-                est enim?
-              </p>
+        <div
+          v-for="(message, index) in listMessage"
+          :key="index"
+          class="flex flex-col-reverse"
+        >
+          <div
+            v-if="isMyMessage(message)"
+            class="flex flex-row-reverse items-end justify-start mt-3"
+          >
+            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
+              <div
+                v-if="message.reply !== null"
+                class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px]"
+              >
+                <p class="text-[1rem] text-gray-500 w-fit">
+                  {{ message.reply.content }}
+                </p>
+              </div>
+              <div
+                v-tooltip.top-start="{
+                  content: getTooltipContent(message.timestamp),
+                  classes: 'tooltip tooltip--left',
+                }"
+                class="ml-2 p-2 bg-blue-600 rounded-[10px] w-fit"
+              >
+                <p class="text-[1.1rem] text-white">
+                  {{ message.content }}
+                </p>
+              </div>
             </div>
+
             <div
-              v-tooltip.top-start="{
-                content: '19/08/2022',
-                classes: 'tooltip tooltip--left',
-              }"
-              class="ml-2 p-2 bg-blue-600 rounded-[10px] w-fit"
+              class="relative hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block right-2 before:left-[100%]"
             >
-              <p class="text-[1.1rem] text-white">
-                suscipit quam rem illo eius molestiae adipisci nisi deleniti,
-                est enim?
-              </p>
+              <button
+                class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+                @click="handleSetReplyMessage(message)"
+              >
+                <fa icon="reply" />
+              </button>
             </div>
           </div>
-
-          <div
-            class="relative hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block right-2 before:left-[100%]"
-          >
-            <button
-              class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
-            >
-              <fa icon="reply" />
-            </button>
-          </div>
-        </div>
-        <div class="flex items-end mt-3">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://icdn.dantri.com.vn/thumb_w/640/2020/12/16/ngam-dan-hot-girl-xinh-dep-noi-bat-nhat-nam-2020-docx-1608126694049.jpeg"
-            first-char="D"
-            size="small"
-          />
-          <div
-            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-gray-200 rounded-[10px]"
-          >
-            <p class="text-[1.1rem]">Hello</p>
-          </div>
-        </div>
-        <div class="flex items-end mt-3">
-          <avatar
-            :is-have-avatar="true"
-            src-image="https://icdn.dantri.com.vn/thumb_w/640/2020/12/16/ngam-dan-hot-girl-xinh-dep-noi-bat-nhat-nam-2020-docx-1608126694049.jpeg"
-            first-char="D"
-            size="small"
-          />
-          <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
-            <div class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px] w-fit">
-              <p class="text-[1rem] text-gray-500">suscipit</p>
+          <div v-else class="flex items-end mt-3">
+            <avatar
+              :is-have-avatar="!!message.user.avatar"
+              :src-image="message.user.avatar"
+              :first-char="message.user && message.user.fullName.charAt(0)"
+              size="small"
+            />
+            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
+              <div
+                v-if="message.reply !== null"
+                class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px] w-fit"
+              >
+                <p class="text-[1rem] text-gray-500">
+                  {{ message.reply.content }}
+                </p>
+              </div>
+              <div
+                v-tooltip.top-start="{
+                  content: getTooltipContent(message.timestamp),
+                  classes: 'tooltip tooltip--left',
+                }"
+                class="ml-2 p-2 bg-gray-200 rounded-[10px] w-fit"
+              >
+                <p class="text-[1.1rem]">{{ message.content }}</p>
+              </div>
             </div>
-            <div class="ml-2 p-2 bg-gray-200 rounded-[10px] w-fit">
-              <p class="text-[1.1rem]">nesciunt inventore nostrum</p>
+
+            <div
+              class="relative left-2 hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block before:right-[100%]"
+            >
+              <button
+                class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+                @click="handleSetReplyMessage(message)"
+              >
+                <fa icon="reply" />
+              </button>
             </div>
-          </div>
-
-          <div
-            class="relative left-2 hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block before:right-[100%]"
-          >
-            <button
-              class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
-              @click="handleSetReplyMessage"
-            >
-              <fa icon="reply" />
-            </button>
-          </div>
-        </div>
-        <div class="flex flex-row-reverse items-end justify-start mt-3">
-          <div
-            v-tooltip.top-start="{
-              content: '19/08/2022',
-              classes: 'tooltip tooltip--left',
-            }"
-            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-blue-600 rounded-[10px] peer"
-          >
-            <p class="text-[1.1rem] text-white">Lorem ipsum dolor sit</p>
-          </div>
-          <div
-            class="relative hidden peer-hover:block before:content-[''] before:absolute before:w-[14px] before:h-full before:bg-transparent hover:block right-2 before:left-[100%]"
-          >
-            <button
-              class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
-            >
-              <fa icon="reply" />
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-end justify-end mt-3">
-          <div
-            class="max-w-[80%] md:max-w-[45%] ml-2 p-2 bg-blue-600 rounded-[10px]"
-          >
-            <p class="text-[1.1rem] text-white">
-              suscipit quam rem illo eius molestiae adipisci nisi deleniti, est
-              enim?
-            </p>
           </div>
         </div>
       </div>
@@ -260,15 +243,24 @@
 import { mapGetters } from 'vuex'
 import { VEmojiPicker } from 'v-emoji-picker'
 import Separation from './Separation.vue'
+import { saveMessage, getMessageByConversation } from '~/api/message.api'
+import { updateLastMessage } from '~/api/conversation'
+import { formatDateForMessage } from '~/helper/date'
+
 export default {
   components: { Separation, VEmojiPicker },
 
   data() {
     return {
-      inputMessage: '',
-      isShowIconPicker: false,
       currentConversation: this.getCurrentConversation,
+      listMessage: null,
+      lastDocMessage: null,
+      unsubscribeSnapMessage: null,
+      unsubscribeLoadMoreMsg: null,
+      isShowIconPicker: false,
+      inputMessage: '',
       replyMessage: null,
+      isScrollToBottom: true,
     }
   },
 
@@ -333,28 +325,71 @@ export default {
       }
       return false
     },
+
+    isMyMessage() {
+      return (message) => {
+        if (message.user.email === this.getCurrentEmail) return true
+        return false
+      }
+    },
+
+    formatDateForMessage() {
+      return (timestamp) => {
+        return formatDateForMessage(timestamp)
+      }
+    },
+
+    getTooltipContent() {
+      return (time) => this.formatDateForMessage(time)
+    },
   },
 
-  mounted() {
-    const containerMessage = document.getElementById('container-msg')
-    containerMessage.scrollTo({
-      top: containerMessage.scrollHeight,
-      behavior: 'smooth',
-    })
-
-    this.setColorBtnHeader()
+  watch: {
+    currentConversation(newValue) {
+      if (newValue) {
+        this.unsubscribeSnapMessage = getMessageByConversation(
+          newValue.id,
+          this.setListMessage,
+          this.lastDocMessage
+        )
+      }
+    },
   },
 
   created() {
     this.currentConversation = this.getCurrentConversation
   },
 
-  updated() {
-    this.currentConversation = this.getCurrentConversation
+  mounted() {
     this.setColorBtnHeader()
   },
 
+  updated() {
+    this.currentConversation = this.getCurrentConversation
+    this.setColorBtnHeader()
+
+    this.scrollTopBottomContainerChat()
+  },
+
+  beforeDestroy() {
+    if (this.unsubscribeSnapMessage) {
+      this.unsubscribeSnapMessage()
+    }
+  },
+
   methods: {
+    scrollTopBottomContainerChat() {
+      if (this.isScrollToBottom) {
+        this.$nextTick(() => {
+          const containerMessage = this.$refs.containerMsg
+          containerMessage.scrollTo({
+            top: containerMessage.scrollHeight,
+            behavior: 'smooth',
+          })
+        })
+      }
+    },
+
     toggleEmojiPicker() {
       this.isShowIconPicker = !this.isShowIconPicker
     },
@@ -374,29 +409,77 @@ export default {
       }
     },
 
-    handleSetReplyMessage() {
-      this.replyMessage = {
-        user: {
-          fullName: 'Tuấn Nghiện',
-        },
-        content: 'nesciunt inventore nostrum',
-      }
+    handleDocsMessage(listMessageDocs) {
+      const listMessage = listMessageDocs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+
+      const lastDocMessage = listMessageDocs[listMessageDocs.length - 1]
+
+      return { listMessage, lastDocMessage }
+    },
+
+    setListMessage(listMessageDocs) {
+      const { listMessage, lastDocMessage } =
+        this.handleDocsMessage(listMessageDocs)
+
+      this.listMessage = listMessage
+      this.lastDocMessage = lastDocMessage
+    },
+
+    handleSetReplyMessage(message) {
+      this.replyMessage = message
     },
 
     clearReplyMessage() {
       this.replyMessage = null
     },
 
-    handleSendMessage() {
+    async handleSendMessage() {
       const currentMembers = this.getCurrentMembers
       const userSendMessage = currentMembers.filter(
         (user) => user.email === this.getCurrentEmail
       )[0]
 
-      console.log(userSendMessage)
-      console.log(this.inputMessage)
+      const newMessage = await saveMessage(
+        this.currentConversation.id,
+        userSendMessage,
+        this.inputMessage,
+        this.replyMessage,
+        'text'
+      )
+
+      updateLastMessage(this.currentConversation, newMessage)
 
       this.inputMessage = ''
+      this.replyMessage = null
+      this.isScrollToBottom = true
+    },
+
+    loadMoreMessage(listMessageDocs) {
+      const { listMessage, lastDocMessage } =
+        this.handleDocsMessage(listMessageDocs)
+
+      if (lastDocMessage && lastDocMessage.id !== this.lastDocMessage.id) {
+        this.lastDocMessage = lastDocMessage
+        this.listMessage = [...this.listMessage, ...listMessage]
+      }
+    },
+
+    handleLoadMoreMessage() {
+      this.unsubscribeLoadMoreMsg = getMessageByConversation(
+        this.currentConversation.id,
+        this.loadMoreMessage,
+        this.lastDocMessage
+      )
+    },
+
+    onScrollContainerMessage(e) {
+      if (e.target.scrollTop === 0) {
+        this.isScrollToBottom = false
+        this.handleLoadMoreMessage()
+      }
     },
   },
 }

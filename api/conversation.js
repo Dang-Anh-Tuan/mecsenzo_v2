@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   serverTimestamp,
+  setDoc,
 } from 'firebase/firestore'
 import { useFirestoreQueryCondition, useFirestoreRealtimeQuery } from './core'
 import { db } from '@/firebase/config'
@@ -97,10 +98,22 @@ const getConversationById = async function (id) {
   return { ...docSnap.data(), id: docSnap.id }
 }
 
+const updateLastMessage = async function (conversation, lastMessage) {
+  const docRef = doc(db, 'conversation', conversation.id)
+
+  conversation = {
+    ...conversation,
+    lastMessage,
+  }
+
+  await setDoc(docRef, conversation)
+}
+
 export {
   createConversation,
   getIndividualConversationByMember,
   getConversationsSpace,
   getConversationsIndividual,
   getConversationById,
+  updateLastMessage,
 }

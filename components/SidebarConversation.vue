@@ -150,12 +150,7 @@ export default {
 
     getLastMessage() {
       return (conversation) => {
-        const lenMessage = conversation.messages.length
-
-        if (lenMessage > 0) {
-          return conversation.messages[lenMessage - 1]
-        }
-        return false
+        return conversation.lastMessage ? conversation.lastMessage : ''
       }
     },
 
