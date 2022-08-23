@@ -193,7 +193,7 @@ export default {
         type: 'individual',
         member: [this.getCurrentEmail, sender],
         seen: [],
-        isTyping: false,
+        isTyping: [],
         colorChat: '#0084ff',
         messages: [],
         thumb: null,

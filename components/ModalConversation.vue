@@ -21,31 +21,7 @@
                 @onChangeField="handleChangeFiled"
               />
             </div>
-            <div v-else>
-              <div
-                v-for="(member, index) in conversationBinding.members"
-                :key="index"
-              >
-                <div v-if="member.email === getCurrentEmail">
-                  <FormField
-                    name="yourNickname"
-                    :label-field="`$t('conversationModal.yourNickname')`"
-                    :value-field="member && member.nickname"
-                    rule="required|maximumLen:30"
-                    @onChangeField="handleChangeFiled"
-                  />
-                </div>
-                <div v-else>
-                  <FormField
-                    name="partnerNickname"
-                    :label-field="`${member.email}$t('conversationModal.partnerNickname')`"
-                    :value-field="member && member.nickname"
-                    rule="required|maximumLen:30"
-                    @onChangeField="handleChangeFiled"
-                  />
-                </div>
-              </div>
-            </div>
+
             <div class="flex justify-between items-center w-full mt-4">
               <div class="flex items-center">
                 <p class="text-[1.2rem] font-semibold text-dark_primary">
@@ -73,7 +49,7 @@
                 </div>
               </div>
             </div>
-            <div class="mt-[54px]">
+            <div v-if="conversationBinding.type === 'group'" class="mt-[54px]">
               <FormField
                 :label-field="$t('profileModal.avatar')"
                 type-input="file"
@@ -82,7 +58,7 @@
               />
               <div class="flex items-center justify-center">
                 <Avatar
-                  :is-have-avatar="getIsHaveAvatar"
+                  :is-have-avatar="!!avatar"
                   :src-image="
                     avatar ||
                     'https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg'
@@ -129,7 +105,7 @@ import Avatar from './Avatar.vue'
 import Button from './Button.vue'
 import { colorConversation } from '~/constants/colorConversation'
 import { uploadImage } from '~/helper/FirebaseHelper'
-import { createConversation } from '~/api/conversation'
+import { createConversation, updateConversation } from '~/api/conversation'
 
 extend('required', {
   validate(value) {
@@ -154,8 +130,6 @@ export default {
   components: { FormField, Avatar, Button },
 
   props: {
-    isCreate: Boolean,
-    isShow: Boolean,
     conversation: {
       type: Object,
       default: () => null,
@@ -170,7 +144,7 @@ export default {
       avatar: null,
       isShowChooseColor: false,
       colorsConversation: colorConversation,
-      conversationBinding: this.conversation,
+      conversationBinding: null,
     }
   },
 
@@ -187,26 +161,25 @@ export default {
       if (this.conversation) return this.$t('conversationModal.headingEdit')
       return this.$t('conversationModal.headingCreate')
     },
-
-    getIsHaveAvatar() {
-      if (this.conversation) return !!this.conversation.thumb
-      return true
-    },
   },
 
   created() {
-    if (this.isCreate)
+    if (!this.conversation) {
       this.conversationBinding = {
         type: 'group',
         member: [],
         seen: [],
-        isTyping: false,
+        isTyping: [],
         colorChat: '#0084ff',
         messages: [],
         thumb: null,
         name: '',
         accountHost: null,
       }
+    } else {
+      this.conversationBinding = { ...this.conversation }
+      this.avatar = this.conversation.thumb
+    }
   },
 
   mounted() {
@@ -263,28 +236,43 @@ export default {
       createConversation(this.conversationBinding)
     },
 
-    handleUpdateConversation() {},
+    handleUpdateConversation() {
+      updateConversation(this.conversationBinding)
+    },
 
-    handleImageUpdateComplete(urlAvatar) {
-      if (this.isCreate) {
-        this.conversationBinding.thumb = urlAvatar
-        this.handleCreateConversation()
-        this.closeModal()
-      }
+    handleImageUpdateCompleteCreateRoom(urlAvatar) {
+      this.conversationBinding.thumb = urlAvatar
+      this.handleCreateConversation()
+      this.closeModal()
+    },
+
+    handleImageUpdateCompleteUpdateRoom(urlAvatar) {
+      this.conversationBinding.thumb = urlAvatar
+      this.handleUpdateConversation()
+      this.closeModal()
     },
 
     handleSubmitForm() {
       if (this.fileAvatar) {
-        uploadImage(
-          `room-chat-thumb`,
-          this.fileAvatar,
-          this.handleImageUpdateComplete
-        )
-      } else if (this.isCreate) {
+        if (!this.conversation) {
+          uploadImage(
+            `room-chat-thumb`,
+            this.fileAvatar,
+            this.handleImageUpdateCompleteCreateRoom
+          )
+        } else {
+          uploadImage(
+            `room-chat-thumb`,
+            this.fileAvatar,
+            this.handleImageUpdateCompleteUpdateRoom
+          )
+        }
+      } else if (!this.conversation) {
         this.handleCreateConversation()
         this.closeModal()
       } else {
         this.handleUpdateConversation()
+        this.closeModal()
       }
     },
   },

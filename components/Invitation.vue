@@ -174,7 +174,7 @@ export default {
         type: 'individual',
         member: [this.getCurrentEmail, invitationUser.email],
         seen: [],
-        isTyping: false,
+        isTyping: [],
         colorChat: '#0084ff',
         thumb: null,
         name: '',
