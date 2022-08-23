@@ -260,6 +260,8 @@ export default {
     handleCreateConversation() {
       this.conversationBinding.accountHost = this.getCurrentEmail
       this.conversationBinding.member = [this.getCurrentEmail]
+      this.conversationBinding.isTyping = []
+      this.conversationBinding.seen = []
       createConversation(this.conversationBinding)
     },
 
