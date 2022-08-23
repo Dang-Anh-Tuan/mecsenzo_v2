@@ -24,13 +24,6 @@ export default {
   name: 'Default',
   components: { Header },
 
-  data() {
-    return {
-      isCreateConversation: true,
-      conversation: this.getConversation,
-    }
-  },
-
   computed: {
     ...mapGetters({
       getIsShowModal: 'modalChatRoom/getIsShow',
@@ -44,7 +37,7 @@ export default {
     },
 
     openModalAddConversation() {
-      this.isCreateConversation = true
+      this.$store.dispatch('modalChatRoom/setConversation', null)
       this.$store.dispatch('modalChatRoom/openModal')
     },
   },

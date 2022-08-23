@@ -52,7 +52,7 @@
           <button
             ref="btnHeader"
             class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
-            
+            @click="showModalConversation"
           >
             <fa icon="circle-info" />
           </button>
@@ -206,11 +206,15 @@
       class="flex justify-between h-[50px] border-t-[1px] border-black mt-2"
     >
       <div class="w-[50%]">
-        <p class="text-[0.9rem] truncate text-ellipsis max-w-[200px] md:max-w-[300px]">
+        <p
+          class="text-[0.9rem] truncate text-ellipsis max-w-[200px] md:max-w-[300px]"
+        >
           Đang trả lời
           <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
         </p>
-        <p class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis max-w-[200px] md:max-w-[300px]">
+        <p
+          class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis max-w-[200px] md:max-w-[300px]"
+        >
           {{ replyMessage.content }}
         </p>
       </div>
@@ -608,6 +612,14 @@ export default {
           isTyping: newIsTyping,
         })
       }
+    },
+
+    showModalConversation() {
+      this.$store.dispatch('modalChatRoom/openModal')
+      this.$store.dispatch(
+        'modalChatRoom/setConversation',
+        this.conversationRealtime
+      )
     },
   },
 }
