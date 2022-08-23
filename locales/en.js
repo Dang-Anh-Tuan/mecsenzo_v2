@@ -58,6 +58,7 @@ export default {
     inputPlaceholder: 'Enter message',
     reply: 'Reply',
     noConversation: "Don't have current conversation",
+    typing: 'Somebody is typing',
   },
   conversationModal: {
     headingEdit: "Edit conversations's info",

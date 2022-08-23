@@ -66,12 +66,57 @@
       @scroll="onScrollContainerMessage"
     >
       <div class="h-[90%] flex flex-col-reverse justify-end">
-        <div class="flex justify-end text-gray-500">
-          <div class="flex items-center select-none">
-            <p>{{ $t('chatSide.seen') }}</p>
-            <fa icon="check" class="ml-1" />
+        <div
+          class="relative flex text-gray-500 py-2 right-[-4px] justify-between"
+        >
+          <div class="flex items-center">
+            <div
+              v-if="getIsTyping.length > 0"
+              class="flex justify-center items-center text-[0.8rem]"
+            >
+              {{ $t('chatSide.typing') }}
+              <div
+                class="dot-typing animate-[dotTyping_0.8s_ease-in_infinite] ml-4"
+              ></div>
+            </div>
+          </div>
+          <div
+            v-if="getSeenUser.length > sizeSeenMessage"
+            class="relative flex justify-end text-gray-500 py-2 right-[-4px]"
+          >
+            <avatar
+              v-for="n in sizeSeenMessage"
+              :key="n"
+              :is-have-avatar="!!getSeenUser[n - 1].avatar"
+              :src-image="getSeenUser[n - 1].avatar"
+              :first-char="
+                getSeenUser[n - 1] && getSeenUser[n - 1].fullName.charAt(0)
+              "
+              size="tiny"
+              class="mr-1"
+            ></avatar>
+            <div
+              class="bg-gray-500 text-white text-[0.6rem] w-[16px] h-[16px] rounded-full flex justify-center items-center select-none"
+            >
+              {{ `+${getSeenUser.length - sizeSeenMessage}` }}
+            </div>
+          </div>
+          <div
+            v-else
+            class="relative flex justify-end text-gray-500 py-2 right-[-4px]"
+          >
+            <avatar
+              v-for="user in getSeenUser"
+              :key="user.id"
+              :is-have-avatar="!!user.avatar"
+              :src-image="user.avatar"
+              :first-char="user && user.fullName.charAt(0)"
+              size="tiny"
+              class="mr-1"
+            ></avatar>
           </div>
         </div>
+
         <div
           v-for="(message, index) in listMessage"
           :key="index"
@@ -160,11 +205,11 @@
       class="flex justify-between h-[50px] border-t-[1px] border-black mt-2"
     >
       <div class="w-[50%]">
-        <p class="text-[0.9rem]">
+        <p class="text-[0.9rem] truncate text-ellipsis max-w-[200px] md:max-w-[300px]">
           Đang trả lời
           <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
         </p>
-        <p class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis">
+        <p class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis max-w-[200px] md:max-w-[300px]">
           {{ replyMessage.content }}
         </p>
       </div>
@@ -172,7 +217,7 @@
         <fa icon="xmark" />
       </button>
     </div>
-    <div class="h-[10%] w-full flex items-center">
+    <div v-for="n in 1" :key="n" class="h-[10%] w-full flex items-center">
       <div class="flex justify-center items-center">
         <div
           class="relative h-[32px] w-[32px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
@@ -204,6 +249,8 @@
             type="text"
             class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200"
             :placeholder="$t('chatSide.inputPlaceholder')"
+            @focus="handleFocusInputMessage"
+            @blur="handleBlurInputMessage"
           />
           <div
             class="absolute right-0 top-0 h-full w-[50px] flex justify-center items-center cursor-pointer"
@@ -250,6 +297,7 @@ import {
   updateConversation,
 } from '~/api/conversation'
 import { formatDateForMessage } from '~/helper/date'
+import { constant } from '~/constants/constant'
 
 export default {
   components: { Separation, VEmojiPicker },
@@ -267,6 +315,7 @@ export default {
       isScrollToBottom: true,
       conversationRealtime: null,
       unsubscribeGetConversationRealtime: null,
+      sizeSeenMessage: constant.SIZE_SEEN_MESSAGE,
     }
   },
 
@@ -293,16 +342,22 @@ export default {
       return currentConversation ? currentConversation.type : ''
     },
 
+    getPartnerUser() {
+      const currentMembers = this.getCurrentMembers
+
+      const partnerUser = currentMembers.filter(
+        (user) => user.email !== this.getCurrentEmail
+      )[0]
+
+      return partnerUser
+    },
+
     getConversationInfo() {
       if (this.currentConversation) {
         if (this.currentConversation.type === 'group')
           return [this.currentConversation.name, this.currentConversation.thumb]
 
-        const currentMembers = this.getCurrentMembers
-
-        const partnerUser = currentMembers.filter(
-          (user) => user.email !== this.getCurrentEmail
-        )[0]
+        const partnerUser = this.getPartnerUser
 
         return partnerUser
           ? [partnerUser.fullName, partnerUser.avatar]
@@ -313,16 +368,39 @@ export default {
     },
 
     getStatusPartner() {
-      const currentMembers = this.getCurrentMembers
-
-      const partnerUser = currentMembers.filter(
-        (user) => user.email !== this.getCurrentEmail
-      )[0]
+      const partnerUser = this.getPartnerUser
 
       if (partnerUser) {
         return partnerUser.isActive
       }
       return false
+    },
+
+    getSeenUser() {
+      if (
+        this.conversationRealtime &&
+        this.conversationRealtime.lastMessage &&
+        this.conversationRealtime.lastMessage.user.email ===
+          this.getCurrentEmail
+      ) {
+        const currentMembers = this.getCurrentMembers
+        return currentMembers.filter(
+          (member) =>
+            member.email !== this.getCurrentEmail &&
+            this.conversationRealtime.seen.includes(member.email)
+        )
+      }
+      return []
+    },
+
+    getIsTyping() {
+      if (this.conversationRealtime && this.conversationRealtime.isTyping) {
+        const emailTyping = this.conversationRealtime.isTyping.filter(
+          (email) => email !== this.getCurrentEmail
+        )
+        return emailTyping
+      }
+      return []
     },
 
     isMyMessage() {
@@ -464,6 +542,7 @@ export default {
         ...this.currentConversation,
         lastMessage: newMessage,
         timeEnd: serverTimestamp(),
+        seen: [this.getCurrentEmail],
       })
 
       this.inputMessage = ''
@@ -498,6 +577,36 @@ export default {
 
     setConversationRealtime(doc) {
       this.conversationRealtime = { id: doc.id, ...doc.data() }
+    },
+
+    async handleFocusInputMessage() {
+      if (this.conversationRealtime) {
+        if (!this.conversationRealtime.seen.includes(this.getCurrentEmail)) {
+          await updateConversation({
+            ...this.conversationRealtime,
+            seen: [...this.conversationRealtime.seen, this.getCurrentEmail],
+          })
+        }
+        await updateConversation({
+          ...this.conversationRealtime,
+          isTyping: [
+            ...this.conversationRealtime.isTyping,
+            this.getCurrentEmail,
+          ],
+        })
+      }
+    },
+
+    async handleBlurInputMessage() {
+      if (this.conversationRealtime && this.conversationRealtime.isTyping) {
+        const newIsTyping = this.conversationRealtime.isTyping.filter(
+          (email) => email !== this.getCurrentEmail
+        )
+        await updateConversation({
+          ...this.conversationRealtime,
+          isTyping: newIsTyping,
+        })
+      }
     },
   },
 }

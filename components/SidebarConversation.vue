@@ -5,7 +5,7 @@
     <div class="relative w-full h-[48px]">
       <input
         type="text"
-        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem]md:text-[1.2rem] md:opacity-100"
+        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem] md:text-[1.2rem]"
         :placeholder="$t('sidebarConversation.inputPlaceholder')"
       />
 
@@ -63,7 +63,7 @@
     </div>
     <Separation />
     <div class="w-full h-[20px] flex justify-between items-center px-3">
-      <p class="heading-space text-[1.1rem] hidden md:block">
+      <p class="heading-space text-[1.1rem] hidden">
         {{ $t('sidebarConversation.spaces') }}
       </p>
       <button
@@ -326,7 +326,7 @@ export default {
   margin-bottom: 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .container-sidebar {
     position: absolute;
     width: 90px;
@@ -361,6 +361,16 @@ export default {
     max-width: 180px !important;
   }
   .container-sidebar:hover .conversation-content {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 767px) {
+  .container-sidebar input {
+    opacity: 1;
+  }
+
+  .heading-space {
     display: block;
   }
 }

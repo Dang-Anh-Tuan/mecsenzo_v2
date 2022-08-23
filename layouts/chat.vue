@@ -30,10 +30,6 @@ export default {
     }
   },
 
-  created() {
-    this.$store.dispatch('conversation/initConversation')
-  },
-
   methods: {
     closeModalConversation() {
       this.isShowModalConversation = false
