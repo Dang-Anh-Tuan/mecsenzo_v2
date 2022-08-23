@@ -82,7 +82,6 @@ const useFirestoreRealtimeQuery = function (
   callback
 ) {
   const q = renderQuery(collectionName, conditions, orderby, limitValue, start)
-
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const result = []
     querySnapshot.forEach((doc) => {

@@ -129,6 +129,7 @@
 import { getUserByEmail, setActiveUser } from '~/api/user.api'
 
 export default {
+  name: 'Login',
   layout: 'auth',
 
   middleware: 'auth-forbidden',

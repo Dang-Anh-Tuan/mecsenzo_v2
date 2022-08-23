@@ -42,6 +42,7 @@ export default {
   computed: {
     getClassSize() {
       const sizeWith = {
+        tiny: 16,
         small: 26,
         medium: 44,
         large: 100,
@@ -51,6 +52,7 @@ export default {
     },
     getClassSizeText() {
       const sizeText = {
+        tiny: 0.6,
         small: 0.8,
         medium: 1.2,
         large: 2,

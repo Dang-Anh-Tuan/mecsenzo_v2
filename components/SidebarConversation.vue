@@ -5,7 +5,7 @@
     <div class="relative w-full h-[48px]">
       <input
         type="text"
-        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem]md:text-[1.2rem] md:opacity-100"
+        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem] md:text-[1.2rem]"
         :placeholder="$t('sidebarConversation.inputPlaceholder')"
       />
 
@@ -20,10 +20,13 @@
       @scroll="handleScroll($event, handleLoadMoreIndividual)"
     >
       <div v-if="conversationIndividual">
-        <div
+        <nuxt-link
           v-for="conversation in conversationIndividual"
+          :id="conversation.id"
           :key="conversation.id"
-          class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+          :to="`/${conversation.id}`"
+          :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+                  ${getClassBgCurrentConversation(conversation.id)}`"
         >
           <div class="relative">
             <avatar
@@ -35,9 +38,8 @@
               :first-char="conversation.partnerUser.fullName.charAt(0)"
             />
             <div
-              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 ${getClassIsOnline(
-                conversation.partnerUser
-              )}`"
+              :class="`absolute w-[12px] h-[12px] rounded-full bottom-0 right-0 
+              ${getClassIsOnline(conversation.partnerUser)}`"
             ></div>
           </div>
           <div class="conversation-content ml-4">
@@ -56,12 +58,12 @@
               {{ getLastMessage(conversation).content }}
             </p>
           </div>
-        </div>
+        </nuxt-link>
       </div>
     </div>
     <Separation />
     <div class="w-full h-[20px] flex justify-between items-center px-3">
-      <p class="heading-space text-[1.1rem] hidden md:block">
+      <p class="heading-space text-[1.1rem] hidden">
         {{ $t('sidebarConversation.spaces') }}
       </p>
       <button
@@ -75,10 +77,13 @@
       class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
       @scroll="handleScroll($event, handleLoadMoreSpaces)"
     >
-      <div
+      <nuxt-link
         v-for="conversation in conversationSpace"
+        :id="conversation.id"
         :key="conversation.id"
-        class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+        :to="`/${conversation.id}`"
+        :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+        ${getClassBgCurrentConversation(conversation.id)}`"
       >
         <avatar
           :is-have-avatar="!!conversation.thumb"
@@ -103,7 +108,7 @@
             {{ getLastMessage(conversation).content }}
           </p>
         </div>
-      </div>
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -145,12 +150,7 @@ export default {
 
     getLastMessage() {
       return (conversation) => {
-        const lenMessage = conversation.messages.length
-
-        if (lenMessage > 0) {
-          return conversation.messages[lenMessage - 1]
-        }
-        return false
+        return conversation.lastMessage ? conversation.lastMessage : ''
       }
     },
 
@@ -169,6 +169,21 @@ export default {
     getClassIsOnline() {
       return (partnerUser) => {
         return partnerUser.isActive ? 'bg-success' : 'bg-gray-300'
+      }
+    },
+
+    getCurrentConversationId() {
+      const currentConversation =
+        this.$store.getters['conversation/getCurrentConversation']
+
+      return currentConversation ? currentConversation.id : null
+    },
+
+    getClassBgCurrentConversation() {
+      return (idConversation) => {
+        return idConversation === this.getCurrentConversationId
+          ? 'bg-[#eaf3ff]'
+          : ''
       }
     },
   },
@@ -311,7 +326,7 @@ export default {
   margin-bottom: 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .container-sidebar {
     position: absolute;
     width: 90px;
@@ -346,6 +361,16 @@ export default {
     max-width: 180px !important;
   }
   .container-sidebar:hover .conversation-content {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 767px) {
+  .container-sidebar input {
+    opacity: 1;
+  }
+
+  .heading-space {
     display: block;
   }
 }

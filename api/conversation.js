@@ -1,4 +1,12 @@
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore'
 import { useFirestoreQueryCondition, useFirestoreRealtimeQuery } from './core'
 import { db } from '@/firebase/config'
 import { constant } from '~/constants/constant'
@@ -83,9 +91,34 @@ const getConversationsIndividual = function (currentEmail, callback, lastDoc) {
   return unsubscribe
 }
 
+const getConversationById = async function (id) {
+  if (!id) return
+  const docRef = doc(db, 'conversation', id)
+  const docSnap = await getDoc(docRef)
+
+  return { ...docSnap.data(), id: docSnap.id }
+}
+
+const getConversationByIdRealTime = function (id, callback) {
+  const unsubscribe = onSnapshot(doc(db, 'conversation', id), (doc) => {
+    callback(doc)
+  })
+
+  return unsubscribe
+}
+
+const updateConversation = async function (conversation) {
+  const docRef = doc(db, 'conversation', conversation.id)
+
+  await setDoc(docRef, conversation)
+}
+
 export {
   createConversation,
   getIndividualConversationByMember,
   getConversationsSpace,
   getConversationsIndividual,
+  getConversationById,
+  getConversationByIdRealTime,
+  updateConversation,
 }

@@ -27,6 +27,36 @@ module.exports = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0)' },
         },
+        dotTyping: {
+          '0%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+          '16.667%': {
+            boxShadow:
+              '9989px -10px 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+          '33.333%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+          '50%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px -10px 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+          '66.667%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+          '83.333%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px -10px 0 0 #9880ff;',
+          },
+          '100%': {
+            boxShadow:
+              '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+        },
       },
     },
   },

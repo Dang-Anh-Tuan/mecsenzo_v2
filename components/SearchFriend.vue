@@ -199,6 +199,7 @@ export default {
         thumb: null,
         name: '',
         accountHost: null,
+        lastMessage: null,
       })
     },
 

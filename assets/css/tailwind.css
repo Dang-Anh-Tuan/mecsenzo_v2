@@ -6,4 +6,16 @@
   .bg-loader {
     background: linear-gradient(110deg, #fff 5%, #ff7200 100%);
   }
+
+  .dot-typing {
+    position: relative;
+    left: -9999px;
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    box-shadow: 9990px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff,
+      10009px 0 0 0 #9880ff;
+  }
 }
