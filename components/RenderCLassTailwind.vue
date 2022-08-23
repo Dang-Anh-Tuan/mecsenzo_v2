@@ -14,7 +14,6 @@
     <span class="hidden w-[26px] h-[26px] text-[1.2rem]"></span>
     <span class="hidden w-[16px] h-[16px] text-[0.6rem]"></span>
 
-
     <span class="hidden w-[26px] h-[26px] text-[1.2rem]"></span>
     <span class="hidden w-[100px] h-[100px] text-[2rem]"></span>
     <span class="grid-cols-5 w-[20.00%] translate-x-[0%]">TabItem</span>
