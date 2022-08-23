@@ -141,7 +141,7 @@
                   content: getTooltipContent(message.timestamp),
                   classes: 'tooltip tooltip--left',
                 }"
-                class="ml-2 p-2 bg-blue-600 rounded-[10px] w-fit"
+                :class="`ml-2 p-2 rounded-[10px] w-fit ${getBgMessage}`"
               >
                 <p class="text-[1.1rem] text-white">
                   {{ message.content }}
@@ -233,13 +233,13 @@
             class="opacity-0 z-[-1] absolute"
           />
           <label for="input-image" class="cursor-pointer">
-            <fa icon="image" class="text-blue-600 text-[1.2rem]" />
+            <fa ref="iconFooter" icon="image" class="text-[1.2rem]" />
           </label>
         </div>
         <button
           class="h-[32px] w-[32px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
         >
-          <fa icon="microphone" class="text-blue-600 text-[1.2rem]" />
+          <fa ref="iconFooter" icon="microphone" class="text-[1.2rem]" />
         </button>
       </div>
       <form
@@ -283,7 +283,7 @@
           type="submit"
           class="h-[40px] w-[40px] ml-2 rounded-full flex items-center justify-center hover:bg-slate-200"
         >
-          <fa icon="paper-plane" class="text-blue-600 text-[1.2rem]" />
+          <fa ref="iconFooter" icon="paper-plane" class="text-[1.2rem]" />
         </button>
       </form>
     </div>
@@ -342,7 +342,7 @@ export default {
     },
 
     getCurrentConversationType() {
-      const currentConversation = this.currentConversation
+      const currentConversation = this.conversationRealtime
 
       return currentConversation ? currentConversation.type : ''
     },
@@ -358,9 +358,12 @@ export default {
     },
 
     getConversationInfo() {
-      if (this.currentConversation) {
-        if (this.currentConversation.type === 'group')
-          return [this.currentConversation.name, this.currentConversation.thumb]
+      if (this.conversationRealtime) {
+        if (this.conversationRealtime.type === 'group')
+          return [
+            this.conversationRealtime.name,
+            this.conversationRealtime.thumb,
+          ]
 
         const partnerUser = this.getPartnerUser
 
@@ -423,6 +426,13 @@ export default {
 
     getTooltipContent() {
       return (time) => this.formatDateForMessage(time)
+    },
+
+    getBgMessage() {
+      if (this.conversationRealtime) {
+        return `bg-[${this.conversationRealtime.colorChat}]`
+      }
+      return 'bg-[#0084ff]'
     },
   },
 
@@ -487,17 +497,21 @@ export default {
 
     handleSelectEmoji(emoji) {
       this.inputMessage = this.inputMessage + emoji.data
-      this.$refs.inputMessage.focus()
+      this.$refs.inputMessage[0].focus()
     },
 
     setColorBtnHeader() {
       this.$nextTick(() => {
-        if (this.currentConversation) {
+        if (this.conversationRealtime) {
           this.$refs.btnHeader.forEach(
-            (btn) => (btn.style.color = this.currentConversation.colorChat)
+            (btn) => (btn.style.color = this.conversationRealtime.colorChat)
+          )
+          this.$refs.iconFooter.forEach(
+            (btn) => (btn.style.color = this.conversationRealtime.colorChat)
           )
         } else {
           this.$refs.btnHeader.forEach((btn) => (btn.style.color = '#0084ff'))
+          this.$refs.iconFooter.forEach((btn) => (btn.style.color = '#0084ff'))
         }
       })
     },
@@ -536,7 +550,7 @@ export default {
       )[0]
 
       const newMessage = await saveMessage(
-        this.currentConversation.id,
+        this.conversationRealtime.id,
         userSendMessage,
         this.inputMessage,
         this.replyMessage,
@@ -544,7 +558,7 @@ export default {
       )
 
       await updateConversation({
-        ...this.currentConversation,
+        ...this.conversationRealtime,
         lastMessage: newMessage,
         timeEnd: serverTimestamp(),
         seen: [this.getCurrentEmail],
@@ -567,7 +581,7 @@ export default {
 
     handleLoadMoreMessage() {
       this.unsubscribeLoadMoreMsg = getMessageByConversation(
-        this.currentConversation.id,
+        this.conversationRealtime.id,
         this.loadMoreMessage,
         this.lastDocMessage
       )
