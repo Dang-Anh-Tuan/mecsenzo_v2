@@ -5,11 +5,11 @@
       <SidebarConversation @open-modal-add-space="openModalAddConversation" />
       <Nuxt />
       <div
-        v-if="isShowModalConversation"
+        v-if="getIsShowModal"
         class="absolute w-[100vw] h-[100vh] top-0 left-0 z-[100]"
       >
         <ModalConversation
-          :is-create="isCreateConversation"
+          :conversation="getConversation"
           @closeModal="closeModalConversation"
         />
       </div>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Header from '../components/Header.vue'
 export default {
   name: 'Default',
@@ -25,19 +26,26 @@ export default {
 
   data() {
     return {
-      isShowModalConversation: false,
       isCreateConversation: true,
+      conversation: this.getConversation,
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      getIsShowModal: 'modalChatRoom/getIsShow',
+      getConversation: 'modalChatRoom/getConversation',
+    }),
   },
 
   methods: {
     closeModalConversation() {
-      this.isShowModalConversation = false
+      this.$store.dispatch('modalChatRoom/closeModal')
     },
 
     openModalAddConversation() {
       this.isCreateConversation = true
-      this.isShowModalConversation = true
+      this.$store.dispatch('modalChatRoom/openModal')
     },
   },
 }

@@ -52,6 +52,7 @@
           <button
             ref="btnHeader"
             class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+            
           >
             <fa icon="circle-info" />
           </button>

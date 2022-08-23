@@ -154,8 +154,6 @@ export default {
   components: { FormField, Avatar, Button },
 
   props: {
-    isCreate: Boolean,
-    isShow: Boolean,
     conversation: {
       type: Object,
       default: () => null,
@@ -195,18 +193,21 @@ export default {
   },
 
   created() {
-    if (this.isCreate)
+    if (!this.conversation) {
       this.conversationBinding = {
         type: 'group',
         member: [],
         seen: [],
-        isTyping: false,
+        isTyping: [],
         colorChat: '#0084ff',
         messages: [],
         thumb: null,
         name: '',
         accountHost: null,
       }
+    } else {
+      this.conversationBinding = this.conversation
+    }
   },
 
   mounted() {
@@ -260,8 +261,6 @@ export default {
     handleCreateConversation() {
       this.conversationBinding.accountHost = this.getCurrentEmail
       this.conversationBinding.member = [this.getCurrentEmail]
-      this.conversationBinding.isTyping = []
-      this.conversationBinding.seen = []
       createConversation(this.conversationBinding)
     },
 
@@ -277,12 +276,14 @@ export default {
 
     handleSubmitForm() {
       if (this.fileAvatar) {
-        uploadImage(
-          `room-chat-thumb`,
-          this.fileAvatar,
-          this.handleImageUpdateComplete
-        )
-      } else if (this.isCreate) {
+        if (!this.conversation) {
+          uploadImage(
+            `room-chat-thumb`,
+            this.fileAvatar,
+            this.handleImageUpdateComplete
+          )
+        }
+      } else if (!this.conversation) {
         this.handleCreateConversation()
         this.closeModal()
       } else {
