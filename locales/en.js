@@ -69,4 +69,7 @@ export default {
     color: 'Color',
     create: 'Create',
   },
+  addMemberModal: {
+    heading: 'Add member',
+  },
 }

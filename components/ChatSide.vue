@@ -43,6 +43,7 @@
             v-if="getCurrentConversationType === 'group'"
             ref="btnHeader"
             class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+            @click="handleShowModalAddMember"
           >
             <fa icon="user-plus" />
           </button>
@@ -77,15 +78,13 @@
             <div v-if="getIsTyping.length > 0">
               <div
                 v-for="user in getIsTyping"
-                :key="user"
+                :key="user.id"
                 class="flex justify-center items-center text-[0.8rem]"
               >
                 <avatar
                   :is-have-avatar="!!user.avatar"
                   :src-image="user.avatar"
-                  :first-char="
-                    user && user.fullName.charAt(0)
-                  "
+                  :first-char="user && user.fullName.charAt(0)"
                   size="small"
                   class="mr-1 mt-1"
                 ></avatar>
@@ -317,6 +316,11 @@
       <fa v-if="!getShowSidebarConversation" icon="angles-right" class="ml-3" />
       <fa v-else icon="angles-left" class="ml-3" />
     </div>
+    <ModalAddMember
+      v-if="getCurrentConversationType === 'group' && isShowModalAddMember"
+      :conversation="conversationRealtime"
+      @closeModal="handleCloseModalAddMember"
+    />
   </div>
 </template>
 
@@ -351,6 +355,7 @@ export default {
       conversationRealtime: null,
       unsubscribeGetConversationRealtime: null,
       sizeSeenMessage: constant.SIZE_SEEN_MESSAGE,
+      isShowModalAddMember: false,
     }
   },
 
@@ -439,8 +444,8 @@ export default {
           (email) => email !== this.getCurrentEmail
         )
 
-        const userTyping = currentMembers.filter((user) =>
-          emailTyping.includes(user.email)
+        const userTyping = currentMembers.filter(
+          (user) => emailTyping.includes(user.email) && user.isActive
         )
         return userTyping
       }
@@ -676,6 +681,14 @@ export default {
         'modalChatRoom/setConversation',
         this.conversationRealtime
       )
+    },
+
+    handleCloseModalAddMember() {
+      this.isShowModalAddMember = false
+    },
+
+    handleShowModalAddMember() {
+      this.isShowModalAddMember = true
     },
   },
 }
