@@ -336,6 +336,9 @@ export default {
 }
 
 @media screen and (max-width: 768px) {
+  .btn-hamburger {
+    display: flex;
+  }
   .main-menu {
     position: absolute;
     top: 110%;
@@ -367,12 +370,6 @@ export default {
     width: 100vw;
     height: 100vh;
     right: -16px;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .btn-hamburger {
-    display: flex;
   }
 }
 </style>
