@@ -69,4 +69,7 @@ export default {
     color: 'Màu',
     create: 'Tạo phòng',
   },
+  addMemberModal: {
+    heading: 'Thêm thành viên',
+  },
 }

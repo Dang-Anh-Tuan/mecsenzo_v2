@@ -120,3 +120,14 @@ export const unfriend = async function (user, email) {
 
   await setDoc(docRef, newUser)
 }
+
+export const getAllFriendOfUser = async function (emailUser) {
+  const currentUser = await getUserByEmail(emailUser)
+
+  if (currentUser.friend) {
+    const friendsOfUser = await getUsersByEmails(currentUser.friend)
+    return friendsOfUser
+  }
+
+  return []
+}
