@@ -72,4 +72,10 @@ export default {
   addMemberModal: {
     heading: 'Thêm thành viên',
   },
+  popupConfirm: {
+    accept: 'Đồng ý',
+    leaveRoom: 'Rời phòng',
+    leaveRoomContent: 'Bạn có chắc muốn rời khỏi cuộc trò chuyện này ?',
+
+  },
 }

@@ -23,7 +23,11 @@
             ></div>
           </div>
           <div class="conversation-content ml-4">
-            <p class="select-none font-semibold">
+            <p
+              :class="`select-none font-semibold truncate text-ellipsis max-w-[80px] sm:max-w-[300px] 
+              ${getShowSidebarConversation ? 'hidden' : ''}
+              `"
+            >
               {{ getConversationInfo[0] }}
             </p>
             <p
@@ -59,6 +63,14 @@
             @click="showModalConversation"
           >
             <fa icon="circle-info" />
+          </button>
+          <button
+            v-if="getCurrentConversationType === 'group'"
+            ref="btnHeader"
+            class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+            @click="handleShowPopupLeaveRoom"
+          >
+            <fa icon="arrow-right-from-bracket" />
           </button>
         </div>
       </div>
@@ -321,6 +333,13 @@
       :conversation="conversationRealtime"
       @closeModal="handleCloseModalAddMember"
     />
+    <PopupConfirm
+      v-if="getCurrentConversationType === 'group' && isShowPopupLeaveRoom"
+      :content="$t('popupConfirm.leaveRoomContent')"
+      :name-btn-action="$t('popupConfirm.leaveRoom')"
+      @close-popup="handleClosePopupLeaveRoom"
+      @confirm-popup="handleLeaveRoom"
+    />
   </div>
 </template>
 
@@ -356,6 +375,7 @@ export default {
       unsubscribeGetConversationRealtime: null,
       sizeSeenMessage: constant.SIZE_SEEN_MESSAGE,
       isShowModalAddMember: false,
+      isShowPopupLeaveRoom: false,
     }
   },
 
@@ -689,6 +709,27 @@ export default {
 
     handleShowModalAddMember() {
       this.isShowModalAddMember = true
+    },
+
+    handleClosePopupLeaveRoom() {
+      this.isShowPopupLeaveRoom = false
+    },
+
+    handleShowPopupLeaveRoom() {
+      this.isShowPopupLeaveRoom = true
+    },
+
+    async handleLeaveRoom() {
+      this.handleClosePopupLeaveRoom()
+
+      await updateConversation({
+        ...this.conversationRealtime,
+        member: this.conversationRealtime.member.filter(
+          (email) => email !== this.getCurrentEmail
+        ),
+      })
+
+      this.$router.push('/')
     },
   },
 }
