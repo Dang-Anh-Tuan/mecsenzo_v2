@@ -74,14 +74,25 @@
           class="relative flex text-gray-500 py-2 right-[-4px] justify-between"
         >
           <div class="flex items-center">
-            <div
-              v-if="getIsTyping.length > 0"
-              class="flex justify-center items-center text-[0.8rem]"
-            >
-              {{ $t('chatSide.typing') }}
+            <div v-if="getIsTyping.length > 0">
               <div
-                class="dot-typing animate-[dotTyping_0.8s_ease-in_infinite] ml-4"
-              ></div>
+                v-for="user in getIsTyping"
+                :key="user"
+                class="flex justify-center items-center text-[0.8rem]"
+              >
+                <avatar
+                  :is-have-avatar="!!user.avatar"
+                  :src-image="user.avatar"
+                  :first-char="
+                    user && user.fullName.charAt(0)
+                  "
+                  size="small"
+                  class="mr-1 mt-1"
+                ></avatar>
+                <div
+                  class="dot-typing animate-[dotTyping_0.8s_ease-in_infinite] ml-4"
+                ></div>
+              </div>
             </div>
           </div>
           <div
@@ -212,7 +223,7 @@
         <p
           class="text-[0.9rem] truncate text-ellipsis max-w-[200px] md:max-w-[300px]"
         >
-          Đang trả lời
+          {{ $t('chatSide.reply') }}
           <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
         </p>
         <p
@@ -423,10 +434,17 @@ export default {
 
     getIsTyping() {
       if (this.conversationRealtime && this.conversationRealtime.isTyping) {
+        const currentMembers = this.getCurrentMembers
         const emailTyping = this.conversationRealtime.isTyping.filter(
           (email) => email !== this.getCurrentEmail
         )
-        return emailTyping
+
+        const userTyping = currentMembers.filter((user) =>
+          emailTyping.includes(user.email)
+        )
+        console.log(currentMembers);
+        console.log(userTyping)
+        return userTyping
       }
       return []
     },
