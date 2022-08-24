@@ -442,8 +442,6 @@ export default {
         const userTyping = currentMembers.filter((user) =>
           emailTyping.includes(user.email)
         )
-        console.log(currentMembers);
-        console.log(userTyping)
         return userTyping
       }
       return []
