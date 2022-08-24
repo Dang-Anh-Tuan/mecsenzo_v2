@@ -1,8 +1,8 @@
 <template>
-  <div class="fixed top-0 left-0 w-[100vw] h-[100vh] overflow-hidden">
+  <div class="fixed top-0 left-0 bottom-0 right-0 overflow-hidden">
     <div class="w-full h-full bg-[rgba(0,0,0,0.5)]" @click="closeModal"></div>
     <div
-      class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[480px] min-h-[560px] bg-white shadow-xl rounded-[25px] p-[32px] py-5 px-10"
+      class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[380px] min-h-[560px] sm:w-[480px] bg-white shadow-xl rounded-[25px] p-[32px] py-5 px-10"
     >
       <div class="py-2 border-b-2 border-b-[#212332]">
         <h3 class="text-[1.6rem] font-bold">
@@ -72,25 +72,27 @@
             </div>
           </div>
 
-          <div
-            class="mt-8 mx-auto w-[350px] flex justify-between items-end h-[50px]"
-          >
-            <Button
-              color="#ff7200"
-              size="large"
-              type="submit"
-              :name-button="
-                (conversation && $t('profileModal.edit')) ||
-                $t('conversationModal.create')
-              "
-            ></Button>
-            <Button
-              color="#ff7200"
-              variant="outline"
-              size="large"
-              :handle-click="closeModal"
-              >{{ $t('profileModal.close') }}</Button
+          <div class="w-full flex justify-center">
+            <div
+              class="absolute bottom-[60px] mt-8 w-[350px] flex justify-between items-end h-[50px]"
             >
+              <Button
+                color="#ff7200"
+                size="large"
+                type="submit"
+                :name-button="
+                  (conversation && $t('profileModal.edit')) ||
+                  $t('conversationModal.create')
+                "
+              ></Button>
+              <Button
+                color="#ff7200"
+                variant="outline"
+                size="large"
+                :handle-click="closeModal"
+                >{{ $t('profileModal.close') }}</Button
+              >
+            </div>
           </div>
         </form>
       </ValidationObserver>

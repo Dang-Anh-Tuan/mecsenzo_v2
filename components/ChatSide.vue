@@ -1,6 +1,9 @@
 <template>
   <div
-    class="flex-1 flex flex-col ml-4 bg-white shadow-2xl rounded-[20px] p-[36px] pl-[100px] md:pl-[36px]"
+    :class="`flex-1 flex flex-col ml-0 md:ml-4 bg-white shadow-2xl rounded-[20px] 
+    p-[36px] sm:pl-[100px]  md:pl-[36px] overflow-x-hidden 
+    ${getShowSidebarConversation ? 'pl-[100px]' : 'pl-[36px]'}
+    `"
   >
     <div class="flex justify-between items-center">
       <div class="h-[50px] w-full flex items-center justify-between">
@@ -258,7 +261,7 @@
             @blur="handleBlurInputMessage"
           />
           <div
-            class="absolute right-0 top-0 h-full w-[50px] flex justify-center items-center cursor-pointer"
+            class="absolute right-0 top-0 h-full w-[50px] flex justify-center items-center cursor-pointer noSelect"
             @click="toggleEmojiPicker"
           >
             <img
@@ -286,6 +289,22 @@
           <fa ref="iconFooter" icon="paper-plane" class="text-[1.2rem]" />
         </button>
       </form>
+    </div>
+    <div
+      :class="`noSelect cursor-pointer absolute w-[50px] 
+      h-[50px] top-[30%] left-[0] flex sm:hidden
+      justify-center items-center bg-white rounded-full 
+      text-dark_primary shadow-xl hover:bg-dark_primary hover:text-white
+      transition-all
+      ${
+        getShowSidebarConversation
+          ? 'translate-x-[70px]'
+          : 'translate-x-[-20px]'
+      }`"
+      @click="handleToggleSidebarMobile"
+    >
+      <fa v-if="!getShowSidebarConversation" icon="angles-right" class="ml-3" />
+      <fa v-else icon="angles-left" class="ml-3" />
     </div>
   </div>
 </template>
@@ -327,6 +346,7 @@ export default {
   computed: {
     ...mapGetters({
       getCurrentMembers: 'conversation/getCurrentMembers',
+      getShowSidebarConversation: 'sidebarConversation/getIsShow',
     }),
 
     checkIsClientSide() {
@@ -516,6 +536,10 @@ export default {
       })
     },
 
+    handleToggleSidebarMobile() {
+      this.$store.dispatch('sidebarConversation/toggleSidebar')
+    },
+
     handleDocsMessage(listMessageDocs) {
       const listMessage = listMessageDocs.map((doc) => ({
         id: doc.id,
@@ -544,29 +568,31 @@ export default {
     },
 
     async handleSendMessage() {
-      const currentMembers = this.getCurrentMembers
-      const userSendMessage = currentMembers.filter(
-        (user) => user.email === this.getCurrentEmail
-      )[0]
+      if (this.inputMessage) {
+        const currentMembers = this.getCurrentMembers
+        const userSendMessage = currentMembers.filter(
+          (user) => user.email === this.getCurrentEmail
+        )[0]
 
-      const newMessage = await saveMessage(
-        this.conversationRealtime.id,
-        userSendMessage,
-        this.inputMessage,
-        this.replyMessage,
-        'text'
-      )
+        const newMessage = await saveMessage(
+          this.conversationRealtime.id,
+          userSendMessage,
+          this.inputMessage,
+          this.replyMessage,
+          'text'
+        )
 
-      await updateConversation({
-        ...this.conversationRealtime,
-        lastMessage: newMessage,
-        timeEnd: serverTimestamp(),
-        seen: [this.getCurrentEmail],
-      })
+        await updateConversation({
+          ...this.conversationRealtime,
+          lastMessage: newMessage,
+          timeEnd: serverTimestamp(),
+          seen: [this.getCurrentEmail],
+        })
 
-      this.inputMessage = ''
-      this.replyMessage = null
-      this.isScrollToBottom = true
+        this.inputMessage = ''
+        this.replyMessage = null
+        this.isScrollToBottom = true
+      }
     },
 
     loadMoreMessage(listMessageDocs) {

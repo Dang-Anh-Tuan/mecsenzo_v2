@@ -1,6 +1,10 @@
 <template>
   <div
-    class="container-sidebar w-[30%] h-full py-[36px] px-[20px] bg-white shadow-2xl rounded-[20px] z-[50]"
+    :class="`relative container-sidebar w-[30%] h-full py-[36px] px-[20px] 
+    bg-white shadow-lg sm:shadow-2xl rounded-[20px] z-[50] 
+    ${
+      getShowSidebarConversation ? 'translate-x-0' : 'translate-x-[-100px]'
+    }  sm:translate-x-0`"
   >
     <div class="relative w-full h-[48px]">
       <input
@@ -114,6 +118,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Avatar from './Avatar.vue'
 import Separation from './Separation.vue'
 import {
@@ -140,6 +145,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      getShowSidebarConversation: 'sidebarConversation/getIsShow',
+    }),
+
     getCurrentEmail() {
       if (process.server) {
         return this.$store.getters['account/getAccount']

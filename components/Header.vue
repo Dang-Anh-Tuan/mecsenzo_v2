@@ -13,14 +13,16 @@
           alt="logo"
           class="w-[68px] h-full"
         />
-        <h1 class="text-dark_primary text-[1.5rem] font-bold tracking-wider">
+        <h1
+          class="text-dark_primary text-[1.2rem] md:text-[1.5rem] font-bold tracking-wider"
+        >
           MECSENZO
         </h1>
       </nuxt-link>
       <div class="h-full">
         <div class="relative flex items-center h-full">
           <div
-            class="relative flex items-center justify-center w-[40px] h-[40px] bg-slate-200 mr-10 rounded-full cursor-pointer"
+            class="noSelect relative flex items-center justify-center w-[40px] h-[40px] bg-slate-200 mr-3 sm:mr-6 rounded-full cursor-pointer"
             @click="handleToggleNotify"
           >
             <div
@@ -46,6 +48,16 @@
               />
             </div>
           </div>
+          <div
+            class="noSelect mr-3 sm:mr-6 flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-200 rounded-full cursor-pointer"
+            @click="handleToggleChooseLang"
+          >
+            <fa icon="earth-asia" class="text-[1.2rem]" />
+          </div>
+          <div
+            v-if="isShowChooseLang"
+            class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-100px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
+          ></div>
           <div
             ref="mainMenu"
             class="main-menu flex justify-center items-center md:cursor-pointer shadow-xl md:shadow-none"
@@ -109,7 +121,7 @@
           </div>
           <div
             ref="btnHamburger"
-            class="btn-hamburger flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-200 rounded-full md:hidden cursor-pointer"
+            class="btn-hamburger noSelect flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-200 rounded-full md:hidden cursor-pointer"
             @click="handleToggleMenu"
           >
             <span></span>
@@ -150,6 +162,7 @@ export default {
       isShowNotify: false,
       notifies: null,
       lastDocNotify: null,
+      isShowChooseLang: false,
     }
   },
 
@@ -200,6 +213,7 @@ export default {
 
     handleToggleMenu() {
       this.handleCloseNotify()
+      this.handleCloseChooseLang()
       this.$refs.mainMenu.classList.toggle('main-menu--show')
       this.$refs.btnHamburger.classList.toggle('btn-hamburger--active')
     },
@@ -227,6 +241,7 @@ export default {
 
     async handleToggleNotify() {
       this.handleCloseMenu()
+      this.handleCloseChooseLang()
       if (!this.isShowNotify) {
         await seenNotifies(this.user.email)
       }
@@ -275,6 +290,16 @@ export default {
         )
       }
     },
+
+    handleToggleChooseLang() {
+      this.handleCloseMenu()
+      this.handleCloseNotify()
+      this.isShowChooseLang = !this.isShowChooseLang
+    },
+
+    handleCloseChooseLang() {
+      this.isShowChooseLang = false
+    },
   },
 }
 </script>
@@ -310,7 +335,7 @@ export default {
   transform: rotate(-45deg) translate(4px, -4px);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .main-menu {
     position: absolute;
     top: 110%;

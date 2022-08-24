@@ -1,11 +1,11 @@
 <template>
-  <div class="flex justify-between items-center w-full mt-2">
+  <div class="grid grid-cols-[20%_70%_10%] w-full mt-2 items-center">
     <div>
-      <p class="text-[1.2rem] font-semibold text-dark_primary">
+      <p class="text-[1rem] sm:text-[1.2rem] font-semibold text-dark_primary">
         {{ labelField }}
       </p>
     </div>
-    <div class="flex items-center">
+    <div>
       <div v-if="typeInput != 'file'">
         <ValidationProvider v-slot="{ errors }" :rules="rule">
           <input
@@ -13,7 +13,7 @@
             :type="typeInput"
             :name="labelField"
             :value="valueField"
-            class="appearance-none outline-none w-[240px] px-3 py-2 border-b-[2px] border-b-[rgb(100,116,139] focus:border-b-[#ff7200]"
+            class="appearance-none outline-none w-full px-3 text-[1rem] sm:text-[1.2rem] py-2 border-b-[2px] border-b-[rgb(100,116,139] focus:border-b-[#ff7200]"
             readonly
             @input="$emit('onChangeField', [name, $event.target.value])"
           />
@@ -29,6 +29,8 @@
           @change="handleChangeAvatar"
         />
       </div>
+    </div>
+    <div>
       <button
         v-if="!isEdit"
         id="btn-edit"

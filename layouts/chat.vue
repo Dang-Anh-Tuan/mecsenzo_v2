@@ -6,7 +6,7 @@
       <Nuxt />
       <div
         v-if="getIsShowModal"
-        class="absolute w-[100vw] h-[100vh] top-0 left-0 z-[100]"
+        class="absolute bottom-0 right-0 top-0 left-0 z-[1000]"
       >
         <ModalConversation
           :conversation="getConversation"
