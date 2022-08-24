@@ -120,7 +120,7 @@ import {
   getConversationsIndividual,
   getConversationsSpace,
 } from '~/api/conversation'
-import { getUserByEmail } from '~/api/user.api'
+import { getUserByEmail, getUsersByEmails } from '~/api/user.api'
 export default {
   components: { Avatar, Separation },
 
@@ -266,16 +266,32 @@ export default {
     },
 
     async mergeUserForIndividualConversation(conversationIndividual) {
+      const currentUser = await getUserByEmail(this.getCurrentEmail)
+      let partnerEmails = []
+
       for (const conversation of conversationIndividual) {
         const emailPartner = conversation.member.filter(
           (email) => email !== this.getCurrentEmail
         )[0]
 
-        const currentUser = await getUserByEmail(this.getCurrentEmail)
-        const partnerUser = await getUserByEmail(emailPartner)
+        partnerEmails = [...partnerEmails, emailPartner]
+      }
 
-        conversation.currentUser = currentUser
-        conversation.partnerUser = partnerUser
+      if (partnerEmails.length > 0) {
+        const partnersUser = await getUsersByEmails(partnerEmails)
+
+        for (const conversation of conversationIndividual) {
+          const emailPartner = conversation.member.filter(
+            (email) => email !== this.getCurrentEmail
+          )[0]
+
+          conversation.currentUser = currentUser
+          for (const partnerUser of partnersUser) {
+            if (partnerUser.email === emailPartner) {
+              conversation.partnerUser = partnerUser
+            }
+          }
+        }
       }
     },
 
