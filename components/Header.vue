@@ -335,7 +335,7 @@ export default {
   transform: rotate(-45deg) translate(4px, -4px);
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   .main-menu {
     position: absolute;
     top: 110%;
@@ -367,6 +367,12 @@ export default {
     width: 100vw;
     height: 100vh;
     right: -16px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .btn-hamburger {
+    display: flex;
   }
 }
 </style>
