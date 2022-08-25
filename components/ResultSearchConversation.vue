@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute w-full h-[86%] bg-white bottom-0 left-0 z-[1000] px-[20px]"
+    class="absolute w-full h-[85%] bg-white bottom-[10px] md:bottom-0 left-0 z-[1000] px-[20px]"
   >
     <div
       class="container-conversation h-[90%] my-5 overflow-y-auto overflow-x-hidden"
