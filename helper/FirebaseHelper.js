@@ -10,7 +10,13 @@ export const addTimeStamp = function (obj) {
   }
 }
 
-export const uploadImage = function (folder, fileImage, handleUploadComplete) {
+export const uploadImage = function (
+  folder,
+  fileImage,
+  handleUploadComplete,
+  handleLoading = null,
+  handleError = null
+) {
   if (!fileImage) return
 
   const storageRef = ref(storage, `${folder}/${fileImage.name}${v4()}`)
@@ -19,6 +25,15 @@ export const uploadImage = function (folder, fileImage, handleUploadComplete) {
 
   uploadTask.on(
     'state_changed',
+    (snapshot) => {
+      if (handleLoading) {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        handleLoading(progress)
+      }
+    },
+    (error) => {
+      if (handleError) handleError(error)
+    },
     async () => {
       const urlNewImage = await getDownloadURL(uploadTask.snapshot.ref)
       handleUploadComplete(urlNewImage)

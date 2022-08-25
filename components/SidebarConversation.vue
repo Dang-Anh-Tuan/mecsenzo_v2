@@ -31,7 +31,7 @@
           :key="conversation.id"
           :to="{
             path: `/`,
-            params : {id : conversation.id},
+            params: { id: conversation.id },
             name: `id___${$i18n.locale}`,
           }"
           :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
@@ -53,8 +53,8 @@
           </div>
           <div class="conversation-content ml-4">
             <p
-              :class="`select-none truncate text-ellipsis max-w-[180px] m
-              d:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              :class="`select-none truncate text-ellipsis max-w-[180px] 
+              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
               ${getClassNameNotSeen(conversation)}`"
             >
               {{ conversation.partnerUser.fullName }}
@@ -91,10 +91,10 @@
         :id="conversation.id"
         :key="conversation.id"
         :to="{
-            path: `/`,
-            params : {id : conversation.id},
-            name: `id___${$i18n.locale}`,
-          }"
+          path: `/`,
+          params: { id: conversation.id },
+          name: `id___${$i18n.locale}`,
+        }"
         :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
         ${getClassBgCurrentConversation(conversation.id)}`"
       >

@@ -24,7 +24,7 @@
           </div>
           <div class="conversation-content ml-4">
             <p
-              :class="`select-none font-semibold truncate text-ellipsis max-w-[80px] sm:max-w-[300px] 
+              :class="`select-none font-semibold truncate  max-w-[80px] sm:max-w-[300px] 
               ${getShowSidebarConversation ? 'hidden' : ''}
               `"
             >
@@ -32,7 +32,7 @@
             </p>
             <p
               v-if="getCurrentConversationType === 'individual'"
-              class="select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] h-[1.4rem] text-gray-500"
+              class="select-none truncate text-[0.9rem] max-w-[180px] h-[1.4rem] text-gray-500"
             >
               {{
                 getStatusPartner
@@ -79,7 +79,7 @@
     <div
       id="container-msg"
       ref="containerMsg"
-      class="flex-1 overflow-y-auto p-2"
+      class="flex-1 overflow-y-auto p-2 overflow-hidden"
       @scroll="onScrollContainerMessage"
     >
       <div class="h-[90%] flex flex-col-reverse justify-end">
@@ -152,25 +152,53 @@
             v-if="isMyMessage(message)"
             class="flex flex-row-reverse items-end justify-start mt-3"
           >
-            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer flex flex-col items-end">
+            <div
+              class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer flex flex-col items-end"
+            >
               <div
                 v-if="message.reply !== null"
-                class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px]"
+                :class="`ml-2 rounded-[10px] max-w-full 
+                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa]'}
+                `"
               >
-                <p class="text-[1rem] text-gray-500 w-fit">
-                  {{ message.reply.content }}
-                </p>
+                <div v-if="message.reply.type === 'text'" class="p-2">
+                  <p class="text-[1rem] text-gray-500 max-w-full truncate">
+                    {{ message.reply.content }}
+                  </p>
+                </div>
+                <div
+                  v-else-if="message.reply.type === 'image'"
+                  class="relative flex justify-end"
+                >
+                  <img
+                    :src="message.reply.content"
+                    alt="image message"
+                    class="max-w-[50%] rounded-[10px] cursor-pointer select-none noSelect"
+                  />
+                  <div
+                    class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.6)]"
+                  ></div>
+                </div>
               </div>
               <div
                 v-tooltip.top-start="{
                   content: getTooltipContent(message.timestamp),
                   classes: 'tooltip tooltip--left',
                 }"
-                :class="`ml-2 p-2 rounded-[10px] w-fit ${getBgMessage}`"
+                :class="`ml-2 rounded-[10px] max-w-full ${getBgMessage}`"
               >
-                <p class="text-[1.1rem] text-white">
-                  {{ message.content }}
-                </p>
+                <div v-if="message.type === 'text'" class="p-2">
+                  <p class="text-[1.1rem] text-white truncate max-w-full">
+                    {{ message.content }}
+                  </p>
+                </div>
+                <div v-else-if="message.type === 'image'">
+                  <img
+                    :src="message.content"
+                    alt="image message"
+                    class="max-w-full rounded-[10px] cursor-pointer select-none noSelect" 
+                  />
+                </div>
               </div>
             </div>
 
@@ -192,23 +220,54 @@
               :first-char="message.user && message.user.fullName.charAt(0)"
               size="small"
             />
-            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
+            <div
+              class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer flex flex-col items-start"
+            >
               <div
                 v-if="message.reply !== null"
-                class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px] w-fit"
+                :class="`ml-2  rounded-[10px] max-w-full 
+                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa]'}
+                `"
               >
-                <p class="text-[1rem] text-gray-500">
-                  {{ message.reply.content }}
-                </p>
+                <div v-if="message.reply.type === 'text'" class="p-2">
+                  <p class="text-[1rem] text-gray-500 max-w-full truncate">
+                    {{ message.reply.content }}
+                  </p>
+                </div>
+                <div
+                  v-else-if="message.reply.type === 'image'"
+                  class="relative"
+                >
+                  <img
+                    :src="message.reply.content"
+                    alt="image message"
+                    class="max-w-[50%] rounded-[10px] cursor-pointer select-none noSelect"
+                  />
+                  <div
+                    class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.6)]"
+                  ></div>
+                </div>
               </div>
               <div
                 v-tooltip.top-start="{
                   content: getTooltipContent(message.timestamp),
                   classes: 'tooltip tooltip--left',
                 }"
-                class="ml-2 p-2 bg-gray-200 rounded-[10px] w-fit"
+                class="ml-2 bg-gray-200 rounded-[10px] max-w-full"
               >
-                <p class="text-[1.1rem]">{{ message.content }}</p>
+                <div v-if="message.type === 'text'" class="p-2">
+                  <p class="text-[1.1rem] max-w-full truncate">
+                    {{ message.content }}
+                  </p>
+                </div>
+
+                <div v-else-if="message.type === 'image'">
+                  <img
+                    :src="message.content"
+                    alt="image message"
+                    class="max-w-full rounded-[10px] cursor-pointer select-none noSelect"
+                  />
+                </div>
               </div>
             </div>
 
@@ -228,22 +287,57 @@
     </div>
     <div
       v-if="replyMessage"
-      class="flex justify-between h-[50px] border-t-[1px] border-black mt-2"
+      :class="`flex justify-between  border-t-[1px] border-black mt-2 
+      ${replyMessage.type === 'image' ? 'h-[100px] mb-2' : 'h-[50px]'}
+      `"
     >
       <div class="w-[50%]">
-        <p
-          class="text-[0.9rem] truncate text-ellipsis max-w-[200px] md:max-w-[300px]"
-        >
+        <p class="text-[0.9rem] truncate max-w-[200px] md:max-w-[300px]">
           {{ $t('chatSide.reply') }}
           <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
         </p>
         <p
-          class="text-[0.9rem] text-[#9e9fa2] truncate text-ellipsis max-w-[200px] md:max-w-[300px]"
+          v-if="replyMessage.type === 'text'"
+          class="text-[0.9rem] text-[#9e9fa2] truncate max-w-[200px] md:max-w-[300px]"
         >
           {{ replyMessage.content }}
         </p>
+        <div
+          v-else-if="replyMessage.type === 'image'"
+          class="relative flex items-center h-full max-w-[300px]"
+        >
+          <img
+            class="h-[60%] object-cover"
+            :src="replyMessage.content"
+            alt="image sent"
+          />
+        </div>
       </div>
       <button class="w-[50px] h-full" @click="clearReplyMessage">
+        <fa icon="xmark" />
+      </button>
+    </div>
+    <div
+      v-if="fileImageInput"
+      class="flex justify-between h-[100px] border-t-[1px] border-black mt-2"
+    >
+      <div class="relative flex items-center h-full max-w-[300px]">
+        <img
+          class="h-[90%] object-cover"
+          :src="fileImageInput.preview"
+          alt="image sent"
+        />
+        <div
+          v-if="percentUploadImage"
+          class="absolute top-[5%] left-0 h-[90%] w-full bg-[rgba(0,0,0,0.5)]"
+        ></div>
+        <ProgressLoader
+          v-if="percentUploadImage"
+          size="small"
+          :percent="percentUploadImage"
+        />
+      </div>
+      <button class="w-[50px] h-full" @click="handleClearTempInputImage">
         <fa icon="xmark" />
       </button>
     </div>
@@ -254,8 +348,10 @@
         >
           <input
             id="input-image"
+            ref="inputImage"
             type="file"
             class="opacity-0 z-[-1] absolute"
+            @change="handleSetFileImageInput"
           />
           <label for="input-image" class="cursor-pointer">
             <fa ref="iconFooter" icon="image" class="text-[1.2rem]" />
@@ -289,7 +385,7 @@
             <img
               src="@/assets/images/icon.png"
               alt="emoji"
-              class="w-[28px] object-fill select-none"
+              class="w-[28px] object-fill "
             />
             <div
               v-if="checkIsClientSide && isShowIconPicker"
@@ -348,6 +444,7 @@ import { mapGetters } from 'vuex'
 import { VEmojiPicker } from 'v-emoji-picker'
 import { serverTimestamp } from '@firebase/firestore'
 import Separation from './Separation.vue'
+import ProgressLoader from './ProgressLoader.vue'
 import { saveMessage, getMessageByConversation } from '~/api/message.api'
 import {
   getConversationByIdRealTime,
@@ -356,9 +453,11 @@ import {
 } from '~/api/conversation'
 import { formatDateForMessage } from '~/helper/date'
 import { constant } from '~/constants/constant'
+import { createTempUrlForImageFile } from '~/helper/FileHelper'
+import { uploadImage } from '~/helper/FirebaseHelper'
 
 export default {
-  components: { Separation, VEmojiPicker },
+  components: { Separation, VEmojiPicker, ProgressLoader },
 
   data() {
     return {
@@ -376,6 +475,8 @@ export default {
       sizeSeenMessage: constant.SIZE_SEEN_MESSAGE,
       isShowModalAddMember: false,
       isShowPopupLeaveRoom: false,
+      fileImageInput: null,
+      percentUploadImage: null,
     }
   },
 
@@ -608,27 +709,68 @@ export default {
       this.replyMessage = null
     },
 
+    async sendMessage(content, type) {
+      const currentMembers = this.getCurrentMembers
+
+      const userSendMessage = currentMembers.filter(
+        (user) => user.email === this.getCurrentEmail
+      )[0]
+
+      const newMessage = await saveMessage(
+        this.conversationRealtime.id,
+        userSendMessage,
+        content,
+        this.replyMessage,
+        type
+      )
+
+      await updateConversation({
+        ...this.conversationRealtime,
+        lastMessage: newMessage,
+        timeEnd: serverTimestamp(),
+        seen: [this.getCurrentEmail],
+      })
+    },
+
+    async saveMessageImage(url) {
+      await this.sendMessage(url, 'image')
+      this.handleClearTempInputImage()
+      this.percentUploadImage = null
+    },
+
+    setPercentLoaderImage(percent) {
+      this.percentUploadImage = percent
+    },
+
     async handleSendMessage() {
-      if (this.inputMessage) {
-        const currentMembers = this.getCurrentMembers
-        const userSendMessage = currentMembers.filter(
-          (user) => user.email === this.getCurrentEmail
-        )[0]
-
-        const newMessage = await saveMessage(
-          this.conversationRealtime.id,
-          userSendMessage,
-          this.inputMessage,
-          this.replyMessage,
-          'text'
+      if (this.fileImageInput) {
+        uploadImage(
+          'message-image',
+          this.fileImageInput,
+          this.saveMessageImage,
+          this.setPercentLoaderImage
         )
+      } else if (this.inputMessage) {
+        await this.sendMessage(this.inputMessage, 'text')
+        // const currentMembers = this.getCurrentMembers
+        // const userSendMessage = currentMembers.filter(
+        //   (user) => user.email === this.getCurrentEmail
+        // )[0]
 
-        await updateConversation({
-          ...this.conversationRealtime,
-          lastMessage: newMessage,
-          timeEnd: serverTimestamp(),
-          seen: [this.getCurrentEmail],
-        })
+        // const newMessage = await saveMessage(
+        //   this.conversationRealtime.id,
+        //   userSendMessage,
+        //   this.inputMessage,
+        //   this.replyMessage,
+        //   'text'
+        // )
+
+        // await updateConversation({
+        //   ...this.conversationRealtime,
+        //   lastMessage: newMessage,
+        //   timeEnd: serverTimestamp(),
+        //   seen: [this.getCurrentEmail],
+        // })
 
         this.inputMessage = ''
         this.replyMessage = null
@@ -733,6 +875,21 @@ export default {
         path: '/',
         name: `index___${this.$i18n.locale}`,
       })
+    },
+
+    handleSetFileImageInput(e) {
+      this.fileImageInput = createTempUrlForImageFile(e)
+
+      if (this.fileImageInput) {
+        this.inputMessage = ''
+        this.$refs.inputMessage[0].disabled = true
+      }
+    },
+
+    handleClearTempInputImage() {
+      this.fileImageInput = null
+      this.$refs.inputMessage[0].disabled = false
+      this.$refs.inputImage[0].value = ''
     },
   },
 }
