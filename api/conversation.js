@@ -113,6 +113,18 @@ const updateConversation = async function (conversation) {
   await setDoc(docRef, conversation)
 }
 
+const getConversationOfUser = async function (emailUser) {
+  const result = await useFirestoreQueryCondition('conversation', [
+    {
+      field: 'member',
+      operator: 'array-contains',
+      value: emailUser,
+    },
+  ])
+
+  return result
+}
+
 export {
   createConversation,
   getIndividualConversationByMember,
@@ -121,4 +133,5 @@ export {
   getConversationById,
   getConversationByIdRealTime,
   updateConversation,
+  getConversationOfUser,
 }

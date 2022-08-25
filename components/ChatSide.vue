@@ -152,7 +152,7 @@
             v-if="isMyMessage(message)"
             class="flex flex-row-reverse items-end justify-start mt-3"
           >
-            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer">
+            <div class="max-w-[80%] md:max-w-[45%] rounded-[10px] peer flex flex-col items-end">
               <div
                 v-if="message.reply !== null"
                 class="ml-2 p-2 bg-[#f6f9fa] rounded-[10px]"
