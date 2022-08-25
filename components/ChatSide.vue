@@ -196,7 +196,8 @@
                   <img
                     :src="message.content"
                     alt="image message"
-                    class="max-w-full rounded-[10px] cursor-pointer select-none noSelect" 
+                    class="max-w-full rounded-[10px] cursor-pointer select-none noSelect"
+                    @click="handleShowImageMessage(message.content)"
                   />
                 </div>
               </div>
@@ -266,6 +267,7 @@
                     :src="message.content"
                     alt="image message"
                     class="max-w-full rounded-[10px] cursor-pointer select-none noSelect"
+                    @click="handleShowImageMessage(message.content)"
                   />
                 </div>
               </div>
@@ -385,7 +387,7 @@
             <img
               src="@/assets/images/icon.png"
               alt="emoji"
-              class="w-[28px] object-fill "
+              class="w-[28px] object-fill"
             />
             <div
               v-if="checkIsClientSide && isShowIconPicker"
@@ -436,6 +438,7 @@
       @close-popup="handleClosePopupLeaveRoom"
       @confirm-popup="handleLeaveRoom"
     />
+    <ShowImageMessage v-if="srcImageShow" :src="srcImageShow" @close-show-image-message="handleCloseShowImageMessage"/>
   </div>
 </template>
 
@@ -477,6 +480,7 @@ export default {
       isShowPopupLeaveRoom: false,
       fileImageInput: null,
       percentUploadImage: null,
+      srcImageShow: null,
     }
   },
 
@@ -891,6 +895,14 @@ export default {
       this.$refs.inputMessage[0].disabled = false
       this.$refs.inputImage[0].value = ''
     },
+
+    handleShowImageMessage(src) {
+      this.srcImageShow = src
+    },
+
+    handleCloseShowImageMessage() {
+      this.srcImageShow = null
+    }
   },
 }
 </script>
