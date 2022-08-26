@@ -69,6 +69,7 @@
 <script>
 import { updateConversation } from '~/api/conversation'
 import { getAllFriendOfUser } from '~/api/user.api'
+import { isRightSearch } from '~/helper/conversation'
 
 export default {
   props: {
@@ -111,15 +112,11 @@ export default {
       this.$emit('closeModal')
     },
 
-    isRightSearch(field, keySearch) {
-      return field.toLowerCase().includes(keySearch.toLowerCase())
-    },
-
     handleSearchUser() {
       this.usersSearch = this.friendOfCurrentUser.filter(
         (user) =>
-          this.isRightSearch(user.fullName, this.inputSearchKey) ||
-          this.isRightSearch(user.email, this.inputSearchKey)
+          isRightSearch(user.fullName, this.inputSearchKey) ||
+          isRightSearch(user.email, this.inputSearchKey)
       )
     },
 

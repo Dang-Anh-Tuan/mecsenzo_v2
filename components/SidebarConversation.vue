@@ -11,10 +11,11 @@
         type="text"
         class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem] md:text-[1.2rem]"
         :placeholder="$t('sidebarConversation.inputPlaceholder')"
+        @input="handleChangeSearchKey"
       />
 
       <button
-        class="absolute top-0 right-0 h-full w-[48px] flex justify-center items-center rounded-full bg-slate-200 md:bg-transparent hover:bg-slate-200 transition-all"
+        class="absolute top-0 right-0 h-full w-[48px] flex justify-center items-center rounded-full bg-slate-200 md:bg-transparent transition-all"
       >
         <fa icon="magnifying-glass" />
       </button>
@@ -114,20 +115,35 @@
         </div>
       </nuxt-link>
     </div>
+    <keep-alive>
+      <AsyncResultSearchConversation v-show="getKeySearch" />
+    </keep-alive>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { defineAsyncComponent } from 'vue'
 import Avatar from './Avatar.vue'
+import LoaderSideConversation from './LoaderSideConversation.vue'
 import Separation from './Separation.vue'
 import {
   getConversationsIndividual,
   getConversationsSpace,
 } from '~/api/conversation'
-import { getUserByEmail, getUsersByEmails } from '~/api/user.api'
+import { mergeUseIndividualConversation } from '~/helper/conversation'
+
+const AsyncResultSearchConversation = defineAsyncComponent({
+  loader: () => import('@/components/ResultSearchConversation.vue'),
+
+  loadingComponent: LoaderSideConversation,
+  delay: 200,
+
+  timeout: 3000,
+})
+
 export default {
-  components: { Avatar, Separation },
+  components: { Avatar, Separation, AsyncResultSearchConversation },
 
   emits: ['open-modal-add-space'],
 
@@ -147,6 +163,7 @@ export default {
   computed: {
     ...mapGetters({
       getShowSidebarConversation: 'sidebarConversation/getIsShow',
+      getKeySearch: 'searchSidebarConversation/getKeySearch',
     }),
 
     getCurrentEmail() {
@@ -274,42 +291,15 @@ export default {
       }
     },
 
-    async mergeUserForIndividualConversation(conversationIndividual) {
-      const currentUser = await getUserByEmail(this.getCurrentEmail)
-      let partnerEmails = []
-
-      for (const conversation of conversationIndividual) {
-        const emailPartner = conversation.member.filter(
-          (email) => email !== this.getCurrentEmail
-        )[0]
-
-        partnerEmails = [...partnerEmails, emailPartner]
-      }
-
-      if (partnerEmails.length > 0) {
-        const partnersUser = await getUsersByEmails(partnerEmails)
-
-        for (const conversation of conversationIndividual) {
-          const emailPartner = conversation.member.filter(
-            (email) => email !== this.getCurrentEmail
-          )[0]
-
-          conversation.currentUser = currentUser
-          for (const partnerUser of partnersUser) {
-            if (partnerUser.email === emailPartner) {
-              conversation.partnerUser = partnerUser
-            }
-          }
-        }
-      }
-    },
-
     async setConversationIndividual(conversationSpaceDocs) {
       const conversationIndividual = this.compileDocsToConversation(
         conversationSpaceDocs
       )
 
-      await this.mergeUserForIndividualConversation(conversationIndividual)
+      await mergeUseIndividualConversation(
+        conversationIndividual,
+        this.getCurrentEmail
+      )
 
       this.conversationIndividual = conversationIndividual
       this.lastDocConversationIndividual =
@@ -321,7 +311,10 @@ export default {
         conversationIndividualDocs
       )
 
-      await this.mergeUserForIndividualConversation(conversationIndividualNew)
+      await mergeUseIndividualConversation(
+        conversationIndividualNew,
+        this.getCurrentEmail
+      )
 
       const lastDoc =
         conversationIndividualDocs[conversationIndividualDocs.length - 1]
@@ -340,6 +333,13 @@ export default {
         this.getCurrentEmail,
         this.loadMoreConversationIndividual,
         this.lastDocConversationIndividual
+      )
+    },
+
+    handleChangeSearchKey(e) {
+      this.$store.dispatch(
+        'searchSidebarConversation/setKeySearch',
+        e.target.value
       )
     },
   },
