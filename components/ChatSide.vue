@@ -166,6 +166,11 @@
                     {{ message.reply.content }}
                   </p>
                 </div>
+                <div v-else-if="message.reply.type === 'audio'" class="p-2">
+                  <p class="text-[1rem] text-gray-500 max-w-full truncate">
+                    {{ $t('chatSide.replyAudio') }}
+                  </p>
+                </div>
                 <div
                   v-else-if="message.reply.type === 'image'"
                   class="relative flex justify-end"
@@ -200,6 +205,9 @@
                     @click="handleShowImageMessage(message.content)"
                   />
                 </div>
+                <div v-if="message.type === 'audio'" class="relative p-2">
+                  <AudioDisplay :url="message.content" class="!left-0" />
+                </div>
               </div>
             </div>
 
@@ -233,6 +241,11 @@
                 <div v-if="message.reply.type === 'text'" class="p-2">
                   <p class="text-[1rem] text-gray-500 max-w-full truncate">
                     {{ message.reply.content }}
+                  </p>
+                </div>
+                <div v-else-if="message.reply.type === 'audio'" class="p-2">
+                  <p class="text-[1rem] text-gray-500 max-w-full truncate">
+                    {{ $t('chatSide.replyAudio') }}
                   </p>
                 </div>
                 <div
@@ -270,6 +283,10 @@
                     @click="handleShowImageMessage(message.content)"
                   />
                 </div>
+
+                <div v-if="message.type === 'audio'" class="relative p-2">
+                  <AudioDisplay :url="message.content" class="!left-0" />
+                </div>
               </div>
             </div>
 
@@ -303,6 +320,12 @@
           class="text-[0.9rem] text-[#9e9fa2] truncate max-w-[200px] md:max-w-[300px]"
         >
           {{ replyMessage.content }}
+        </p>
+        <p
+          v-else-if="replyMessage.type === 'audio'"
+          class="text-[0.9rem] text-[#9e9fa2] truncate max-w-[200px] md:max-w-[300px]"
+        >
+          {{ $t('chatSide.replyAudio') }}
         </p>
         <div
           v-else-if="replyMessage.type === 'image'"
@@ -343,6 +366,11 @@
         <fa icon="xmark" />
       </button>
     </div>
+    <PreviewVoiceChat
+      :is-show-preview-chat-voice="isShowPreviewChatVoice"
+      @close-preview="handleClosePreviewChatVoice"
+      @set-data-chat-voice="handleSetDataChatVoice"
+    />
     <div v-for="n in 1" :key="n" class="h-[10%] w-full flex items-center">
       <div class="flex justify-center items-center">
         <div
@@ -361,6 +389,7 @@
         </div>
         <button
           class="h-[32px] w-[32px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
+          @click="handleShowPreviewChatVoice"
         >
           <fa ref="iconFooter" icon="microphone" class="text-[1.2rem]" />
         </button>
@@ -438,7 +467,11 @@
       @close-popup="handleClosePopupLeaveRoom"
       @confirm-popup="handleLeaveRoom"
     />
-    <ShowImageMessage v-if="srcImageShow" :src="srcImageShow" @close-show-image-message="handleCloseShowImageMessage"/>
+    <ShowImageMessage
+      v-if="srcImageShow"
+      :src="srcImageShow"
+      @close-show-image-message="handleCloseShowImageMessage"
+    />
   </div>
 </template>
 
@@ -457,7 +490,7 @@ import {
 import { formatDateForMessage } from '~/helper/date'
 import { constant } from '~/constants/constant'
 import { createTempUrlForImageFile } from '~/helper/FileHelper'
-import { uploadImage } from '~/helper/FirebaseHelper'
+import { uploadByBlobUrl, uploadImage } from '~/helper/FirebaseHelper'
 
 export default {
   components: { Separation, VEmojiPicker, ProgressLoader },
@@ -481,6 +514,8 @@ export default {
       fileImageInput: null,
       percentUploadImage: null,
       srcImageShow: null,
+      isShowPreviewChatVoice: false,
+      dataChatVoice: null,
     }
   },
 
@@ -742,6 +777,11 @@ export default {
       this.percentUploadImage = null
     },
 
+    async saveMessageVoice(url) {
+      await this.sendMessage(url, 'audio')
+      this.handleClosePreviewChatVoice()
+    },
+
     setPercentLoaderImage(percent) {
       this.percentUploadImage = percent
     },
@@ -754,27 +794,15 @@ export default {
           this.saveMessageImage,
           this.setPercentLoaderImage
         )
+      } else if (this.dataChatVoice) {
+        uploadByBlobUrl(
+          'message-voice',
+          this.dataChatVoice.blob,
+          this.dataChatVoice.fileName,
+          this.saveMessageVoice
+        )
       } else if (this.inputMessage) {
         await this.sendMessage(this.inputMessage, 'text')
-        // const currentMembers = this.getCurrentMembers
-        // const userSendMessage = currentMembers.filter(
-        //   (user) => user.email === this.getCurrentEmail
-        // )[0]
-
-        // const newMessage = await saveMessage(
-        //   this.conversationRealtime.id,
-        //   userSendMessage,
-        //   this.inputMessage,
-        //   this.replyMessage,
-        //   'text'
-        // )
-
-        // await updateConversation({
-        //   ...this.conversationRealtime,
-        //   lastMessage: newMessage,
-        //   timeEnd: serverTimestamp(),
-        //   seen: [this.getCurrentEmail],
-        // })
 
         this.inputMessage = ''
         this.replyMessage = null
@@ -888,6 +916,10 @@ export default {
         this.inputMessage = ''
         this.$refs.inputMessage[0].disabled = true
       }
+      if (this.isShowPreviewChatVoice) {
+        this.isShowPreviewChatVoice = null
+        this.dataChatVoice = null
+      }
     },
 
     handleClearTempInputImage() {
@@ -902,7 +934,29 @@ export default {
 
     handleCloseShowImageMessage() {
       this.srcImageShow = null
-    }
+    },
+
+    handleShowPreviewChatVoice() {
+      this.isShowPreviewChatVoice = true
+
+      this.inputMessage = ''
+      this.$refs.inputMessage[0].disabled = true
+
+      if (this.fileImageInput) {
+        this.fileImageInput = null
+      }
+    },
+
+    handleClosePreviewChatVoice() {
+      this.isShowPreviewChatVoice = false
+      this.dataChatVoice = null
+      this.inputMessage = ''
+      this.$refs.inputMessage[0].disabled = false
+    },
+
+    handleSetDataChatVoice(payload) {
+      this.dataChatVoice = payload
+    },
   },
 }
 </script>

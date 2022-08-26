@@ -126,7 +126,7 @@
               <SubMenuItem
                 icon="chart-line"
                 :content="$t('nav.statistic')"
-                :to="{ path: 'statistic', name: `statistic___${$i18n.locale}` }"
+                :to="{ path: 'test', name: `test___${$i18n.locale}` }"
                 type="nuxt-link"
                 @closeNotify="handleCloseNotifyAndMenu"
               />
