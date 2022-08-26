@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import { createTempUrlForImageFile } from '~/helper/FileHelper'
+
 export default {
   props: {
     name: {
@@ -112,9 +114,7 @@ export default {
     },
 
     handleChangeAvatar(e) {
-      const fileImage = e.target.files[0]
-      const urlTemp = fileImage ? URL.createObjectURL(fileImage) : undefined
-      fileImage.preview = urlTemp
+      const fileImage = createTempUrlForImageFile(e)
       this.$emit('onChangeFile', fileImage)
     },
   },
