@@ -23,6 +23,7 @@ export default {
     '@/plugins/global-detective.js',
     '@/plugins/v-tooltip.js',
     '@/plugins/v-emoji.js',
+    { src: '@/plugins/v-audio-record.js', mode: 'client' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -91,4 +92,6 @@ export default {
       'https://mecsenzo-default-rtdb.asia-southeast1.firebasedatabase.app',
     firebaseAPIKey: process.env.API_KEY,
   },
+
+  ssr: false
 }

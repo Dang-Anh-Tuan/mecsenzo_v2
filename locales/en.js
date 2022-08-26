@@ -49,6 +49,8 @@ export default {
   sidebarConversation: {
     inputPlaceholder: 'Find conversation ...',
     spaces: 'Spaces',
+    lastMsgImage: 'Sent a photo',
+    lastMsgAudio: 'Sent a audio',
   },
   chatSide: {
     active: 'Active',
@@ -59,6 +61,7 @@ export default {
     reply: 'Reply',
     noConversation: "Don't have current conversation",
     typing: 'Somebody is typing',
+    replyAudio: 'Reply a audio',
   },
   conversationModal: {
     headingEdit: "Edit conversations's info",

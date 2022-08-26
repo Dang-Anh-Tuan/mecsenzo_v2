@@ -64,7 +64,15 @@
               md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
               ${getClassNewMsgNotSeen(conversation)}`"
             >
-              {{ getLastMessage(conversation).content }}
+              <span v-if="getLastMessage(conversation).type === 'text'">
+                {{ getLastMessage(conversation).content }}
+              </span>
+              <span v-else-if="getLastMessage(conversation).type === 'audio'">
+                {{ $t('sidebarConversation.lastMsgAudio') }}
+              </span>
+              <span v-else-if="getLastMessage(conversation).type === 'image'">
+                {{ $t('sidebarConversation.lastMsgImage') }}
+              </span>
             </p>
           </div>
         </nuxt-link>
@@ -118,7 +126,15 @@
             max-w-[180px] md:max-w-[120px] lg:max-w-[180px]
             h-[1.4rem] ${getClassNewMsgNotSeen(conversation)}`"
           >
-            {{ getLastMessage(conversation).content }}
+            <span v-if="getLastMessage(conversation).type === 'text'">
+              {{ getLastMessage(conversation).content }}
+            </span>
+            <span v-else-if="getLastMessage(conversation).type === 'audio'">
+              {{ $t('sidebarConversation.lastMsgAudio') }}
+            </span>
+            <span v-else-if="getLastMessage(conversation).type === 'image'">
+              {{ $t('sidebarConversation.lastMsgImage') }}
+            </span>
           </p>
         </div>
       </nuxt-link>

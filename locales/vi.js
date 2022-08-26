@@ -49,6 +49,8 @@ export default {
   sidebarConversation: {
     inputPlaceholder: 'Tìm kiếm cuộc trò chuyện',
     spaces: 'Nhóm trò chuyện',
+    lastMsgImage: 'Đã gửi một ảnh',
+    lastMsgAudio: 'Đã gửi một tin nhắn thoại',
   },
   chatSide: {
     active: 'Đang hoạt động',
@@ -59,6 +61,7 @@ export default {
     reply: 'Đang trả lời',
     noConversation: 'Chưa có cuộc trò chuyện hiện tại',
     typing: 'Có người đang nhập tin nhắn',
+    replyAudio: 'Trả lời tin nhắn thoại',
   },
   conversationModal: {
     headingEdit: 'Sửa thông tin cuộc trò chuyện',
@@ -76,6 +79,5 @@ export default {
     accept: 'Đồng ý',
     leaveRoom: 'Rời phòng',
     leaveRoomContent: 'Bạn có chắc muốn rời khỏi cuộc trò chuyện này ?',
-
   },
 }
