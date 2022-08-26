@@ -75,7 +75,10 @@
         <p class="text-sm font-semibold mt-2 pt-1 mb-0">
           Do have an account?
           <nuxt-link
-            to="/login"
+            :to="{
+              path: `/login`,
+              name: `login___${$i18n.locale}`,
+            }"
             class="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out"
             >Login</nuxt-link
           >
@@ -134,7 +137,10 @@ export default {
             })
           })
           .then(() => {
-            this.$router.push('/')
+            this.$router.push({
+              path: '/',
+              name: `index___${this.$i18n.locale}`,
+            })
           })
           .catch((e) => {
             this.$refs.errorMsg.classList.remove('hidden')

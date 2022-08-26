@@ -10,7 +10,11 @@
           v-for="conversation in resultSearch"
           :id="conversation.id"
           :key="conversation.id"
-          :to="`/${conversation.id}`"
+          :to="{
+            path: `/`,
+            params : {id : conversation.id},
+            name: `id___${$i18n.locale}`,
+          }"
           class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
         >
           <div class="relative">

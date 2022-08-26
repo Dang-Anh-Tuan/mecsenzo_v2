@@ -50,10 +50,12 @@ export default {
       {
         code: 'en',
         file: 'en.js',
+        name: 'English',
       },
       {
         code: 'vi',
         file: 'vi.js',
+        name: 'Vietnamese',
       },
     ],
     lazy: true,

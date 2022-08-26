@@ -729,7 +729,10 @@ export default {
         ),
       })
 
-      this.$router.push('/')
+      this.$router.push({
+        path: '/',
+        name: `index___${this.$i18n.locale}`,
+      })
     },
   },
 }

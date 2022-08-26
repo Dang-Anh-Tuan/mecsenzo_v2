@@ -79,8 +79,10 @@ export default {
       default: () => 'button',
     },
     to: {
-      type: String,
-      default: () => '#',
+      type: Object,
+      default: () => ({
+        path: '/',
+      }),
     },
   },
 

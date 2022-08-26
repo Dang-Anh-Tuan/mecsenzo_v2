@@ -30,8 +30,11 @@ export default {
       default: () => null,
     },
     link: {
-      type: String,
-      default: () => '/',
+      type: Object,
+      default: () => ({
+        path: 'add-friend',
+        name: `add-friend___${this.$i18n.locale}`,
+      }),
     },
   },
 

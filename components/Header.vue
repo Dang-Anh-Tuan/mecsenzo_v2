@@ -4,7 +4,7 @@
       class="flex items-center max-w-[1200px] m-auto h-full justify-between px-4 xl:px-0"
     >
       <nuxt-link
-        to="/"
+        :to="{ path: '/', name: `index___${$i18n.locale}` }"
         class="flex items-center"
         @click.native="handleCloseNotifyAndMenu"
       >
@@ -43,7 +43,12 @@
                 :sender="notify.senderFullname"
                 :type="notify.type"
                 :timestamp="notify.timestamp"
-                :link="notify.link"
+                :link="{
+                  path: `${splitBackslashNotifyLink(notify.link)}`,
+                  name: `${splitBackslashNotifyLink(notify.link)}___${
+                    $i18n.locale
+                  }`,
+                }"
                 @closeNotify="handleCloseNotify"
               />
             </div>
@@ -56,8 +61,27 @@
           </div>
           <div
             v-if="isShowChooseLang"
-            class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-100px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
-          ></div>
+            class="notify-container absolute w-[300px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-100px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
+          >
+            <div
+              v-for="locale in availableLocales"
+              :key="locale.code"
+              class="flex justify-between items-center py-3 px-1 cursor-pointer border-b-[1px] border-b-[#939496]"
+            >
+              <nuxt-link
+                :to="switchLocalePath(locale.code)"
+                class="flex-1"
+                @click.native="handleToggleChooseLang"
+                >{{ locale.name }}
+              </nuxt-link>
+              <div
+                v-if="$i18n.locale === locale.code"
+                class="flex justify-center items-center w-[20px] h-[20px] bg-[#33b5e7] rounded-full"
+              >
+                <div class="w-[9px] h-[9px] bg-white rounded-full"></div>
+              </div>
+            </div>
+          </div>
           <div
             ref="mainMenu"
             class="main-menu flex justify-center items-center md:cursor-pointer shadow-xl md:shadow-none"
@@ -92,14 +116,17 @@
               <SubMenuItem
                 icon="plus"
                 :content="$t('nav.addFriend')"
-                to="/add-friend"
+                :to="{
+                  path: 'add-friend',
+                  name: `add-friend___${$i18n.locale}`,
+                }"
                 type="nuxt-link"
                 @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
                 icon="chart-line"
                 :content="$t('nav.statistic')"
-                to="/statistic"
+                :to="{ path: 'statistic', name: `statistic___${$i18n.locale}` }"
                 type="nuxt-link"
                 @closeNotify="handleCloseNotifyAndMenu"
               />
@@ -185,7 +212,18 @@ export default {
         })
       return count
     },
+
+    availableLocales() {
+      return this.$i18n.locales
+    },
+
+    splitBackslashNotifyLink() {
+      return (link) => {
+        return link.substr(1)
+      }
+    },
   },
+
   async created() {
     await this.setUser()
     this.avatar = this.user && this.user.avatar
@@ -208,7 +246,10 @@ export default {
       setActiveUser(false)
       localStorage.removeItem('user')
       this.$store.dispatch('account/clearAccount')
-      this.$router.push('/login')
+      this.$router.push({
+        path: '/login',
+        name: `login___${this.$i18n.locale}`,
+      })
     },
 
     handleToggleMenu() {

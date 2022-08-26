@@ -115,7 +115,10 @@
         <p class="text-sm font-semibold mt-2 pt-1 mb-0">
           Don't have an account?
           <nuxt-link
-            to="/register"
+            :to="{
+          path:`/register`,
+          name : `register___${$i18n.locale}`
+          }"
             class="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out"
             >Register</nuxt-link
           >
@@ -156,7 +159,10 @@ export default {
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
         setActiveUser(true)
-        this.$router.push('/')
+        this.$router.push({
+          path: '/',
+          name: `index___${this.$i18n.locale}`,
+        })
       } catch (e) {
         this.$refs.errorMsg.classList.remove('hidden')
         this.$refs.errorMsg.textContent = e.data.error.message
