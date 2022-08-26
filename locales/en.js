@@ -72,4 +72,9 @@ export default {
   addMemberModal: {
     heading: 'Add member',
   },
+  popupConfirm: {
+    accept: 'Accept',
+    leaveRoom: 'Leave room',
+    leaveRoomContent: 'Do you want to leave this room ?',
+  },
 }
