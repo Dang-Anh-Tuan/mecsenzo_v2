@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { updateConversation } from '~/api/conversation'
 import { getAllFriendOfUser } from '~/api/user.api'
 import { isRightSearch } from '~/helper/conversation'
@@ -88,13 +89,9 @@ export default {
   },
 
   computed: {
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
 
     checkIsInRoom() {
       return (email) => {

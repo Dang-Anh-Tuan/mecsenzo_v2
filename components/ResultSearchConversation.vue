@@ -92,15 +92,9 @@ export default {
   computed: {
     ...mapGetters({
       getKeySearch: 'searchSidebarConversation/getKeySearch',
+      getCurrentEmail: 'account/getAccount',
     }),
 
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
 
     getClassNameNotSeen() {
       return (conversation) =>

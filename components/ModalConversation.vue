@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { extend } from 'vee-validate'
 import FormField from './FormField.vue'
 import Avatar from './Avatar.vue'
@@ -151,13 +152,9 @@ export default {
   },
 
   computed: {
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
 
     getHeadingModal() {
       if (this.conversation) return this.$t('conversationModal.headingEdit')

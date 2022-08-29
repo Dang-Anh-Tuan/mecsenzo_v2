@@ -30,6 +30,7 @@
           v-focus
           type="text"
           class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200"
+          :disabled="isDisableInputMessage"
           :placeholder="$t('chatSide.inputPlaceholder')"
           @focus="handleFocusInputMessage"
           @blur="handleBlurInputMessage"
@@ -73,6 +74,7 @@ export default {
       type: String,
       default: () => '#0084ff',
     },
+    isDisableInputMessage: Boolean,
   },
 
   emits: [
@@ -108,8 +110,11 @@ export default {
       this.isShowIconPicker = !this.isShowIconPicker
     },
 
-    handleSetFileImageInput() {
-      this.$emit('set-file-image-input')
+    handleSetFileImageInput(e) {
+      const fileImage = e.target.files[0]
+      this.$emit('set-file-image-input', fileImage)
+
+      this.$refs.inputMessage.value = ''
     },
 
     handleShowPreviewChatVoice() {
@@ -117,6 +122,7 @@ export default {
     },
 
     handleSendMessage() {
+      this.$refs.inputMessage.value = ''
       this.$emit('send-message')
     },
 
@@ -129,6 +135,9 @@ export default {
     },
 
     handleSelectEmoji(emoji) {
+      const inputMessageEl = this.$refs.inputMessage
+      inputMessageEl.value = inputMessageEl.value + emoji.data
+      inputMessageEl.focus()
       this.$emit('select-emoji', emoji)
     },
 

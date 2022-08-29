@@ -114,7 +114,7 @@ export default {
     },
 
     handleChangeAvatar(e) {
-      const fileImage = createTempUrlForImageFile(e)
+      const fileImage = createTempUrlForImageFile(e.target.files[0])
       this.$emit('onChangeFile', fileImage)
     },
   },

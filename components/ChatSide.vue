@@ -39,6 +39,7 @@
       :color-btn="
         conversationRealtime ? conversationRealtime.colorChat : '#0084ff'
       "
+      :is-disable-input-message="isDisableInputMessage"
       @set-file-image-input="handleSetFileImageInput"
       @show-preview-chat-voice="handleShowPreviewChatVoice"
       @send-message="handleSendMessage"
@@ -136,6 +137,7 @@ export default {
       srcImageShow: null,
       isShowPreviewChatVoice: false,
       dataChatVoice: null,
+      isDisableInputMessage: false,
     }
   },
 
@@ -284,7 +286,6 @@ export default {
 
     handleSelectEmoji(emoji) {
       this.inputMessage = this.inputMessage + emoji.data
-      this.$refs.inputMessage[0].focus()
     },
 
     handleToggleSidebarMobile() {
@@ -344,12 +345,16 @@ export default {
     async saveMessageImage(url) {
       await this.sendMessage(url, 'image')
       this.handleClearTempInputImage()
+
       this.percentUploadImage = null
+      this.replyMessage = null
     },
 
     async saveMessageVoice(url) {
       await this.sendMessage(url, 'audio')
       this.handleClosePreviewChatVoice()
+
+      this.replyMessage = null
     },
 
     setPercentLoaderImage(percent) {
@@ -472,12 +477,12 @@ export default {
       })
     },
 
-    handleSetFileImageInput(e) {
-      this.fileImageInput = createTempUrlForImageFile(e)
+    handleSetFileImageInput(fileImage) {
+      this.fileImageInput = createTempUrlForImageFile(fileImage)
+      this.isDisableInputMessage = true
 
       if (this.fileImageInput) {
         this.inputMessage = ''
-        this.$refs.inputMessage[0].disabled = true
       }
       if (this.isShowPreviewChatVoice) {
         this.isShowPreviewChatVoice = null
@@ -487,8 +492,7 @@ export default {
 
     handleClearTempInputImage() {
       this.fileImageInput = null
-      this.$refs.inputMessage[0].disabled = false
-      this.$refs.inputImage[0].value = ''
+      this.isDisableInputMessage = false
     },
 
     handleShowImageDetail(src) {
@@ -501,9 +505,8 @@ export default {
 
     handleShowPreviewChatVoice() {
       this.isShowPreviewChatVoice = true
-
+      this.isDisableInputMessage = true
       this.inputMessage = ''
-      this.$refs.inputMessage[0].disabled = true
 
       if (this.fileImageInput) {
         this.fileImageInput = null
@@ -514,7 +517,7 @@ export default {
       this.isShowPreviewChatVoice = false
       this.dataChatVoice = null
       this.inputMessage = ''
-      this.$refs.inputMessage[0].disabled = false
+      this.isDisableInputMessage = false
     },
 
     handleSetDataChatVoice(payload) {
