@@ -25,103 +25,28 @@
       :reply-message="replyMessage"
       @clear-reply-message="clearReplyMessage"
     />
-    <div
-      v-if="fileImageInput"
-      class="flex justify-between h-[100px] border-t-[1px] border-black mt-2"
-    >
-      <div class="relative flex items-center h-full max-w-[300px]">
-        <img
-          class="h-[90%] object-cover"
-          :src="fileImageInput.preview"
-          alt="image sent"
-        />
-        <div
-          v-if="percentUploadImage"
-          class="absolute top-[5%] left-0 h-[90%] w-full bg-[rgba(0,0,0,0.5)]"
-        ></div>
-        <ProgressLoader
-          v-if="percentUploadImage"
-          size="small"
-          :percent="percentUploadImage"
-        />
-      </div>
-      <button class="w-[50px] h-full" @click="handleClearTempInputImage">
-        <fa icon="xmark" />
-      </button>
-    </div>
+    <PreviewImageInput
+      :file-image-input="fileImageInput"
+      :percent-upload-image="percentUploadImage"
+      @clear-temp-input-image="handleClearTempInputImage"
+    />
     <PreviewVoiceChat
       :is-show-preview-chat-voice="isShowPreviewChatVoice"
       @close-preview="handleClosePreviewChatVoice"
       @set-data-chat-voice="handleSetDataChatVoice"
     />
-    <div v-for="n in 1" :key="n" class="h-[10%] w-full flex items-center">
-      <div class="flex justify-center items-center">
-        <div
-          class="relative h-[32px] w-[32px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
-        >
-          <input
-            id="input-image"
-            ref="inputImage"
-            type="file"
-            class="opacity-0 z-[-1] absolute"
-            @change="handleSetFileImageInput"
-          />
-          <label for="input-image" class="cursor-pointer">
-            <fa ref="iconFooter" icon="image" class="text-[1.2rem]" />
-          </label>
-        </div>
-        <button
-          class="h-[32px] w-[32px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
-          @click="handleShowPreviewChatVoice"
-        >
-          <fa ref="iconFooter" icon="microphone" class="text-[1.2rem]" />
-        </button>
-      </div>
-      <form
-        class="flex-1 flex items-center"
-        @submit.prevent="handleSendMessage"
-      >
-        <div class="relative flex-1 h-full">
-          <input
-            ref="inputMessage"
-            v-model="inputMessage"
-            v-focus
-            type="text"
-            class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200"
-            :placeholder="$t('chatSide.inputPlaceholder')"
-            @focus="handleFocusInputMessage"
-            @blur="handleBlurInputMessage"
-          />
-          <div
-            class="absolute right-0 top-0 h-full w-[50px] flex justify-center items-center cursor-pointer noSelect"
-            @click="toggleEmojiPicker"
-          >
-            <img
-              src="@/assets/images/icon.png"
-              alt="emoji"
-              class="w-[28px] object-fill"
-            />
-            <div
-              v-if="checkIsClientSide && isShowIconPicker"
-              class="absolute w-[50px] h-[50px]"
-            >
-              <VEmojiPicker
-                ref="emojiPicker"
-                class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[330px]"
-                :show-search="false"
-                @select="handleSelectEmoji"
-              />
-            </div>
-          </div>
-        </div>
-        <button
-          type="submit"
-          class="h-[40px] w-[40px] ml-2 rounded-full flex items-center justify-center hover:bg-slate-200"
-        >
-          <fa ref="iconFooter" icon="paper-plane" class="text-[1.2rem]" />
-        </button>
-      </form>
-    </div>
+    <ChatSideFooter
+      :color-btn="
+        conversationRealtime ? conversationRealtime.colorChat : '#0084ff'
+      "
+      @set-file-image-input="handleSetFileImageInput"
+      @show-preview-chat-voice="handleShowPreviewChatVoice"
+      @send-message="handleSendMessage"
+      @focus-input-message="handleFocusInputMessage"
+      @blur-input-message="handleBlurInputMessage"
+      @select-emoji="handleSelectEmoji"
+      @update:input-message="updateInputMessage"
+    />
     <div
       :class="`noSelect cursor-pointer absolute w-[50px] 
       h-[50px] top-[30%] left-[0] flex sm:hidden
@@ -168,13 +93,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { VEmojiPicker } from 'v-emoji-picker'
 import { serverTimestamp } from '@firebase/firestore'
 import Separation from './Separation.vue'
-import ProgressLoader from './ProgressLoader.vue'
 import ListMessage from './ListMessage.vue'
 import HeaderChatSide from './HeaderChatSide.vue'
 import PreviewReply from './PreviewReply.vue'
+import PreviewImageInput from './PreviewImageInput.vue'
 
 import { saveMessage, getMessageByConversation } from '~/api/message.api'
 import {
@@ -188,11 +112,10 @@ import { uploadByBlobUrl, uploadImage } from '~/helper/FirebaseHelper'
 export default {
   components: {
     Separation,
-    VEmojiPicker,
-    ProgressLoader,
     ListMessage,
     HeaderChatSide,
     PreviewReply,
+    PreviewImageInput,
   },
 
   data() {
@@ -202,7 +125,6 @@ export default {
       lastDocMessage: null,
       unsubscribeSnapMessage: null,
       unsubscribeLoadMoreMsg: null,
-      isShowIconPicker: false,
       inputMessage: '',
       replyMessage: null,
       conversationRealtime: null,
@@ -221,19 +143,8 @@ export default {
     ...mapGetters({
       getCurrentMembers: 'conversation/getCurrentMembers',
       getShowSidebarConversation: 'sidebarConversation/getIsShow',
+      getCurrentEmail: 'account/getAccount',
     }),
-
-    checkIsClientSide() {
-      return !process.server
-    },
-
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
 
     getPartnerUser() {
       const currentMembers = this.getCurrentMembers
@@ -356,10 +267,6 @@ export default {
     )
   },
 
-  updated() {
-    this.setColorBtnHeader()
-  },
-
   beforeDestroy() {
     if (this.unsubscribeSnapMessage) {
       this.unsubscribeSnapMessage()
@@ -371,25 +278,13 @@ export default {
   },
 
   methods: {
-    toggleEmojiPicker() {
-      this.isShowIconPicker = !this.isShowIconPicker
+    updateInputMessage(value) {
+      this.inputMessage = value
     },
 
     handleSelectEmoji(emoji) {
       this.inputMessage = this.inputMessage + emoji.data
       this.$refs.inputMessage[0].focus()
-    },
-
-    setColorBtnHeader() {
-      this.$nextTick(() => {
-        if (this.conversationRealtime) {
-          this.$refs.iconFooter.forEach(
-            (btn) => (btn.style.color = this.conversationRealtime.colorChat)
-          )
-        } else {
-          this.$refs.iconFooter.forEach((btn) => (btn.style.color = '#0084ff'))
-        }
-      })
     },
 
     handleToggleSidebarMobile() {

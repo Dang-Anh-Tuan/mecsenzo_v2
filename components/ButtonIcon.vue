@@ -1,6 +1,7 @@
 <template>
   <button
     ref="btn"
+    :type="type"
     class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
     @click="handleClick"
   >
@@ -14,6 +15,11 @@ export default {
     color: {
       type: String,
       default: () => '#0084ff',
+    },
+
+    type: {
+      type: String,
+      default: () => 'button',
     },
   },
 
