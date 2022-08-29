@@ -98,6 +98,9 @@ svg {
 .ar-recorder__time-limit,
 .ar-player,
 .ar-records__record.ar-records__record--selected {
-  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
 }
 </style>

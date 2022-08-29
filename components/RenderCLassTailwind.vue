@@ -23,15 +23,15 @@
     <span class="grid-cols-1 w-[100.00%] translate-x-[400%] bg-[#eaf3ff]"
       >TabItem</span
     >
-    <div class="bg-[#0084ff]"></div>
-    <div class="bg-[#ff311e]"></div>
-    <div class="bg-[#a797ff]"></div>
-    <div class="bg-[#fb45de]"></div>
-    <div class="bg-[#aa3232]"></div>
-    <div class="bg-[#faaf00]"></div>
-    <div class="bg-[#6edf00]"></div>
-    <div class="bg-[#4d3ec2]"></div>
-    <div class="bg-[#5e007e]"></div>
-    <div class="bg-[#ed9f9a]"></div>
+    <div class="!bg-[#0084ff]"></div>
+    <div class="!bg-[#ff311e]"></div>
+    <div class="!bg-[#a797ff]"></div>
+    <div class="!bg-[#fb45de]"></div>
+    <div class="!bg-[#aa3232]"></div>
+    <div class="!bg-[#faaf00]"></div>
+    <div class="!bg-[#6edf00]"></div>
+    <div class="!bg-[#4d3ec2]"></div>
+    <div class="!bg-[#5e007e]"></div>
+    <div class="!bg-[#ed9f9a]"></div>
   </div>
 </template>

@@ -1,0 +1,177 @@
+<template>
+  <div v-if="message">
+    <div
+      :id="message.id"
+      :class="`flex items-end mt-3 
+      ${isMyMessage(message) ? 'flex-row-reverse justify-start' : ''} 
+      `"
+    >
+      <avatar
+        v-if="!isMyMessage(message)"
+        :is-have-avatar="!!message.user.avatar"
+        :src-image="message.user.avatar"
+        :first-char="message.user && message.user.fullName.charAt(0)"
+        size="small"
+      />
+      <div
+        :class="`max-w-[80%] md:max-w-[45%] rounded-[10px] peer flex flex-col 
+        ${isMyMessage(message) ? 'items-end' : 'items-start'}   
+        `"
+      >
+        <a
+          v-if="message.reply !== null"
+          :href="`#${message.reply.id}`"
+          :class="`ml-2 rounded-[10px] max-w-full 
+                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa]'}
+                `"
+        >
+          <div v-if="message.reply.type === 'text'" class="p-2">
+            <p class="text-[1rem] text-gray-500 max-w-full truncate">
+              {{ message.reply.content }}
+            </p>
+          </div>
+          <div v-else-if="message.reply.type === 'audio'" class="p-2">
+            <p class="text-[1rem] text-gray-500 max-w-full truncate">
+              {{ $t('chatSide.replyAudio') }}
+            </p>
+          </div>
+          <div
+            v-else-if="message.reply.type === 'image'"
+            :class="`relative 
+            ${isMyMessage(message) ? 'flex justify-end' : ''} 
+             `"
+          >
+            <img
+              :src="message.reply.content"
+              alt="image message"
+              class="max-w-[50%] rounded-[10px] cursor-pointer select-none noSelect"
+            />
+            <div
+              class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.6)]"
+            ></div>
+          </div>
+        </a>
+        <div
+          v-tooltip.top-start="{
+            content: getTooltipContent(message.timestamp),
+            classes: 'tooltip tooltip--left',
+          }"
+          :class="`ml-2 rounded-[10px] max-w-full bg-[#e4e6eb] ${
+            isMyMessage(message) ? getBgMessage : ''
+          } `"
+        >
+          <div v-if="message.type === 'text'" class="p-2">
+            <p
+              :class="`text-[1.1rem]  truncate max-w-full ${
+                isMyMessage(message) ? 'text-white' : 'text-[#333]'
+              }`"
+            >
+              {{ message.content }}
+            </p>
+          </div>
+          <div v-else-if="message.type === 'image'">
+            <img
+              :src="message.content"
+              alt="image message"
+              class="max-w-full rounded-[10px] cursor-pointer select-none noSelect"
+              @click="handleShowImageDetail(message.content)"
+            />
+          </div>
+          <div v-if="message.type === 'audio'" class="relative p-2">
+            <AudioDisplay
+              v-if="!isMyMessage(message)"
+              :url="message.content"
+              class="!left-0"
+            />
+            <AudioDisplay
+              v-else
+              :url="message.content"
+              class="!left-0"
+              :is-color-white="true"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        :class="`relative hidden peer-hover:block before:content-['']
+        before:absolute before:w-[14px] before:h-full hover:block 
+        before:bg-transparent 
+        ${
+          isMyMessage(message)
+            ? 'right-2 before:left-[100%]'
+            : ' before:right-[100%]'
+        }
+         `"
+      >
+        <button
+          class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+          @click="handleSetReplyMessage(message)"
+        >
+          <fa icon="reply" />
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import { formatDateForMessage } from '~/helper/date'
+
+export default {
+  props: {
+    message: {
+      type: Object,
+      default: () => null,
+    },
+
+    conversation: {
+      type: Object,
+      default: () => null,
+    },
+  },
+
+  emits: ['set-reply', 'show-image-detail'],
+
+  computed: {
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
+
+    isMyMessage() {
+      return (message) => {
+        if (message.user.email === this.getCurrentEmail) return true
+        return false
+      }
+    },
+
+    formatDateForMessage() {
+      return (timestamp) => {
+        return formatDateForMessage(timestamp)
+      }
+    },
+
+    getTooltipContent() {
+      return (time) => this.formatDateForMessage(time)
+    },
+
+    getBgMessage() {
+      if (this.conversation) {
+        return `!bg-[${this.conversation.colorChat}]`
+      }
+      return '!bg-[#0084ff]'
+    },
+  },
+
+  methods: {
+    handleSetReplyMessage(message) {
+      this.$emit('set-reply', message)
+    },
+
+    handleShowImageDetail(srcImage) {
+      this.$emit('show-image-detail', srcImage)
+    },
+  },
+}
+</script>
