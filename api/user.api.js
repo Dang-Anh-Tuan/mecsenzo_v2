@@ -131,3 +131,17 @@ export const getAllFriendOfUser = async function (emailUser) {
 
   return []
 }
+
+export const getUserRealtimeByEmail = async function (currentEmail, callback) {
+  const currentUser = await getUserByEmail(currentEmail)
+
+  const unsubscribe = onSnapshot(doc(db, 'users', currentUser.id), (doc) => {
+    const user = {
+      id: doc.id,
+      ...doc.data(),
+    }
+    callback(user)
+  })
+
+  return unsubscribe
+}

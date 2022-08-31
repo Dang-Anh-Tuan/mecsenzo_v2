@@ -14,15 +14,17 @@
         />
       </div>
     </div>
+    <VideoCallPending />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import Header from '../components/Header.vue'
+import VideoCallPending from '~/components/VideoCallPending.vue'
 export default {
   name: 'Default',
-  components: { Header },
+  components: { Header, VideoCallPending },
 
   computed: {
     ...mapGetters({

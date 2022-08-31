@@ -125,6 +125,32 @@ const getConversationOfUser = async function (emailUser) {
   return result
 }
 
+const getConversationOfUserRealtime = function (
+  currentEmail,
+  callback,
+  lastDoc
+) {
+  const unsubscribe = useFirestoreRealtimeQuery(
+    'conversation',
+    [
+      {
+        field: 'member',
+        operator: 'array-contains',
+        value: currentEmail,
+      },
+    ],
+    {
+      field: 'timeEnd',
+      value: 'desc',
+    },
+    constant.SIZE_LOAD_CONVERSATION_SPACE,
+    lastDoc,
+    callback
+  )
+
+  return unsubscribe
+}
+
 export {
   createConversation,
   getIndividualConversationByMember,
@@ -134,4 +160,5 @@ export {
   getConversationByIdRealTime,
   updateConversation,
   getConversationOfUser,
+  getConversationOfUserRealtime,
 }

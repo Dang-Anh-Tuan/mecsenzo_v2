@@ -1,4 +1,14 @@
+// import path from 'path'
+// import fs from 'fs'
+
 export default {
+  // server: {
+  //   https: {
+  //     key: fs.readFileSync(path.resolve(__dirname, 'privateKey.pem')),
+  //     cert: fs.readFileSync(path.resolve(__dirname, 'server.crt')),
+  //   },
+  // },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'mecsenzo',
@@ -12,6 +22,20 @@ export default {
       { name: 'format-detection', content: 'telephone=no' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }],
+    script: [
+      {
+        hid: 'stripe',
+        type: 'text/javascript',
+        src: 'https://cdn.stringee.com/sdk/web/2.2.1/stringee-web-sdk.min.js',
+        defer: true,
+      },
+      {
+        hid: 'stripe',
+        type: 'text/javascript',
+        src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js',
+        defer: true,
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -23,7 +47,8 @@ export default {
     '@/plugins/global-detective.js',
     '@/plugins/v-tooltip.js',
     '@/plugins/v-emoji.js',
-    { src: '@/plugins/v-audio-record.js', mode: 'client' }
+    '@/plugins/axios.js',
+    { src: '@/plugins/v-audio-record.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -93,5 +118,5 @@ export default {
     firebaseAPIKey: process.env.API_KEY,
   },
 
-  ssr: false
+  ssr: false,
 }

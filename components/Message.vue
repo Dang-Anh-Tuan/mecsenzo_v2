@@ -77,18 +77,30 @@
               @click="handleShowImageDetail(message.content)"
             />
           </div>
-          <div v-if="message.type === 'audio'" class="relative p-2">
+          <div
+            v-else-if="message.type === 'audio'"
+            class="relative p-2 flex items-center"
+          >
             <AudioDisplay
               v-if="!isMyMessage(message)"
               :url="message.content"
-              class="!left-0"
+              class="!left-0 !top-0"
             />
             <AudioDisplay
               v-else
               :url="message.content"
-              class="!left-0"
+              class="!left-0 !top-0"
               :is-color-white="true"
             />
+          </div>
+          <div v-if="message.type === 'videoCall'" class="p-2">
+            <p
+              :class="`text-[1.1rem]  truncate max-w-full ${
+                isMyMessage(message) ? 'text-white' : 'text-[#333]'
+              }`"
+            >
+              Video call {{ message.status }}
+            </p>
           </div>
         </div>
       </div>
