@@ -188,15 +188,8 @@ export default {
     ...mapGetters({
       getShowSidebarConversation: 'sidebarConversation/getIsShow',
       getKeySearch: 'searchSidebarConversation/getKeySearch',
+      getCurrentEmail: 'account/getAccount',
     }),
-
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
 
     getLastMessage() {
       return (conversation) => {

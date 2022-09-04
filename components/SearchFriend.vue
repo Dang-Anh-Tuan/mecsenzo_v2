@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Button from './Button.vue'
 import Avatar from './Avatar.vue'
 import {
@@ -97,13 +98,10 @@ export default {
   },
 
   computed: {
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
+
     isPendingInvitationSent() {
       return (user) => {
         const emailReceived = this.pendingInvitationSent.map(
@@ -113,6 +111,7 @@ export default {
         return emailReceived.includes(user.email)
       }
     },
+
     isPendingInvitationReceived() {
       return (user) => {
         const emailSent = this.pendingInvitationReceived.map(
@@ -122,6 +121,7 @@ export default {
         return emailSent.includes(user.email)
       }
     },
+
     isFriend() {
       return (user) => {
         return this.friendOfCurrentUser.includes(user.email)

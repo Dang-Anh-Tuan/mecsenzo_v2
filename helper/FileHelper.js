@@ -1,5 +1,4 @@
-const createTempUrlForImageFile = function (event) {
-  const fileImage = event.target.files[0]
+const createTempUrlForImageFile = function (fileImage) {
   const urlTemp = fileImage ? URL.createObjectURL(fileImage) : undefined
   if (fileImage) {
     fileImage.preview = urlTemp

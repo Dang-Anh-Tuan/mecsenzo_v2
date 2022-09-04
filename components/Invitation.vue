@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Avatar from './Avatar.vue'
 import {
   acceptInvitation,
@@ -102,13 +103,10 @@ export default {
   },
 
   computed: {
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
+
     getInvitations() {
       if (this.filter === 'pending') {
         return this.invitationsReceived

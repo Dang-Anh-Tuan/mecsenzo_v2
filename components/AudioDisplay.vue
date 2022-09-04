@@ -1,13 +1,24 @@
 <template>
-  <div v-if="url" class="container-result">
-    <button @click="handleTogglePlayPreview">
-      <fa v-if="isPreviewPause" icon="play" />
-      <fa v-else icon="pause" />
+  <div
+    v-if="url"
+    :class="`container-result ${isColorWhite ? 'container-result--white' : ''}`"
+  >
+    <button class="btn-controller" @click="handleTogglePlayPreview">
+      <fa
+        v-if="isPreviewPause"
+        icon="play"
+        :class="`${isColorWhite ? 'text-white' : ''}`"
+      />
+      <fa v-else icon="pause" :class="`${isColorWhite ? 'text-white' : ''}`" />
     </button>
     <div class="process-audio">
       <div ref="processCurrent" class="process-current"></div>
     </div>
-    <div v-if="currentTimePreview && totalTimePreview" class="time-audio">
+    <div
+      :class="`time-audio ${isColorWhite ? 'text-white' : 'text-[#888]'} ${
+        currentTimePreview && totalTimePreview ? 'time-audio--show' : ''
+      }`"
+    >
       {{ Math.ceil(currentTimePreview) }}:{{ Math.ceil(totalTimePreview) }}
     </div>
     <audio
@@ -31,6 +42,9 @@ export default {
     fileName: {
       type: String,
       default: () => '',
+    },
+    isColorWhite: {
+      type: Boolean,
     },
   },
 
@@ -89,15 +103,27 @@ export default {
 }
 
 .process-current {
-  height: 1px;
-  width: 0;
   background-color: #0fcdce;
-  box-shadow: 0 0 3px 1px #0fcdce;
+}
+.process-current {
+  position: relative;
+  top: -1px;
+  height: 4px;
+  width: 0;
 }
 
 .time-audio {
   font-size: 0.9rem;
-  color: #888;
   margin-left: 8px;
+  opacity: 0;
+}
+
+.time-audio--show {
+  opacity: 1;
+}
+
+.container-result--white .process-current {
+  color: #fff;
+  background-color: #fff;
 }
 </style>

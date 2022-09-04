@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
 import ModalProfile from './ModalProfile.vue'
@@ -194,13 +195,9 @@ export default {
   },
 
   computed: {
-    getCurrentEmail() {
-      if (process.server) {
-        return this.$store.getters['account/getAccount']
-      } else {
-        return localStorage.getItem('email')
-      }
-    },
+    ...mapGetters({
+      getCurrentEmail: 'account/getAccount',
+    }),
 
     getNumberNewNotify() {
       let count = 0
