@@ -73,6 +73,11 @@
               <span v-else-if="getLastMessage(conversation).type === 'image'">
                 {{ $t('sidebarConversation.lastMsgImage') }}
               </span>
+              <span
+                v-else-if="getLastMessage(conversation).type === 'videoCall'"
+              >
+                {{ $t('sidebarConversation.lastMsgVideoCall') }}
+              </span>
             </p>
           </div>
         </nuxt-link>

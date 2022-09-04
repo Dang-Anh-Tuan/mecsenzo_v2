@@ -67,7 +67,7 @@ const saveMessageVideoCall = async function (
     content: roomVideoCall,
     type: 'videoCall',
     status: 'pending',
-    emailJoin: [],
+    emailJoin: [user.email],
     reply: null,
     timestamp: new Date(),
   }

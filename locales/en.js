@@ -51,6 +51,7 @@ export default {
     spaces: 'Spaces',
     lastMsgImage: 'Sent a photo',
     lastMsgAudio: 'Sent a audio',
+    lastMsgVideoCall: 'Video call',
   },
   chatSide: {
     active: 'Active',
@@ -62,6 +63,10 @@ export default {
     noConversation: "Don't have current conversation",
     typing: 'Somebody is typing',
     replyAudio: 'Reply a audio',
+    videoCall: 'Video Call',
+    cancelVideo: 'Cancel video',
+    endVideo: 'Video call have been ended',
+    joinVideoCall: 'Join Video Call',
   },
   conversationModal: {
     headingEdit: "Edit conversations's info",
@@ -79,5 +84,10 @@ export default {
     accept: 'Accept',
     leaveRoom: 'Leave room',
     leaveRoomContent: 'Do you want to leave this room ?',
+  },
+  modalCallVideo: {
+    calling: 'Calling',
+    busy: 'Busy',
+    videoCallEnd: 'This video call have been ended',
   },
 }

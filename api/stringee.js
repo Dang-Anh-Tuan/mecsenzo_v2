@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const PROJECT_ID = 'SK.0.rR90YGubjUpprgV3NR3T54siAcAu0WwP'
-const PROJECT_SECRET = 'VFZiQ3dLZGIzUmZCd1JwQmFYcXdtWmdibHFhdWJXYg=='
+const PROJECT_ID = 'SK.0.ByORaA48uoMMR0nh5MfCBMaeXvNTmZMI'
+const PROJECT_SECRET = 'UUJTeTFuWUdDdUUxSDUydkFkR2xGblVaOHM4STdISg=='
 const BASE_URL = 'https://api.stringee.com/v1/room2'
 
 class API {

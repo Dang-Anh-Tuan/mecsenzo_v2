@@ -17,9 +17,18 @@
                   size="large"
                 />
               </div>
-              <div>
+              <div class="flex flex-col items-center">
                 <p class="select-none text-[1.2rem] text-white font-medium">
                   {{ infoVideoCall.name }}
+                </p>
+                <p
+                  v-if="currentMessageVideoCall.status === 'pending'"
+                  class="text-white text-[1.2rem] mt-4 font-light"
+                >
+                  {{ $t('modalCallVideo.calling') }}
+                </p>
+                <p v-else class="text-white text-[1.2rem] mt-4 font-light">
+                  {{ $t('modalCallVideo.busy') }}
                 </p>
               </div>
             </div>
@@ -38,7 +47,7 @@
                 class="w-[68px] h-[68px] rounded-full bg-danger text-[1.2rem] text-white"
                 @click="handleCloseModalVideoCall"
               >
-                <fa icon="dash" />
+                -
               </button>
             </div>
           </div>

@@ -58,7 +58,11 @@ import {
   updateConversation,
 } from '~/api/conversation'
 import { updateMessageVideoCall } from '~/api/message.api'
-import { getUserByEmail, getUserRealtimeByEmail } from '~/api/user.api'
+import {
+  getUserByEmail,
+  getUserRealtimeByEmail,
+  updateUser,
+} from '~/api/user.api'
 export default {
   data() {
     return {
@@ -175,6 +179,9 @@ export default {
     },
 
     async handleCancelVideoCall() {
+      const currentUser = await getUserByEmail(this.getCurrentEmail)
+      await updateUser({ ...currentUser, isFreeVideoCall: true })
+
       if (this.infoVideoCall.type === 'individual') {
         const newLastMessage = {
           ...this.lastMessageVideoCall,
@@ -202,21 +209,30 @@ export default {
           ...this.lastMessageVideoCall,
           status: 'accept',
           timeStart: serverTimestamp(),
+          emailJoin: [
+            ...this.lastMessageVideoCall.emailJoin,
+            this.getCurrentEmail,
+          ],
         }
       } else {
         newLastMessage = {
           ...this.lastMessageVideoCall,
+          emailJoin: [
+            ...this.lastMessageVideoCall.emailJoin,
+            this.getCurrentEmail,
+          ],
+          timeStart: serverTimestamp(),
         }
       }
 
-      const idRoom = this.lastMessageVideoCall.content.roomId
+      const idMessage = this.lastMessageVideoCall.id
 
       await updateMessageVideoCall(newLastMessage)
       await this.updateConversationWhenSendMessage(newLastMessage)
 
       this.$router.push({
         path: 'video-chat',
-        params: { id: idRoom },
+        params: { id: idMessage },
         name: `video-chat-id___${this.$i18n.locale}`,
       })
     },

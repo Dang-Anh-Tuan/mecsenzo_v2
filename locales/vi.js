@@ -51,6 +51,7 @@ export default {
     spaces: 'Nhóm trò chuyện',
     lastMsgImage: 'Đã gửi một ảnh',
     lastMsgAudio: 'Đã gửi một tin nhắn thoại',
+    lastMsgVideoCall: 'Cuộc trò chuyện video call',
   },
   chatSide: {
     active: 'Đang hoạt động',
@@ -62,6 +63,10 @@ export default {
     noConversation: 'Chưa có cuộc trò chuyện hiện tại',
     typing: 'Có người đang nhập tin nhắn',
     replyAudio: 'Trả lời tin nhắn thoại',
+    videoCall: 'Gọi video call',
+    cancelVideo: 'Đã bỏ lỡ cuộc gọi',
+    endVideo: 'Cuộc trò chuyện đã kết thúc',
+    joinVideoCall: 'Tham gia video call',
   },
   conversationModal: {
     headingEdit: 'Sửa thông tin cuộc trò chuyện',
@@ -79,5 +84,10 @@ export default {
     accept: 'Đồng ý',
     leaveRoom: 'Rời phòng',
     leaveRoomContent: 'Bạn có chắc muốn rời khỏi cuộc trò chuyện này ?',
+  },
+  modalCallVideo: {
+    calling: 'Đang gọi',
+    busy: 'Người dùng bận',
+    videoCallEnd: 'Cuộc trò chuyện đã kết thúc',
   },
 }

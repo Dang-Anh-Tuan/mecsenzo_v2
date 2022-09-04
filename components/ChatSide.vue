@@ -124,7 +124,7 @@ import {
 } from '~/api/conversation'
 import { createTempUrlForImageFile } from '~/helper/FileHelper'
 import { uploadByBlobUrl, uploadImage } from '~/helper/FirebaseHelper'
-import { getUserByEmail } from '~/api/user.api'
+import { getUserByEmail, getUsersByEmails, updateUser } from '~/api/user.api'
 import { constant } from '~/constants/constant'
 import stringee from '@/api/stringee'
 
@@ -290,14 +290,17 @@ export default {
       }
     },
 
-    currentMessageVideoCall(newValue) {
+    async currentMessageVideoCall(newValue) {
       if (newValue.status === 'accept') {
         this.flagAutoCancelVideoCall = false
         this.$router.push({
           path: 'video-chat',
-          params: { id: this.currentMessageVideoCall.content.roomId },
+          params: { id: this.currentMessageVideoCall.id },
           name: `video-chat-id___${this.$i18n.locale}`,
         })
+      } else if (newValue.status === 'cancel') {
+        this.isShowModalCallVideo = false
+        await updateUser({ ...this.getCurrentUser, isFreeVideoCall: true })
       }
     },
   },
@@ -593,6 +596,7 @@ export default {
       if (this.conversationRealtime.type === 'individual') {
         const partnerUser = this.getPartnerUser
         const partnerUserQuery = await getUserByEmail(partnerUser.email)
+        const currentUser = this.getCurrentUser
 
         this.infoVideoCall = {
           avatar: partnerUserQuery.avatar,
@@ -606,10 +610,16 @@ export default {
           }
           await this.handleCancelVideoCall()
         } else {
+          await updateUser({ ...partnerUserQuery, isFreeVideoCall: false })
+          await updateUser({ ...currentUser, isFreeVideoCall: false })
+
           setTimeout(async () => {
             if (this.flagAutoCancelVideoCall) {
               await this.handleCancelVideoCall()
               this.handleCloseVideoCall()
+              await updateUser({ ...partnerUserQuery, isFreeVideoCall: true })
+              await updateUser({ ...currentUser, isFreeVideoCall: true })
+
               if (this.unsubscribeCurrentMessageVideoCall) {
                 this.unsubscribeCurrentMessageVideoCall()
               }
@@ -622,9 +632,17 @@ export default {
           )
         }
       } else {
+        const emailMemberOfConversation = this.conversationRealtime.member
+        const userOfConversation = await getUsersByEmails(
+          emailMemberOfConversation
+        )
+        userOfConversation.forEach(async (user) => {
+          await updateUser({ ...user, isFreeVideoCall: false })
+        })
+
         this.$router.push({
           path: 'video-chat',
-          params: { id: this.currentMessageVideoCall.content.roomId },
+          params: { id: this.currentMessageVideoCall.id },
           name: `video-chat-id___${this.$i18n.locale}`,
         })
 
