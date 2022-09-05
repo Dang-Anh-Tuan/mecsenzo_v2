@@ -10,6 +10,9 @@ import SearchFriend from '~/components/SearchFriend.vue'
 import TabSide from '~/components/TabSide.vue'
 export default {
   components: { TabSide },
+
+  middleware: ['check-auth', 'auth-required'],
+  
   data() {
     return {
       tabItems: [

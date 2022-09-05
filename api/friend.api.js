@@ -7,7 +7,10 @@ import {
   setDoc,
 } from '@firebase/firestore'
 import { getUsersByEmails } from './user.api'
-import { useFirestoreQueryCondition } from '~/api/core'
+import {
+  useFirestoreQueryCondition,
+  useFirestoreRealtimeQuery,
+} from '~/api/core'
 import { db } from '~/firebase/config'
 import { addTimeStamp } from '~/helper/FirebaseHelper'
 import { mapInvitationUser } from '~/helper/mapInvitationUser'
@@ -151,4 +154,60 @@ export const getAcceptInvitation = async function (email) {
   const result = [...invitationSent, ...invitationReceived]
 
   return result
+}
+
+export const getInvitationReceivedByEmailRealTime = function (
+  email,
+  setInvitationReceived
+) {
+  useFirestoreRealtimeQuery(
+    'friend',
+    [
+      {
+        field: 'receiverEmail',
+        operator: '==',
+        value: email,
+      },
+      {
+        field: 'status',
+        operator: '==',
+        value: 'pending',
+      },
+    ],
+    {
+      field: 'timestamp',
+      value: 'desc',
+    },
+    null,
+    null,
+    setInvitationReceived
+  )
+}
+
+export const getInvitationSentByEmailRealTime = function (
+  email,
+  setInvitationSent
+) {
+  useFirestoreRealtimeQuery(
+    'friend',
+    [
+      {
+        field: 'senderEmail',
+        operator: '==',
+        value: email,
+      },
+      {
+        field: 'status',
+        operator: '==',
+        value: 'pending',
+      },
+    ],
+    {
+      field: 'timestamp',
+      value: 'desc',
+    },
+    null,
+    null,
+    setInvitationSent
+  )
 }

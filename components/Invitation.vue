@@ -22,30 +22,49 @@
     </div>
 
     <div
-      class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-6 overflow-auto"
+      class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-6 overflow-y-auto max-h-[400px]"
     >
       <div
         v-for="invitation in getInvitations"
         :key="invitation.id"
-        class="flex w-full justify-between items-center border-[2px] p-3 h-[86px]"
+        class="relative flex w-full justify-between items-center border-[2px] p-3 h-[86px]"
       >
-        <div class="flex items-center">
+        <div v-if="invitation.user" class="flex items-center">
           <avatar
-            :is-have-avatar="invitation.user && !!invitation.user.avatar"
-            :src-image="invitation.user && invitation.user.avatar"
-            :first-char="invitation.user && invitation.user.fullName.charAt(0)"
+            :is-have-avatar="!!invitation.user.avatar"
+            :src-image="invitation.user.avatar"
+            :first-char="invitation.user.fullName.charAt(0)"
           />
           <p class="select-none text-[1.2rem] font-medium ml-3">
-            {{ invitation.user && invitation.user.fullName }}
+            {{ invitation.user.fullName }}
           </p>
         </div>
         <div v-if="filter === 'approved'">
-          <Button
-            color="#f74242"
-            :handle-click="() => handleUnfriend(invitation)"
-          >
-            {{ $t('addFriendTab.invitationTab.unfriend') }}
-          </Button>
+          <ButtonIcon class="group" color="#333">
+            <fa icon="ellipsis-vertical" />
+            <div
+              class="hidden absolute top-[100%] right-0 group-hover:flex flex-col w-[150px] shadow-xl z-[1000] bg-white after:contents-[''] after:w-full after:absolute after:h-[30px] after:left-0 after:top-[-30px] after:bg-transparent"
+            >
+              <button
+                class="text-[0.9rem] py-2 px-3 border-b-[1px] hover:bg-slate-300"
+                @click="handleRedirectToConversation(invitation.user)"
+              >
+                {{ $t('addFriendTab.invitationTab.chat') }}
+              </button>
+              <button
+                class="text-[0.9rem] py-2 px-3 border-b-[1px] hover:bg-slate-300"
+                @click="handleShowInfoFriend(invitation.user)"
+              >
+                {{ $t('addFriendTab.invitationTab.info') }}
+              </button>
+              <button
+                class="text-[0.9rem] py-2 px-3 border-b-[1px] hover:bg-slate-300"
+                @click="handleUnfriend(invitation)"
+              >
+                {{ $t('addFriendTab.invitationTab.unfriend') }}
+              </button>
+            </div>
+          </ButtonIcon>
         </div>
         <div v-else-if="filter === 'sent'">
           <Button
@@ -65,6 +84,12 @@
         </div>
       </div>
     </div>
+    <ModalProfileFriend
+      v-if="profileFriend"
+      :user="profileFriend"
+      @redirect-chat="handleRedirectToConversation"
+      @close-modal="handleCloseModalProfile"
+    />
   </div>
 </template>
 
@@ -74,8 +99,8 @@ import Avatar from './Avatar.vue'
 import {
   acceptInvitation,
   deleteInvitation,
-  getPendingInvitationSent,
   getAcceptInvitation,
+  getPendingInvitationSent,
   getPendingInvitationReceived,
 } from '~/api/friend.api'
 import {
@@ -87,7 +112,10 @@ import {
 import { mapInvitationUser } from '~/helper/mapInvitationUser'
 import { createNotify } from '~/api/notify'
 import { routers } from '~/constants/router'
-import { createConversation } from '~/api/conversation'
+import {
+  createConversation,
+  getIndividualConversationByMember,
+} from '~/api/conversation'
 
 export default {
   components: { Avatar },
@@ -99,6 +127,7 @@ export default {
       invitationsSent: [],
       invitationsReceived: [],
       currentUser: null,
+      profileFriend: null,
     }
   },
 
@@ -126,22 +155,28 @@ export default {
       this.getCurrentEmail
     )
 
-    const emailSenderInvitation = this.invitationsReceived.map(
-      (invitation) => invitation.senderEmail
-    )
-    if (emailSenderInvitation.length > 0) {
-      const senderInvitation = await getUsersByEmails(emailSenderInvitation)
-
-      mapInvitationUser(this.invitationsReceived, senderInvitation)
-    }
-
     const emailReceiverInvitation = this.invitationsSent.map(
       (invitation) => invitation.receiverEmail
     )
     if (emailReceiverInvitation.length > 0) {
       const receiverInvitation = await getUsersByEmails(emailReceiverInvitation)
 
-      mapInvitationUser(this.invitationsSent, receiverInvitation)
+      this.invitationsSent = mapInvitationUser(
+        this.invitationsSent,
+        receiverInvitation
+      ).splice(0)
+    }
+
+    const emailSenderInvitation = this.invitationsReceived.map(
+      (invitation) => invitation.senderEmail
+    )
+    if (emailSenderInvitation.length > 0) {
+      const senderInvitation = await getUsersByEmails(emailSenderInvitation)
+
+      this.invitationsReceived = mapInvitationUser(
+        this.invitationsReceived,
+        senderInvitation
+      ).splice(0)
     }
 
     this.friends = await getAcceptInvitation(this.getCurrentEmail)
@@ -193,6 +228,29 @@ export default {
       await unfriend(invitation.user, this.currentUser.email)
       await deleteInvitation(invitation.id)
       this.friends = this.friends.filter((item) => item.id !== invitation.id)
+    },
+
+    async handleRedirectToConversation(partnerUser) {
+      const conversationsOfCurrentUser =
+        await getIndividualConversationByMember(this.currentUser.email)
+
+      const conversation = conversationsOfCurrentUser.filter((conversation) =>
+        conversation.member.includes(partnerUser.email)
+      )[0]
+
+      this.$router.push({
+        path: `/`,
+        params: { id: conversation.id },
+        name: `id___${this.$i18n.locale}`,
+      })
+    },
+
+    handleShowInfoFriend(user) {
+      this.profileFriend = user
+    },
+
+    handleCloseModalProfile() {
+      this.profileFriend = null
     },
   },
 }
