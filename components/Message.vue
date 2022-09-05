@@ -77,18 +77,66 @@
               @click="handleShowImageDetail(message.content)"
             />
           </div>
-          <div v-if="message.type === 'audio'" class="relative p-2">
+          <div
+            v-else-if="message.type === 'audio'"
+            class="relative p-2 flex items-center"
+          >
             <AudioDisplay
               v-if="!isMyMessage(message)"
               :url="message.content"
-              class="!left-0"
+              class="!left-0 !top-0"
             />
             <AudioDisplay
               v-else
               :url="message.content"
-              class="!left-0"
+              class="!left-0 !top-0"
               :is-color-white="true"
             />
+          </div>
+          <div v-if="message.type === 'videoCall'" class="p-2">
+            <div
+              class="w-full h-full flex flex-col justify-center items-center"
+            >
+              <p
+                :class="`text-[1rem]  truncate max-w-full font-semibold ${
+                  isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                }`"
+              >
+                {{ $t('chatSide.videoCall') }}
+              </p>
+              <p
+                v-if="message.status === 'cancel'"
+                :class="`text-[1rem]  truncate max-w-full ${
+                  isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                }`"
+              >
+                {{ $t('chatSide.cancelVideo') }}
+              </p>
+              <div v-if="message.status === 'end'">
+                <p
+                  :class="`text-[1rem]  truncate max-w-full ${
+                    isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                  }`"
+                >
+                  <span class="hidden sm:inline-block md:hidden xl:inline-block"
+                    >{{ $t('chatSide.endVideo') }} :</span
+                  >
+                  <span>{{ getTimeVideoCall(message) }}</span>
+                </p>
+              </div>
+              <div
+                v-if="
+                  message.status === 'pending' && conversation.type === 'group'
+                "
+              >
+                <button
+                  class="bg-success px-2 py-3 text-white border-[20px] mt-1 mb-1"
+                  @click="handleJoinVideoCall(message)"
+                >
+                  {{ $t('chatSide.joinVideoCall') }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -116,8 +164,10 @@
 </template>
 
 <script>
+import { serverTimestamp } from '@firebase/firestore'
 import { mapGetters } from 'vuex'
-import { formatDateForMessage } from '~/helper/date'
+import { updateMessageVideoCall } from '~/api/message.api'
+import { calcDurationVideoCall, formatDateForMessage } from '~/helper/date'
 
 export default {
   props: {
@@ -162,6 +212,12 @@ export default {
       }
       return '!bg-[#0084ff]'
     },
+
+    getTimeVideoCall() {
+      return (message) => {
+        return calcDurationVideoCall(message.timeStart, message.timeEnd)
+      }
+    },
   },
 
   methods: {
@@ -171,6 +227,24 @@ export default {
 
     handleShowImageDetail(srcImage) {
       this.$emit('show-image-detail', srcImage)
+    },
+
+    async handleJoinVideoCall(message) {
+      const newLastMessage = {
+        ...this.message,
+        emailJoin: [...this.message.emailJoin, this.getCurrentEmail],
+        timeStart: serverTimestamp(),
+      }
+
+      const idMessage = this.message.id
+
+      await updateMessageVideoCall(newLastMessage)
+
+      this.$router.push({
+        path: 'video-chat',
+        params: { id: idMessage },
+        name: `video-chat-id___${this.$i18n.locale}`,
+      })
     },
   },
 }

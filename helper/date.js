@@ -91,4 +91,14 @@ const formatDateForMessage = function (timestamp) {
   }
 }
 
-export { formatDate, formatDateForMessage }
+const calcDurationVideoCall = function (timeStart, timeEnd) {
+  const diffSeconds = timeEnd.seconds - timeStart.seconds
+
+  const hours = (diffSeconds / 60 / 60).toFixed(0)
+  const minute = ((diffSeconds / 60) % 60).toFixed(0)
+  const seconds = (diffSeconds % 60).toFixed(0)
+
+  return `${formatTime(hours)} : ${formatTime(minute)} : ${formatTime(seconds)}`
+}
+
+export { formatDate, formatDateForMessage, calcDurationVideoCall }

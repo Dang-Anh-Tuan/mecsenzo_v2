@@ -44,7 +44,10 @@
         >
           <fa icon="user-plus" />
         </ButtonIcon>
-        <ButtonIcon :color="getColorBtnIcon">
+        <ButtonIcon
+          :color="getColorBtnIcon"
+          @btn-icon-click="handleCreateVideoCall"
+        >
           <fa icon="video" />
         </ButtonIcon>
         <ButtonIcon
@@ -102,6 +105,10 @@ export default {
 
     handleShowPopupLeaveRoom() {
       this.$emit('header-chat-side:leave-room')
+    },
+
+    handleCreateVideoCall() {
+      this.$emit('header-chat-side:create-video-call')
     },
   },
 }

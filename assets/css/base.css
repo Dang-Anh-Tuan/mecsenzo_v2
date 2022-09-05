@@ -46,3 +46,7 @@ body {
   background: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 }
+
+video {
+  width: 100vw;
+}

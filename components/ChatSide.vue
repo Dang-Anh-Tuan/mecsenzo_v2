@@ -12,6 +12,7 @@
       @header-chat-side:show-add-member="handleShowModalAddMember"
       @header-chat-side:show-modal-conversation="showModalConversation"
       @header-chat-side:leave-room="handleShowPopupLeaveRoom"
+      @header-chat-side:create-video-call="handleCreateVideoCall"
     />
     <Separation />
     <ListMessage
@@ -89,6 +90,13 @@
       :src="srcImageShow"
       @close-show-image-message="handleCloseShowImageMessage"
     />
+    <ModalCallVideo
+      v-if="isShowModalCallVideo"
+      :info-video-call="infoVideoCall"
+      :current-message-video-call="currentMessageVideoCall"
+      @cancel-video-call="handleCancelVideoCall"
+      @close-video-call="handleCloseVideoCall"
+    />
   </div>
 </template>
 
@@ -100,8 +108,15 @@ import ListMessage from './ListMessage.vue'
 import HeaderChatSide from './HeaderChatSide.vue'
 import PreviewReply from './PreviewReply.vue'
 import PreviewImageInput from './PreviewImageInput.vue'
+import ModalCallVideo from './ModalCallVideo.vue'
 
-import { saveMessage, getMessageByConversation } from '~/api/message.api'
+import {
+  saveMessage,
+  getMessageByConversation,
+  saveMessageVideoCall,
+  updateMessageVideoCall,
+  getMessageRealtime,
+} from '~/api/message.api'
 import {
   getConversationByIdRealTime,
   getConversationById,
@@ -109,6 +124,9 @@ import {
 } from '~/api/conversation'
 import { createTempUrlForImageFile } from '~/helper/FileHelper'
 import { uploadByBlobUrl, uploadImage } from '~/helper/FirebaseHelper'
+import { getUserByEmail, getUsersByEmails, updateUser } from '~/api/user.api'
+import { constant } from '~/constants/constant'
+import stringee from '@/api/stringee'
 
 export default {
   components: {
@@ -117,6 +135,7 @@ export default {
     HeaderChatSide,
     PreviewReply,
     PreviewImageInput,
+    ModalCallVideo,
   },
 
   data() {
@@ -138,6 +157,11 @@ export default {
       isShowPreviewChatVoice: false,
       dataChatVoice: null,
       isDisableInputMessage: false,
+      currentMessageVideoCall: null,
+      isShowModalCallVideo: false,
+      infoVideoCall: null,
+      unsubscribeCurrentMessageVideoCall: null,
+      flagAutoCancelVideoCall: true,
     }
   },
 
@@ -156,6 +180,14 @@ export default {
       )[0]
 
       return partnerUser
+    },
+
+    getCurrentUser() {
+      const currentMembers = this.getCurrentMembers
+
+      return currentMembers.filter(
+        (user) => user.email === this.getCurrentEmail
+      )[0]
     },
 
     getConversationInfo() {
@@ -257,6 +289,20 @@ export default {
         )
       }
     },
+
+    async currentMessageVideoCall(newValue) {
+      if (newValue.status === 'accept') {
+        this.flagAutoCancelVideoCall = false
+        this.$router.push({
+          path: 'video-chat',
+          params: { id: this.currentMessageVideoCall.id },
+          name: `video-chat-id___${this.$i18n.locale}`,
+        })
+      } else if (newValue.status === 'cancel') {
+        this.isShowModalCallVideo = false
+        await updateUser({ ...this.getCurrentUser, isFreeVideoCall: true })
+      }
+    },
   },
 
   async created() {
@@ -267,6 +313,10 @@ export default {
       'conversation/setCurrentMembers',
       this.currentConversation.member
     )
+  },
+
+  mounted() {
+    stringee.setRestToken()
   },
 
   beforeDestroy() {
@@ -319,12 +369,17 @@ export default {
       this.replyMessage = null
     },
 
-    async sendMessage(content, type) {
-      const currentMembers = this.getCurrentMembers
+    async updateConversationWhenSendMessage(newMessage) {
+      await updateConversation({
+        ...this.conversationRealtime,
+        lastMessage: newMessage,
+        timeEnd: serverTimestamp(),
+        seen: [this.getCurrentEmail],
+      })
+    },
 
-      const userSendMessage = currentMembers.filter(
-        (user) => user.email === this.getCurrentEmail
-      )[0]
+    async sendMessage(content, type) {
+      const userSendMessage = this.getCurrentUser
 
       const newMessage = await saveMessage(
         this.conversationRealtime.id,
@@ -334,12 +389,7 @@ export default {
         type
       )
 
-      await updateConversation({
-        ...this.conversationRealtime,
-        lastMessage: newMessage,
-        timeEnd: serverTimestamp(),
-        seen: [this.getCurrentEmail],
-      })
+      await this.updateConversationWhenSendMessage(newMessage)
     },
 
     async saveMessageImage(url) {
@@ -522,6 +572,103 @@ export default {
 
     handleSetDataChatVoice(payload) {
       this.dataChatVoice = payload
+    },
+
+    async handleCreateVideoCall() {
+      const roomVideoCall = await stringee.createRoom(
+        this.conversationRealtime.id
+      )
+
+      this.flagAutoCancelVideoCall = true
+
+      const newMessage = await saveMessageVideoCall(
+        this.conversationRealtime.id,
+        this.getCurrentUser,
+        roomVideoCall
+      )
+
+      await this.updateConversationWhenSendMessage(newMessage)
+
+      this.isShowModalCallVideo = true
+
+      this.currentMessageVideoCall = newMessage
+
+      if (this.conversationRealtime.type === 'individual') {
+        const partnerUser = this.getPartnerUser
+        const partnerUserQuery = await getUserByEmail(partnerUser.email)
+        const currentUser = this.getCurrentUser
+
+        this.infoVideoCall = {
+          avatar: partnerUserQuery.avatar,
+          name: partnerUserQuery.fullName,
+        }
+
+        if (partnerUserQuery.isFreeVideoCall === false) {
+          this.currentMessageVideoCall = {
+            ...this.currentMessageVideoCall,
+            status: 'cancel',
+          }
+          await this.handleCancelVideoCall()
+        } else {
+          await updateUser({ ...partnerUserQuery, isFreeVideoCall: false })
+          await updateUser({ ...currentUser, isFreeVideoCall: false })
+
+          setTimeout(async () => {
+            if (this.flagAutoCancelVideoCall) {
+              await this.handleCancelVideoCall()
+              this.handleCloseVideoCall()
+              await updateUser({ ...partnerUserQuery, isFreeVideoCall: true })
+              await updateUser({ ...currentUser, isFreeVideoCall: true })
+
+              if (this.unsubscribeCurrentMessageVideoCall) {
+                this.unsubscribeCurrentMessageVideoCall()
+              }
+            }
+          }, constant.MILISECONDS_CANCEL_VIDEO_CALL)
+
+          this.unsubscribeCurrentMessageVideoCall = getMessageRealtime(
+            this.currentMessageVideoCall.id,
+            this.setCurrentMessageVideoCall
+          )
+        }
+      } else {
+        const emailMemberOfConversation = this.conversationRealtime.member
+        const userOfConversation = await getUsersByEmails(
+          emailMemberOfConversation
+        )
+        userOfConversation.forEach(async (user) => {
+          await updateUser({ ...user, isFreeVideoCall: false })
+        })
+
+        this.$router.push({
+          path: 'video-chat',
+          params: { id: this.currentMessageVideoCall.id },
+          name: `video-chat-id___${this.$i18n.locale}`,
+        })
+
+        this.infoVideoCall = {
+          avatar: this.conversationRealtime.thumb,
+          name: this.conversationRealtime.name,
+        }
+      }
+    },
+
+    async handleCancelVideoCall() {
+      const newLastMessage = {
+        ...this.currentMessageVideoCall,
+        status: 'cancel',
+      }
+      await updateMessageVideoCall(newLastMessage)
+      await this.updateConversationWhenSendMessage(newLastMessage)
+    },
+
+    handleCloseVideoCall() {
+      this.isShowModalCallVideo = false
+      this.flagAutoCancelVideoCall = false
+    },
+
+    setCurrentMessageVideoCall(message) {
+      this.currentMessageVideoCall = message
     },
   },
 }

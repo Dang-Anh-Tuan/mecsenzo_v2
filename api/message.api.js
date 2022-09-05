@@ -1,4 +1,10 @@
-import { addDoc, collection } from '@firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+} from '@firebase/firestore'
 import { useFirestoreRealtimeQuery } from './core'
 import { constant } from '~/constants/constant'
 import { db } from '~/firebase/config'
@@ -11,7 +17,7 @@ const saveMessage = async function (
   type
 ) {
   const newMessage = {
-    conversation : idConversation,
+    conversation: idConversation,
     user,
     content,
     reply,
@@ -50,4 +56,49 @@ const getMessageByConversation = function (
   return unsubscribe
 }
 
-export { saveMessage, getMessageByConversation }
+const saveMessageVideoCall = async function (
+  idConversation,
+  user,
+  roomVideoCall
+) {
+  const newMessage = {
+    conversation: idConversation,
+    user,
+    content: roomVideoCall,
+    type: 'videoCall',
+    status: 'pending',
+    emailJoin: [user.email],
+    reply: null,
+    timestamp: new Date(),
+  }
+
+  const responseMsg = await addDoc(collection(db, 'message'), newMessage)
+  return { id: responseMsg.id, ...newMessage }
+}
+
+const updateMessageVideoCall = async function (messageVideoCall) {
+  const docRef = doc(db, 'message', messageVideoCall.id)
+  const result = await setDoc(docRef, messageVideoCall)
+
+  return result
+}
+
+const getMessageRealtime = function (idMessage, callback) {
+  const unsubscribe = onSnapshot(doc(db, 'message', idMessage), (doc) => {
+    const user = {
+      id: doc.id,
+      ...doc.data(),
+    }
+    callback(user)
+  })
+
+  return unsubscribe
+}
+
+export {
+  saveMessage,
+  getMessageByConversation,
+  saveMessageVideoCall,
+  updateMessageVideoCall,
+  getMessageRealtime,
+}
