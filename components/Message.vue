@@ -118,8 +118,10 @@
                     isMyMessage(message) ? 'text-white' : 'text-[#333]'
                   }`"
                 >
-                  {{ $t('chatSide.endVideo') }} :
-                  {{ getTimeVideoCall(message) }}
+                  <span class="hidden sm:inline-block md:hidden xl:inline-block"
+                    >{{ $t('chatSide.endVideo') }} :</span
+                  >
+                  <span>{{ getTimeVideoCall(message) }}</span>
                 </p>
               </div>
               <div
