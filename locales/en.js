@@ -32,6 +32,8 @@ export default {
       cancel: 'Cancel',
       accept: 'Accept',
       unfriend: 'Unfriend',
+      chat: 'Chat',
+      info: 'Information',
     },
   },
   notify: {

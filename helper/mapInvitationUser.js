@@ -5,4 +5,6 @@ export const mapInvitationUser = function (invitation, users) {
       user: users[i],
     }
   }
+
+  return invitation
 }

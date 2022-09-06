@@ -32,6 +32,8 @@ export default {
       cancel: 'Hủy',
       accept: 'Chấp nhận',
       unfriend: 'Hủy kết bạn',
+      chat: 'Trò chuyện',
+      info: 'Thông tin cá nhân',
     },
   },
   notify: {

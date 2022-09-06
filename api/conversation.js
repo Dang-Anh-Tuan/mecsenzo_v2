@@ -23,18 +23,18 @@ const createConversation = async function (conversation) {
 const getIndividualConversationByMember = async function (member) {
   const result = await useFirestoreQueryCondition('conversation', [
     {
+      field: 'member',
+      operator: 'array-contains',
+      value: member,
+    },
+    {
       field: 'type',
       operator: '==',
       value: 'individual',
     },
-    {
-      field: 'member',
-      operator: 'array-contains-all',
-      value: member,
-    },
   ])
 
-  return result[0]
+  return result
 }
 
 const getConversationsSpace = function (currentEmail, callback, lastDoc) {
