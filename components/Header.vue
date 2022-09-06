@@ -72,7 +72,7 @@
             >
               <nuxt-link
                 :to="switchLocalePath(locale.code)"
-                class="flex-1"
+                class="flex-1 dark:text-dark_text_strong"
                 @click.native="handleToggleChooseLang(locale.code)"
                 >{{ locale.name }}
               </nuxt-link>
