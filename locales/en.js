@@ -1,4 +1,13 @@
 export default {
+  auth: {
+    login: 'Login',
+    register: 'Register',
+    password: 'Password',
+    fullNamePlaceholder: 'Enter your full name ...',
+    rePasswordPlaceholder: 'Confirm password',
+    haveAccount: 'Do you have account ?',
+    notHaveAccount: "Don't have an account?",
+  },
   nav: {
     profile: 'Profile',
     addFriend: 'Add Friend',

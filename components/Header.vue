@@ -71,7 +71,7 @@
               <nuxt-link
                 :to="switchLocalePath(locale.code)"
                 class="flex-1"
-                @click.native="handleToggleChooseLang"
+                @click.native="handleToggleChooseLang(locale.code)"
                 >{{ locale.name }}
               </nuxt-link>
               <div
@@ -172,6 +172,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { localize } from 'vee-validate'
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
 import ModalProfile from './ModalProfile.vue'
@@ -329,7 +330,8 @@ export default {
       }
     },
 
-    handleToggleChooseLang() {
+    handleToggleChooseLang(code) {
+      localize(code)
       this.handleCloseMenu()
       this.handleCloseNotify()
       this.isShowChooseLang = !this.isShowChooseLang

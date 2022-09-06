@@ -1,90 +1,105 @@
 <template>
-  <div class="w-[500px] m-auto mt-[150px]">
-    <form @submit.prevent="onSubmit">
-      <h3 class="text-[2rem] font-semibold">Sign Up</h3>
-      <div class="flex justify-center my-3">
-        <p ref="errorMsg" class="text-red-500 text-[1rem] hidden">Error</p>
-      </div>
-      <div
-        class="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5"
-      ></div>
-      <div class="mb-6">
-        <input
-          id="exampleFormControlInput2"
-          v-model="fullName"
-          type="text"
-          class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-          placeholder="Enter your full name ..."
-        />
-      </div>
-      <!-- Email input -->
-      <div class="mb-6">
-        <input
-          id="exampleFormControlInput2"
-          v-model="email"
-          type="text"
-          class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-          placeholder="Email address"
-        />
-      </div>
-
-      <!-- Password input -->
-      <div class="mb-6">
-        <input
-          id="exampleFormControlInput2"
-          v-model="password"
-          type="password"
-          class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-          placeholder="Password"
-        />
-      </div>
-
-      <div class="mb-6">
-        <input
-          id="exampleFormControlInput2"
-          v-model="rePassword"
-          type="password"
-          class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-          placeholder="Re - Password"
-        />
-      </div>
-
-      <div class="flex justify-between items-center mb-6">
-        <div class="form-group form-check">
-          <input
-            id="exampleCheck2"
-            type="checkbox"
-            class="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
-          />
-          <label
-            class="form-check-label inline-block text-gray-800"
-            for="exampleCheck2"
-            >Remember me</label
-          >
+  <div
+    class="relative m-auto mt-[100px] w-[400px] md:w-[500px] shadow-xl p-10 rounded-[25px] bg-white animate-[fadeUp_0.5s]"
+  >
+    <div class="flex justify-center mb-4">
+      <h3
+        class="text-dark_primary text-[1.6rem] md:text-[1.5rem] font-bold tracking-wider uppercase select-none"
+      >
+        {{ $t('auth.register') }}
+      </h3>
+    </div>
+    <ValidationObserver v-slot="{ handleSubmit }">
+      <form @submit.prevent="handleSubmit(onSubmit)">
+        <div class="flex justify-center my-3">
+          <p ref="errorMsg" class="text-red-500 text-[1rem] hidden">Error</p>
         </div>
-        <a href="#!" class="text-gray-800">Forgot password?</a>
-      </div>
-
-      <div class="text-center lg:text-left">
-        <button
-          type="submit"
-          class="w-full inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-        >
-          Register
-        </button>
-        <p class="text-sm font-semibold mt-2 pt-1 mb-0">
-          Do have an account?
-          <nuxt-link
-            :to="{
-              path: `/login`,
-              name: `login___${$i18n.locale}`,
-            }"
-            class="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out"
-            >Login</nuxt-link
+        <div class="mb-6">
+          <ValidationProvider
+            v-slot="{ errors }"
+            rules="required|maximumLen:30"
           >
-        </p>
-      </div>
-    </form>
+            <input
+              id="exampleFormControlInput2"
+              v-model="fullName"
+              type="text"
+              class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border-b-[2px] border-solid border-gray-300 transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-dark_primary focus:outline-none"
+              :placeholder="$t('auth.fullNamePlaceholder')"
+            />
+            <p class="text-red-500 text-[0.9rem] italic ml-4">
+              {{ errors[0] }}
+            </p>
+          </ValidationProvider>
+        </div>
+        <div class="mb-6">
+          <ValidationProvider v-slot="{ errors }" rules="required">
+            <input
+              id="exampleFormControlInput2"
+              v-model="email"
+              type="text"
+              class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border-b-[2px] border-solid border-gray-300 transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-dark_primary focus:outline-none"
+              placeholder="Email"
+              rule="required"
+            />
+            <p class="text-red-500 text-[0.9rem] italic ml-4">
+              {{ errors[0] }}
+            </p>
+          </ValidationProvider>
+        </div>
+
+        <div class="mb-6">
+          <ValidationProvider v-slot="{ errors }" rules="required">
+            <input
+              id="exampleFormControlInput2"
+              v-model="password"
+              type="password"
+              class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border-b-[2px] border-solid border-gray-300 transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-dark_primary focus:outline-none"
+              :placeholder="$t('auth.password')"
+              rule="required"
+            />
+            <p class="text-red-500 text-[0.9rem] italic ml-4">
+              {{ errors[0] }}
+            </p>
+          </ValidationProvider>
+        </div>
+
+        <div class="mb-6">
+          <ValidationProvider v-slot="{ errors }" rules="required">
+            <input
+              id="exampleFormControlInput2"
+              v-model="rePassword"
+              type="password"
+              class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border-b-[2px] border-solid border-gray-300 transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-dark_primary focus:outline-none"
+              :placeholder="$t('auth.rePasswordPlaceholder')"
+              rule="required"
+            />
+            <p class="text-red-500 text-[0.9rem] italic ml-4">
+              {{ errors[0] }}
+            </p>
+          </ValidationProvider>
+        </div>
+
+        <div class="text-center lg:text-left">
+          <button
+            type="submit"
+            class="w-full inline-block px-7 py-3 bg-dark_primary text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:opacity-75 hover:shadow-lg focus:opacity-75 focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out"
+          >
+            {{ $t('auth.register') }}
+          </button>
+          <p class="text-sm font-semibold mt-2 pt-1 mb-0">
+            {{ $t('auth.haveAccount') }}
+            <nuxt-link
+              :to="{
+                path: `/login`,
+                name: `login___${$i18n.locale}`,
+              }"
+              class="text-blue-600 hover:text-blue-700 focus:text-blue-700 transition duration-200 ease-in-out"
+              >{{ $t('auth.login') }}</nuxt-link
+            >
+          </p>
+        </div>
+      </form>
+    </ValidationObserver>
   </div>
 </template>
 

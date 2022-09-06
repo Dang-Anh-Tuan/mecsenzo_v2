@@ -102,32 +102,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { extend } from 'vee-validate'
 import FormField from './FormField.vue'
 import Avatar from './Avatar.vue'
 import Button from './Button.vue'
 import { colorConversation } from '~/constants/colorConversation'
 import { uploadImage } from '~/helper/FirebaseHelper'
 import { createConversation, updateConversation } from '~/api/conversation'
-
-extend('required', {
-  validate(value) {
-    return {
-      required: true,
-      valid: !['', null, undefined].includes(value),
-    }
-  },
-  computesRequired: true,
-  message: 'Field is required',
-})
-
-extend('maximumLen', {
-  validate(value, args) {
-    return value.length <= args.length
-  },
-  params: ['length'],
-  message: 'Must be least 30 characters',
-})
 
 export default {
   components: { FormField, Avatar, Button },
