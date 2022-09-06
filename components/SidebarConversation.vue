@@ -10,9 +10,7 @@
     <div class="relative w-full h-[48px]">
       <input
         type="text"
-        class="appearance-none outline-none w-full h-full p-[20px] rounded-full 
-        bg-gray-200 focus:bg-white focus:shadow-lg transition-all
-         duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[0.9rem] md:text-[1rem]"
+        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[0.9rem] md:text-[1rem]"
         :placeholder="$t('sidebarConversation.inputPlaceholder')"
         @input="handleChangeSearchKey"
       />
@@ -24,7 +22,7 @@
       </button>
     </div>
     <div
-      class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
+      class="container-conversation relative h-[36%] my-5 overflow-y-auto overflow-x-hidden"
       @scroll="handleScroll($event, handleLoadMoreIndividual)"
     >
       <div v-if="conversationIndividual">
@@ -86,6 +84,12 @@
           </div>
         </nuxt-link>
       </div>
+      <div
+        v-if="isShowLoaderIndividualConversation"
+        class="h-[100px] w-full bg-transparent absolute top-0 left-0 flex justify-center items-center"
+      >
+        <LoaderSideConversation />
+      </div>
     </div>
     <Separation />
     <div class="w-full h-[20px] flex justify-between items-center px-3">
@@ -100,7 +104,7 @@
       </button>
     </div>
     <div
-      class="container-conversation h-[36%] my-5 overflow-y-auto overflow-x-hidden"
+      class="container-conversation relative h-[36%] my-5 overflow-y-auto overflow-x-hidden"
       @scroll="handleScroll($event, handleLoadMoreSpaces)"
     >
       <nuxt-link
@@ -148,6 +152,12 @@
           </p>
         </div>
       </nuxt-link>
+      <div
+        v-if="isShowLoaderGroupConversation"
+        class="h-[100px] w-full bg-transparent absolute top-0 left-0 flex justify-center items-center"
+      >
+        <LoaderSideConversation />
+      </div>
     </div>
     <keep-alive>
       <AsyncResultSearchConversation v-show="getKeySearch" />
@@ -192,6 +202,9 @@ export default {
       unsubscribeGetIndividual() {},
       unsubscribeLoadMoreSpaces() {},
       unsubscribeLoadMoreIndividual() {},
+      isShowLoaderIndividualConversation: true,
+      isShowLoaderGroupConversation: true,
+
     }
   },
 
@@ -284,6 +297,8 @@ export default {
 
       const lengthDocs = conversationSpaceDocs.length
       this.lastDocConversationsSpace = conversationSpaceDocs[lengthDocs - 1]
+
+      this.isShowLoaderGroupConversation = false
     },
 
     loadMoreConversationSpace(conversationSpaceDocs) {
@@ -332,6 +347,8 @@ export default {
       this.conversationIndividual = conversationIndividual
       this.lastDocConversationIndividual =
         conversationSpaceDocs[conversationSpaceDocs.length - 1]
+
+      this.isShowLoaderIndividualConversation = false
     },
 
     async loadMoreConversationIndividual(conversationIndividualDocs) {
