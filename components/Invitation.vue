@@ -35,13 +35,13 @@
             :src-image="invitation.user.avatar"
             :first-char="invitation.user.fullName.charAt(0)"
           />
-          <p class="select-none text-[1.2rem] font-medium ml-3">
+          <p class="select-none text-[1.2rem] font-medium ml-3 dark:text-white">
             {{ invitation.user.fullName }}
           </p>
         </div>
         <div v-if="filter === 'approved'">
           <ButtonIcon class="group" color="#333">
-            <fa icon="ellipsis-vertical" />
+            <fa icon="ellipsis-vertical" class="dark:text-dark_text_light" />
             <div
               class="hidden absolute top-[100%] right-0 group-hover:flex flex-col w-[150px] shadow-xl z-[1000] bg-white after:contents-[''] after:w-full after:absolute after:h-[30px] after:left-0 after:top-[-30px] after:bg-transparent"
             >

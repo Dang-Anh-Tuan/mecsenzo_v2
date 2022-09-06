@@ -25,7 +25,7 @@
             :src-image="user && user.avatar"
             :first-char="user && user.fullName.charAt(0)"
           />
-          <p class="select-none text-[1.2rem] font-medium ml-3">
+          <p class="select-none text-[1.2rem] font-medium ml-3 dark:text-white">
             {{ user && user.fullName }}
           </p>
         </div>
