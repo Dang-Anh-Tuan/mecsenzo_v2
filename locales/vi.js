@@ -1,4 +1,13 @@
 export default {
+  auth: {
+    login: 'Đăng nhập',
+    register: 'Đăng ký',
+    password: 'Mật khẩu',
+    fullNamePlaceholder: 'Nhập họ tên ...',
+    rePasswordPlaceholder: 'Nhập lại mật khẩu',
+    haveAccount: 'Bạn đã có tài khoản ?',
+    notHaveAccount: 'Bạn chưa cho tài khoản?',
+  },
   nav: {
     profile: 'Thông tin cá nhân',
     addFriend: 'Thêm bạn bè',

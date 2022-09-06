@@ -28,6 +28,10 @@ module.exports = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0)' },
         },
+        fadeUp: {
+          '0%': { top: '20px', opacity: '0' },
+          '100%': { top: '0px', opacity: '1' },
+        },
         dotTyping: {
           '0%': {
             boxShadow:
@@ -56,6 +60,20 @@ module.exports = {
           '100%': {
             boxShadow:
               '9989px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10009px 0 0 0 #9880ff;',
+          },
+        },
+        drawIntro: {
+          '0%': {
+            strokeDashoffset: '1000',
+          },
+
+          '80%': {
+            strokeDashoffset: '0',
+            fill: 'transparent',
+          },
+          '100%': {
+            strokeDashoffset: '0',
+            fill: '#ff7200',
           },
         },
       },
