@@ -73,23 +73,12 @@
 </template>
 
 <script>
-import { extend } from 'vee-validate'
 import { getUserByEmail, setActiveUser } from '~/api/user.api'
 import Intro from '~/components/Intro.vue'
 
-extend('required', {
-  validate(value) {
-    return {
-      required: true,
-      valid: !['', null, undefined].includes(value),
-    }
-  },
-  computesRequired: true,
-  message: 'Field is required',
-})
-
 export default {
   name: 'Login',
+  components: { Intro },
   layout: 'auth',
   middleware: 'auth-forbidden',
   data() {
@@ -122,6 +111,5 @@ export default {
       }
     },
   },
-  components: { Intro },
 }
 </script>

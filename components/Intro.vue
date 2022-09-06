@@ -64,20 +64,12 @@
         </g>
       </svg>
     </div>
-    <audio
-      ref="audioIntro"
-      controls
-      class="absolute opacity-0"
-      src="@/assets/audio/intro.mp3"
-    ></audio>
   </div>
 </template>
 
 <script>
 export default {
   mounted() {
-    this.$refs.audioIntro.play()
-
     const containerIntro = this.$refs.intro
 
     setTimeout(() => {

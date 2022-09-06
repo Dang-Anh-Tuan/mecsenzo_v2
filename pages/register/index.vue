@@ -104,27 +104,7 @@
 </template>
 
 <script>
-import { extend } from 'vee-validate'
 import { createUser, getUserByEmail, setActiveUser } from '@/api/user.api'
-
-extend('required', {
-  validate(value) {
-    return {
-      required: true,
-      valid: !['', null, undefined].includes(value),
-    }
-  },
-  computesRequired: true,
-  message: 'Field is required',
-})
-
-extend('maximumLen', {
-  validate(value, args) {
-    return value.length <= args.length
-  },
-  params: ['length'],
-  message: 'Must be least 30 characters',
-})
 
 export default {
   layout: 'auth',
