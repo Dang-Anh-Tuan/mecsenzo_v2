@@ -3,7 +3,7 @@
     v-if="url"
     :class="`container-result ${isColorWhite ? 'container-result--white' : ''}`"
   >
-    <button class="btn-controller" @click="handleTogglePlayPreview">
+    <button class="btn-controller dark:text-white" @click="handleTogglePlayPreview">
       <fa
         v-if="isPreviewPause"
         icon="play"
@@ -15,7 +15,7 @@
       <div ref="processCurrent" class="process-current"></div>
     </div>
     <div
-      :class="`time-audio ${isColorWhite ? 'text-white' : 'text-[#888]'} ${
+      :class="`time-audio ${isColorWhite ? 'text-white' : 'text-[#888] dark:text-white'} ${
         currentTimePreview && totalTimePreview ? 'time-audio--show' : ''
       }`"
     >

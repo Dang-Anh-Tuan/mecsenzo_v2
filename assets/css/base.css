@@ -50,3 +50,7 @@ body {
 video {
   width: 100vw;
 }
+
+.dark > body {
+  background-color: #212332;
+}

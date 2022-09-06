@@ -16,8 +16,13 @@ module.exports = {
         dark_primary: '#ff7200',
         dark_primary_light: '#f49548',
         dark_bg: '#212332',
+        dark_bg_light: '#2a2d3e',
         success: '#00c24e',
         danger: '#f83349',
+        dark_bg_nav: '#242526',
+        dark_text_light: '#828488',
+        dark_text_strong: '#acafb4',
+        dark_bg_message: '#707070',
       },
       keyframes: {
         scaleDown: {

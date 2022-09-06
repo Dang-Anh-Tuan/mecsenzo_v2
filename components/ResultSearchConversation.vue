@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute w-full h-[85%] bg-white bottom-[10px] md:bottom-0 left-0 z-[1000] px-[20px]"
+    class="absolute w-full h-[85%] bg-white bottom-[10px] md:bottom-0 left-0 z-[1000] px-[20px] dark:bg-dark_bg_light"
   >
     <div
       class="container-conversation h-[90%] my-5 overflow-y-auto overflow-x-hidden"
@@ -15,7 +15,7 @@
             params: { id: conversation.id },
             name: `id___${$i18n.locale}`,
           }"
-          class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200"
+          class="h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 hover:bg-[rgba(255,255,255,0.1)]"
         >
           <div class="relative">
             <avatar
@@ -42,7 +42,7 @@
           <div class="conversation-content ml-4">
             <p
               :class="`select-none truncate text-ellipsis max-w-[180px] m
-              d:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              d:max-w-[120px] lg:max-w-[180px] h-[1.4rem]  dark:text-dark_text_strong
               ${getClassNameNotSeen(conversation)}`"
             >
               {{
@@ -53,7 +53,7 @@
             </p>
             <p
               :class="`select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] 
-              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]  dark:text-dark_text_light
               ${getClassNewMsgNotSeen(conversation)}`"
             >
               <span v-if="getLastMessage(conversation).type === 'text'">

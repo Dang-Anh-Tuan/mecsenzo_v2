@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="fileImageInput"
-    class="flex justify-between h-[100px] border-t-[1px] border-black mt-2"
+    class="flex justify-between h-[100px] border-t-[1px] border-black mt-2 dark:border-dark_text_strong"
   >
     <div class="relative flex items-center h-full max-w-[300px]">
       <img
@@ -20,7 +20,7 @@
       />
     </div>
     <button class="w-[50px] h-full" @click="handleClearTempInputImage">
-      <fa icon="xmark" />
+      <fa icon="xmark" class="dark:text-dark_text_strong" />
     </button>
   </div>
 </template>

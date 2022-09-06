@@ -18,7 +18,7 @@
         </div>
         <div class="conversation-content ml-4">
           <p
-            :class="`select-none font-semibold truncate  max-w-[80px] sm:max-w-[300px] 
+            :class="`select-none font-semibold truncate  max-w-[80px] sm:max-w-[300px] dark:text-white
               ${isShowSidebarConversation ? 'hidden' : ''}
               `"
           >

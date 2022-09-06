@@ -1,8 +1,10 @@
 <template>
   <nuxt-link :to="link" @click.native="handleCloseNotify">
     <div class="py-3 px-1 cursor-pointer border-b-[1px] border-b-[#939496]">
-      <p class="leading-[1.4rem]">
-        <span class="font-semibold">{{ sender }}</span>
+      <p class="leading-[1.4rem] dark:text-dark_text_light">
+        <span class="font-semibold dark:text-dark_text_strong">{{
+          sender
+        }}</span>
         {{ $t(getQueryTextNotifyContent) }}
       </p>
       <p class="mt-1 text-[0.9rem] italic text-gray-400">

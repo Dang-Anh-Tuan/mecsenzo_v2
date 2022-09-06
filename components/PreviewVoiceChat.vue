@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="isShowPreviewChatVoice"
-    class="`flex flex-row justify-between border-t-[1px] border-black mt-2 w-full relative `"
+    class="`flex flex-row justify-between border-t-[1px] mt-2 w-full relative dark:!border-dark_text_strong`"
   >
     <Recorder @change-data-audio="handleChangeDataChatVoice" />
     <button
       class="absolute top-0 right-0 w-[50px] h-full"
       @click="closePreview"
     >
-      <fa icon="xmark" />
+      <fa icon="xmark" class="dark:text-dark_text_strong" />
     </button>
   </div>
 </template>

@@ -2,7 +2,7 @@
   <div class="h-[10%] w-full flex items-center">
     <div class="flex justify-center items-center">
       <div
-        class="relative h-[40px] w-[40px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200"
+        class="relative h-[40px] w-[40px] rounded-full mr-2 flex items-center justify-center hover:bg-slate-200 hover:bg-[rgba(255,255,255,0.1)]"
       >
         <input
           id="input-image"
@@ -29,7 +29,7 @@
           ref="inputMessage"
           v-focus
           type="text"
-          class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200"
+          class="w-full px-3 py-2 pr-[60px] appearance-none outline-none rounded-full bg-slate-200 dark:bg-dark_bg_message dark:text-white"
           :disabled="isDisableInputMessage"
           :placeholder="$t('chatSide.inputPlaceholder')"
           @focus="handleFocusInputMessage"
@@ -51,7 +51,7 @@
           >
             <VEmojiPicker
               ref="emojiPicker"
-              class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] w-[200px] h-[330px]"
+              class="absolute right-[-50px] md:right-[0px] translate-y-[calc(-100%)] h-[330px]"
               :show-search="false"
               @select="handleSelectEmoji"
             />
@@ -138,6 +138,7 @@ export default {
       const inputMessageEl = this.$refs.inputMessage
       inputMessageEl.value = inputMessageEl.value + emoji.data
       inputMessageEl.focus()
+      this.$refs.inputMessage.focus()
       this.$emit('select-emoji', emoji)
     },
 

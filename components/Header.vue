@@ -1,5 +1,7 @@
 <template>
-  <header class="w-full h-[68px] bg-white fixed top-0 shadow-xl z-[1000]">
+  <header
+    class="w-full h-[68px] bg-white fixed top-0 shadow-xl z-[1000] dark:bg-dark_bg_nav dark:shadow-gray-500 dark:shadow-md"
+  >
     <div
       class="flex items-center max-w-[1200px] m-auto h-full justify-between px-4 xl:px-0"
     >
@@ -22,7 +24,7 @@
       <div class="h-full">
         <div class="relative flex items-center h-full">
           <div
-            class="noSelect relative flex items-center justify-center w-[40px] h-[40px] bg-slate-200 mr-3 sm:mr-6 rounded-full cursor-pointer"
+            class="noSelect relative flex items-center justify-center w-[40px] h-[40px] mr-3 sm:mr-6 rounded-full cursor-pointer bg-slate-100 hover:bg-slate-200 dark:text-white dark:bg-[rgba(255,255,255,0.3)] dark:hover:bg-[rgba(255,255,255,0.5)]"
             @click="handleToggleNotify"
           >
             <div
@@ -35,7 +37,7 @@
           </div>
           <div
             v-if="isShowNotify"
-            class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-40px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
+            class="notify-container absolute w-[350px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-40px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out] dark:bg-dark_bg_nav"
             @scroll="handleScroll"
           >
             <div v-for="(notify, index) in notifies" :key="index">
@@ -54,14 +56,14 @@
             </div>
           </div>
           <div
-            class="noSelect mr-3 sm:mr-6 flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-200 rounded-full cursor-pointer"
+            class="noSelect mr-3 sm:mr-6 flex flex-col justify-center items-center w-[40px] h-[40px] bg-slate-100 hover:bg-slate-200 rounded-full cursor-pointer dark:text-white dark:bg-[rgba(255,255,255,0.3)] dark:hover:bg-[rgba(255,255,255,0.5)]"
             @click="handleToggleChooseLang"
           >
             <fa icon="earth-asia" class="text-[1.2rem]" />
           </div>
           <div
             v-if="isShowChooseLang"
-            class="notify-container absolute w-[300px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-100px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out]"
+            class="notify-container absolute w-[300px] max-h-[70vh] overflow-y-auto px-4 py-4 bg-white shadow-xl top-[110%] right-[calc(100%-100px)] rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out animate-[leftIn_0.3s_ease-in-out] md:animate-[scaleDown_0.15s_ease-in-out] dark:bg-dark_bg_nav"
           >
             <div
               v-for="locale in availableLocales"
@@ -93,18 +95,18 @@
                 :first-char="user && user.fullName.charAt(0)"
               />
               <p
-                class="text-dark_bg leading-[1.4rem] text-[1.2rem] h-[1.4rem] ml-4 select-none"
+                class="text-dark_bg leading-[1.4rem] text-[1.2rem] h-[1.4rem] ml-4 select-none dark:text-white"
               >
                 {{ user && user.fullName }}
               </p>
               <fa
                 icon="caret-down"
-                class="hidden text-dark_bg text-[1.2rem] ml-2 md:block"
+                class="hidden text-dark_bg text-[1.2rem] ml-2 md:block dark:text-white"
               />
             </div>
 
             <div
-              class="sub-menu absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out"
+              class="sub-menu absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent z-[100] origin-top transition-all duration-150 ease-in-out dark:bg-dark_bg_nav"
             >
               <SubMenuItem
                 icon="user"
@@ -135,6 +137,7 @@
                 :content="$t('nav.darkMode')"
                 :is-dark-mode="true"
                 type="button"
+                :handle-click-sub-menu-item="handleChangeModeDarkTheme"
                 @closeNotify="handleCloseNotifyAndMenu"
               />
               <SubMenuItem
@@ -233,6 +236,19 @@ export default {
       },
       this.lastDocNotify
     )
+  },
+
+  mounted() {
+    let currentTheme = localStorage.getItem('theme')
+    if (!currentTheme) {
+      currentTheme = 'light'
+      localStorage.setItem('theme', currentTheme)
+    }
+
+    if (currentTheme === 'dark') {
+      const htmlEl = document.querySelector('html')
+      htmlEl.classList.add('dark')
+    }
   },
 
   methods: {
@@ -339,6 +355,21 @@ export default {
 
     handleCloseChooseLang() {
       this.isShowChooseLang = false
+    },
+
+    handleChangeModeDarkTheme() {
+      const htmlEl = document.querySelector('html')
+      htmlEl.classList.toggle('dark')
+
+      let currentTheme = localStorage.getItem('theme')
+      if (!currentTheme) {
+        currentTheme = 'dark'
+        localStorage.setItem('theme', currentTheme)
+      } else if (currentTheme === 'light') {
+        localStorage.setItem('theme', 'dark')
+      } else {
+        localStorage.setItem('theme', 'light')
+      }
     },
   },
 }

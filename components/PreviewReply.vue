@@ -1,14 +1,16 @@
 <template>
   <div
     v-if="replyMessage"
-    :class="`flex justify-between  border-t-[1px] border-black mt-2 
+    :class="`flex justify-between  border-t-[1px] border-black mt-2  dark:text-dark_text_strong dark:border-dark_text_strong
       ${replyMessage.type === 'image' ? 'h-[100px] mb-2' : 'h-[50px]'}
       `"
   >
     <div class="w-[50%]">
       <p class="text-[0.9rem] truncate max-w-[200px] md:max-w-[300px]">
         {{ $t('chatSide.reply') }}
-        <span class="font-semibold">{{ replyMessage.user.fullName }}</span>
+        <span class="font-semibold dark:text-dark_text_strong">{{
+          replyMessage.user.fullName
+        }}</span>
       </p>
       <p
         v-if="replyMessage.type === 'text'"
