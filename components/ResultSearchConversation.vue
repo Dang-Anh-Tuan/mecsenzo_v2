@@ -95,7 +95,6 @@ export default {
       getCurrentEmail: 'account/getAccount',
     }),
 
-
     getClassNameNotSeen() {
       return (conversation) =>
         conversation.seen.includes(this.getCurrentEmail) ? '' : 'font-medium'

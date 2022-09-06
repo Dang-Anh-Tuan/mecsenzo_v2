@@ -93,6 +93,7 @@ export default {
 
           this.lastMessageVideoCall = lastMessages.filter((message) => {
             return (
+              message &&
               message.type === 'videoCall' &&
               message.status === 'pending' &&
               message.user.email !== this.getCurrentEmail &&

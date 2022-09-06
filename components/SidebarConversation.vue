@@ -36,6 +36,7 @@
           }"
           :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
                   ${getClassBgCurrentConversation(conversation.id)}`"
+          @click.native="handleSeenConversation(conversation)"
         >
           <div class="relative">
             <avatar
@@ -110,6 +111,7 @@
         }"
         :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
         ${getClassBgCurrentConversation(conversation.id)}`"
+        @click.native="handleSeenConversation(conversation)"
       >
         <avatar
           :is-have-avatar="!!conversation.thumb"
@@ -159,6 +161,7 @@ import Separation from './Separation.vue'
 import {
   getConversationsIndividual,
   getConversationsSpace,
+  updateConversation,
 } from '~/api/conversation'
 import { mergeUseIndividualConversation } from '~/helper/conversation'
 
@@ -363,6 +366,20 @@ export default {
         'searchSidebarConversation/setKeySearch',
         e.target.value
       )
+    },
+
+    async handleSeenConversation(conversation) {
+      const seenOfConversation = conversation.seen
+      const newSeenOfConversation = seenOfConversation.includes(
+        this.getCurrentEmail
+      )
+        ? seenOfConversation
+        : [...seenOfConversation, this.getCurrentEmail]
+
+      await updateConversation({
+        ...conversation,
+        seen: newSeenOfConversation,
+      })
     },
   },
 }
