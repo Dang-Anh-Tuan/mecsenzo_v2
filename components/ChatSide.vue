@@ -1,7 +1,7 @@
 <template>
   <div
-    :class="`flex-1 flex flex-col ml-0 md:ml-4 bg-white shadow-2xl rounded-[20px] 
-    p-[36px] sm:pl-[100px]  md:pl-[36px] overflow-x-hidden 
+    :class="`flex-1 flex flex-col ml-0 md:ml-4 bg-white shadow-2xl rounded-[20px]  
+    p-[36px] sm:pl-[100px]  md:pl-[36px] overflow-x-hidden dark:bg-dark_bg_light
     ${getShowSidebarConversation ? 'pl-[100px]' : 'pl-[36px]'}
     `"
   >

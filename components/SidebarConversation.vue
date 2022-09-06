@@ -2,6 +2,7 @@
   <div
     :class="`relative container-sidebar w-[30%] h-full py-[36px] px-[20px] 
     bg-white shadow-lg sm:shadow-2xl rounded-[20px] z-[50] 
+    dark:bg-dark_bg_light
     ${
       getShowSidebarConversation ? 'translate-x-0' : 'translate-x-[-100px]'
     }  sm:translate-x-0`"
@@ -9,7 +10,9 @@
     <div class="relative w-full h-[48px]">
       <input
         type="text"
-        class="appearance-none outline-none w-full h-full p-[20px] rounded-full bg-gray-200 focus:bg-white focus:shadow-lg transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[1.1rem] md:text-[1.2rem]"
+        class="appearance-none outline-none w-full h-full p-[20px] rounded-full 
+        bg-gray-200 focus:bg-white focus:shadow-lg transition-all
+         duration-150 ease-in-out opacity-0 group-hover:opacity-100 text-[0.9rem] md:text-[1rem]"
         :placeholder="$t('sidebarConversation.inputPlaceholder')"
         @input="handleChangeSearchKey"
       />
@@ -34,7 +37,7 @@
             params: { id: conversation.id },
             name: `id___${$i18n.locale}`,
           }"
-          :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+          :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 hover:bg-[rgba(255,255,255,0.1)]
                   ${getClassBgCurrentConversation(conversation.id)}`"
           @click.native="handleSeenConversation(conversation)"
         >
@@ -55,14 +58,14 @@
           <div class="conversation-content ml-4">
             <p
               :class="`select-none truncate text-ellipsis max-w-[180px] 
-              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]  dark:text-dark_text_strong
               ${getClassNameNotSeen(conversation)}`"
             >
               {{ conversation.partnerUser.fullName }}
             </p>
             <p
               :class="`select-none truncate text-ellipsis text-[0.9rem] max-w-[180px] 
-              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+              md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] dark:text-dark_text_light
               ${getClassNewMsgNotSeen(conversation)}`"
             >
               <span v-if="getLastMessage(conversation).type === 'text'">
@@ -86,7 +89,7 @@
     </div>
     <Separation />
     <div class="w-full h-[20px] flex justify-between items-center px-3">
-      <p class="heading-space text-[1.1rem] hidden">
+      <p class="heading-space text-[1.1rem] hidden dark:text-white">
         {{ $t('sidebarConversation.spaces') }}
       </p>
       <button
@@ -109,7 +112,7 @@
           params: { id: conversation.id },
           name: `id___${$i18n.locale}`,
         }"
-        :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200 
+        :class="`h-[54px] mb-3 flex items-center cursor-pointer hover:bg-slate-200  hover:bg-[rgba(255,255,255,0.1)]
         ${getClassBgCurrentConversation(conversation.id)}`"
         @click.native="handleSeenConversation(conversation)"
       >
@@ -122,7 +125,7 @@
           <p
             :class="`select-none truncate 
             text-ellipsis max-w-[180px] 
-            md:max-w-[120px] lg:max-w-[180px] h-[1.4rem] 
+            md:max-w-[120px] lg:max-w-[180px] h-[1.4rem]  dark:text-dark_text_strong
             ${getClassNameNotSeen(conversation)}`"
           >
             {{ conversation.name }}
@@ -130,7 +133,7 @@
           <p
             v-if="getLastMessage(conversation)"
             :class="`select-none truncate text-ellipsis text-[0.9rem] 
-            max-w-[180px] md:max-w-[120px] lg:max-w-[180px]
+            max-w-[180px] md:max-w-[120px] lg:max-w-[180px] dark:text-dark_text_light
             h-[1.4rem] ${getClassNewMsgNotSeen(conversation)}`"
           >
             <span v-if="getLastMessage(conversation).type === 'text'">

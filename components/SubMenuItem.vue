@@ -5,23 +5,23 @@
     @click.prevent="handleClickBtn"
   >
     <div
-      class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
+      class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 dark:text-dark_text_strong"
     >
       <fa :icon="icon" />
     </div>
     <div>
       <p
-        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 select-none"
+        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 select-none dark:text-dark_text_strong"
       >
         {{ content }}
       </p>
     </div>
     <div
       v-if="isDarkMode"
-      class="relative w-[68px] h-[30px] bg-[#939496] rounded-full ml-5"
+      class="relative w-[68px] h-[30px] bg-[#939496] rounded-full ml-5 dark:bg-blue-400"
     >
       <div
-        class="absolute top-[2px] left-1 w-[26px] h-[26px] bg-slate-600 rounded-full"
+        class="absolute top-[2px] left-1 w-[26px] h-[26px] bg-slate-600 rounded-full dark:left-[38px] dark:bg-white transform-all duration-300"
       ></div>
     </div>
   </div>
@@ -32,23 +32,23 @@
     @click.native="handleCloseNotify"
   >
     <div
-      class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
+      class="w-[30px] text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 dark:text-dark_text_strong"
     >
       <fa :icon="icon" />
     </div>
     <div>
       <p
-        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300"
+        class="text-[1.2rem] text-[#939496] group-hover:text-dark_primary transition-all duration-300 dark:text-dark_text_strong"
       >
         {{ content }}
       </p>
     </div>
     <div
       v-if="isDarkMode"
-      class="relative w-[68px] h-[30px] bg-[#939496] rounded-full ml-5"
+      class="relative w-[68px] h-[30px] bg-[#939496] rounded-full ml-5 dark:bg-blue-400"
     >
       <div
-        class="absolute top-[2px] left-1 w-[26px] h-[26px] bg-slate-600 rounded-full"
+        class="absolute top-[2px] left-1 w-[26px] h-[26px] bg-slate-600 rounded-full dark:left-[38px] dark:bg-white transform-all duration-300"
       ></div>
     </div>
   </nuxt-link>

@@ -22,11 +22,11 @@
           v-if="message.reply !== null"
           :href="`#${message.reply.id}`"
           :class="`ml-2 rounded-[10px] max-w-full 
-                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa]'}
+                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa] dark:bg-[rgba(255,255,255,0.1)]'}
                 `"
         >
           <div v-if="message.reply.type === 'text'" class="p-2">
-            <p class="text-[1rem] text-gray-500 max-w-full truncate">
+            <p class="text-[1rem] text-gray-500 max-w-full truncate dark:text-dark_text_light">
               {{ message.reply.content }}
             </p>
           </div>
@@ -37,17 +37,17 @@
           </div>
           <div
             v-else-if="message.reply.type === 'image'"
-            :class="`relative 
+            :class="`relative  max-w-[50%]
             ${isMyMessage(message) ? 'flex justify-end' : ''} 
              `"
           >
             <img
               :src="message.reply.content"
               alt="image message"
-              class="max-w-[50%] rounded-[10px] cursor-pointer select-none noSelect"
+              class=" rounded-[10px] cursor-pointer select-none noSelect"
             />
             <div
-              class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.6)]"
+              class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.4)]"
             ></div>
           </div>
         </a>
@@ -57,13 +57,15 @@
             classes: 'tooltip tooltip--left',
           }"
           :class="`ml-2 rounded-[10px] max-w-full bg-[#e4e6eb] ${
-            isMyMessage(message) ? getBgMessage : ''
+            isMyMessage(message) ? getBgMessage : 'dark:bg-dark_bg_message'
           } `"
         >
           <div v-if="message.type === 'text'" class="p-2">
             <p
               :class="`text-[1.1rem]  truncate max-w-full ${
-                isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                isMyMessage(message)
+                  ? 'text-white'
+                  : 'text-[#333] dark:text-white'
               }`"
             >
               {{ message.content }}
@@ -148,15 +150,15 @@
         ${
           isMyMessage(message)
             ? 'right-2 before:left-[100%]'
-            : ' before:right-[100%]'
+            : 'left-2 before:right-[100%]'
         }
          `"
       >
         <button
-          class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200"
+          class="h-[32px] w-[32px] rounded-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-[rgba(255,255,255,0.1)]"
           @click="handleSetReplyMessage(message)"
         >
-          <fa icon="reply" />
+          <fa icon="reply" class="dark:text-dark_text_light" />
         </button>
       </div>
     </div>

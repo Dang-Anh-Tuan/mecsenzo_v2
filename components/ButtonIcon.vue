@@ -2,7 +2,7 @@
   <button
     ref="btn"
     :type="type"
-    class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200"
+    class="p-2 w-[40px] h-[40px] rounded-full text-[1.2rem] flex justify-center items-center hover:bg-slate-200 hover:bg-[rgba(225,255,255,0.1)]"
     @click="handleClick"
   >
     <slot></slot>
