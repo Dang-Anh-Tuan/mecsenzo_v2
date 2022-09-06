@@ -82,7 +82,6 @@ import Button from './Button.vue'
 import { uploadImage } from '~/helper/FirebaseHelper'
 import { getUserByEmail, setAvatarUser, updateUser } from '~/api/user.api'
 
-
 export default {
   components: { FormField, Avatar, Button },
 
@@ -90,7 +89,12 @@ export default {
     isShow: Boolean,
   },
 
-  emits: ['closeModal'],
+  emits: [
+    'closeModal',
+    'update:user',
+    'set-percent-upload',
+    'clear-percent-upload',
+  ],
 
   data() {
     return {
@@ -132,6 +136,7 @@ export default {
       this.updateInfoUser()
       await setAvatarUser(urlAvatar)
       this.closeModal()
+      this.clearPercentUploadAvatar()
     },
 
     handleEditProfile() {
@@ -139,7 +144,8 @@ export default {
         uploadImage(
           `user-avatar`,
           this.fileAvatar,
-          this.handleImageUpdateComplete
+          this.handleImageUpdateComplete,
+          this.setPercentUploadAvatar
         )
         this.$emit('update:user', {
           newUser: this.user,
@@ -150,6 +156,14 @@ export default {
         this.closeModal()
         this.$emit('update:user')
       }
+    },
+
+    setPercentUploadAvatar(percent) {
+      this.$emit('set-percent-upload', percent)
+    },
+
+    clearPercentUploadAvatar() {
+      this.$emit('clear-percent-upload')
     },
   },
 }

@@ -86,7 +86,7 @@ export default {
     ],
     lazy: true,
     langDir: 'locales/',
-    defaultLocale: 'vi',
+    defaultLocale: 'en',
   },
 
   fontawesome: {

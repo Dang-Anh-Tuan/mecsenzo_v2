@@ -168,7 +168,15 @@
       <ModalProfile
         @closeModal="closeModalProfile"
         @update:user="handleUpdateUser"
+        @set-percent-upload="setPercentUploadAvatar"
+        @clear-percent-upload="clearPercentUploadAvatar"
       />
+      <div
+        v-if="percentUploadAvatar"
+        class="absolute top-0 left-0 bottom-0 right-0 w-[100vw] h-[100vh] overflow-hidden z-[1000] bg-[rgba(0,0,0,0.5)]"
+      >
+        <ProgressLoader  size="large" :percent="percentUploadAvatar" />
+      </div>
     </div>
   </header>
 </template>
@@ -178,13 +186,14 @@ import { mapGetters } from 'vuex'
 import { localize } from 'vee-validate'
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
+import ProgressLoader from './ProgressLoader.vue'
 import ModalProfile from './ModalProfile.vue'
 import NotifyItem from './NotifyItem.vue'
 import { getUserByEmail, setActiveUser } from '~/api/user.api'
 import { getNotify, seenNotifies } from '~/api/notify'
 
 export default {
-  components: { Avatar, SubMenuItem, ModalProfile, NotifyItem },
+  components: { Avatar, SubMenuItem, ModalProfile, NotifyItem, ProgressLoader },
 
   data() {
     return {
@@ -195,6 +204,7 @@ export default {
       notifies: null,
       lastDocNotify: null,
       isShowChooseLang: false,
+      percentUploadAvatar: null,
     }
   },
 
@@ -371,6 +381,16 @@ export default {
         localStorage.setItem('theme', 'light')
       }
     },
+
+    setPercentUploadAvatar(percent) {
+      this.percentUploadAvatar = percent
+    },
+
+    clearPercentUploadAvatar() {
+      this.percentUploadAvatar = null
+      
+    },
+  
   },
 }
 </script>
