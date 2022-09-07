@@ -5,6 +5,9 @@
     ${getShowSidebarConversation ? 'pl-[100px]' : 'pl-[36px]'}
     `"
   >
+    <div v-if="getIsShowLoader" class="h-[50px]">
+      <LoaderUser />
+    </div>
     <HeaderChatSide
       v-if="conversationRealtime"
       :info-conversation="getHeaderChatSideData"
@@ -271,6 +274,10 @@ export default {
         conversation: this.conversationRealtime,
         statusPartner: this.getStatusPartner,
       }
+    },
+
+    getIsShowLoader() {
+      return !this.conversationRealtime
     },
   },
 

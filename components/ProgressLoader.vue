@@ -3,6 +3,10 @@
     ref="container"
     class="absolute flex items-center justify-center top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
   >
+    <p v-if="size === 'large'" class="absolute text-[1.2rem] text-white">
+      {{ percent.toFixed(0) }}%
+    </p>
+
     <svg class="flex justify-center items-center w-full h-full">
       <circle
         ref="circleAll"

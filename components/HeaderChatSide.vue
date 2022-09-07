@@ -77,7 +77,7 @@ export default {
   props: {
     infoConversation: {
       type: Object,
-      default: () => {},
+      default: () => null,
     },
     isShowSidebarConversation: Boolean,
   },
