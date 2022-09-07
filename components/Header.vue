@@ -175,7 +175,7 @@
         @closeModal="closeModalProfile"
         @update:user="handleUpdateUser"
         @set-percent-upload="setPercentUploadAvatar"
-        @clear-percent-upload="clearPercentUploadAvatar"
+        @clear-percent-upload="setPercentUploadAvatar(null)"
       />
       <div
         v-if="percentUploadAvatar"
@@ -402,9 +402,7 @@ export default {
       this.percentUploadAvatar = percent
     },
 
-    clearPercentUploadAvatar() {
-      this.percentUploadAvatar = null
-    },
+
   },
 }
 </script>

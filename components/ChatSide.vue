@@ -277,10 +277,7 @@ export default {
     },
 
     getIsShowLoader() {
-      if (!this.conversationRealtime) {
-        return true
-      }
-      return false
+      return !this.conversationRealtime
     },
   },
 
