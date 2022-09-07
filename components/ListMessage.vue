@@ -7,6 +7,9 @@
     @scroll="onScrollContainerMessage"
   >
     <div class="h-[90%] flex flex-col-reverse justify-end">
+      <div v-if="!listMessageData.listMessage">
+        <LoaderMessage />
+      </div>
       <ListMessageFooter
         :footer-list-message-data="listMessageData.footerData"
       />

@@ -88,7 +88,13 @@
             ref="mainMenu"
             class="main-menu flex justify-center items-center md:cursor-pointer shadow-xl md:shadow-none"
           >
-            <div class="flex justify-center items-center py-3 md:py-0">
+            <div v-if="isShowLoaderUser" class="h-full">
+              <LoaderUser />
+            </div>
+            <div
+              v-if="user"
+              class="flex justify-center items-center py-3 md:py-0"
+            >
               <avatar
                 :is-have-avatar="!!avatar"
                 :src-image="avatar"
@@ -175,7 +181,7 @@
         v-if="percentUploadAvatar"
         class="absolute top-0 left-0 bottom-0 right-0 w-[100vw] h-[100vh] overflow-hidden z-[1000] bg-[rgba(0,0,0,0.5)]"
       >
-        <ProgressLoader  size="large" :percent="percentUploadAvatar" />
+        <ProgressLoader size="large" :percent="percentUploadAvatar" />
       </div>
     </div>
   </header>
@@ -189,11 +195,19 @@ import SubMenuItem from './SubMenuItem.vue'
 import ProgressLoader from './ProgressLoader.vue'
 import ModalProfile from './ModalProfile.vue'
 import NotifyItem from './NotifyItem.vue'
+import LoaderUser from './LoaderUser.vue'
 import { getUserByEmail, setActiveUser } from '~/api/user.api'
 import { getNotify, seenNotifies } from '~/api/notify'
 
 export default {
-  components: { Avatar, SubMenuItem, ModalProfile, NotifyItem, ProgressLoader },
+  components: {
+    Avatar,
+    SubMenuItem,
+    ModalProfile,
+    NotifyItem,
+    ProgressLoader,
+    LoaderUser,
+  },
 
   data() {
     return {
@@ -205,6 +219,7 @@ export default {
       lastDocNotify: null,
       isShowChooseLang: false,
       percentUploadAvatar: null,
+      isShowLoaderUser: true,
     }
   },
 
@@ -264,6 +279,7 @@ export default {
   methods: {
     async setUser() {
       this.user = await getUserByEmail(this.getCurrentEmail)
+      this.isShowLoaderUser = false
     },
 
     handleLogout() {
@@ -388,9 +404,7 @@ export default {
 
     clearPercentUploadAvatar() {
       this.percentUploadAvatar = null
-      
     },
-  
   },
 }
 </script>
