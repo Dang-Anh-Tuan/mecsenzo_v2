@@ -8,6 +8,10 @@
     >
       <avatar
         v-if="!isMyMessage(message)"
+        v-tooltip.top-start="{
+          content: message.user && message.user.fullName,
+          classes: 'tooltip tooltip--left',
+        }"
         :is-have-avatar="!!message.user.avatar"
         :src-image="message.user.avatar"
         :first-char="message.user && message.user.fullName.charAt(0)"
@@ -22,11 +26,17 @@
           v-if="message.reply !== null"
           :href="`#${message.reply.id}`"
           :class="`ml-2 rounded-[10px] max-w-full 
-                ${message.reply.type === 'image' ? '' : 'bg-[#f6f9fa] dark:bg-[rgba(255,255,255,0.1)]'}
+                ${
+                  message.reply.type === 'image'
+                    ? ''
+                    : 'bg-[#f6f9fa] dark:bg-[rgba(255,255,255,0.1)]'
+                }
                 `"
         >
           <div v-if="message.reply.type === 'text'" class="p-2">
-            <p class="text-[1rem] text-gray-500 max-w-full truncate dark:text-dark_text_light">
+            <p
+              class="text-[1rem] text-gray-500 max-w-full truncate dark:text-dark_text_light"
+            >
               {{ message.reply.content }}
             </p>
           </div>
@@ -44,7 +54,7 @@
             <img
               :src="message.reply.content"
               alt="image message"
-              class=" rounded-[10px] cursor-pointer select-none noSelect"
+              class="rounded-[10px] cursor-pointer select-none noSelect"
             />
             <div
               class="absolute w-full h-full top-0 left-0 rounded-[10px] bg-[rgba(255,255,255,0.4)]"
