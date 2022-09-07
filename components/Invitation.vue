@@ -20,7 +20,12 @@
         <fa icon="caret-down" class="text-dark_bg text-[1.2rem] ml-2" />
       </div>
     </div>
-
+    <div
+      v-if="isShowLoader"
+      class="h-[200px] w-full flex justify-center items-center"
+    >
+      <LoaderSideConversation />
+    </div>
     <div
       class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full my-6 overflow-y-auto max-h-[400px]"
     >
@@ -96,6 +101,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Avatar from './Avatar.vue'
+import LoaderSideConversation from './LoaderSideConversation.vue'
 import {
   acceptInvitation,
   deleteInvitation,
@@ -118,7 +124,7 @@ import {
 } from '~/api/conversation'
 
 export default {
-  components: { Avatar },
+  components: { Avatar, LoaderSideConversation },
 
   data() {
     return {
@@ -128,6 +134,7 @@ export default {
       invitationsReceived: [],
       currentUser: null,
       profileFriend: null,
+      isShowLoader: true,
     }
   },
 
@@ -154,6 +161,8 @@ export default {
     this.invitationsReceived = await getPendingInvitationReceived(
       this.getCurrentEmail
     )
+
+    this.isShowLoader = false
 
     const emailReceiverInvitation = this.invitationsSent.map(
       (invitation) => invitation.receiverEmail
