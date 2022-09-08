@@ -101,4 +101,10 @@ export default {
     busy: 'Người dùng bận',
     videoCallEnd: 'Cuộc trò chuyện đã kết thúc',
   },
+  chart: {
+    totalMessage: 'Tổng tin nhắn',
+    chartTotalMessage: 'Thống kê tổng tin nhắn',
+    timeReply: 'Thời gian trả lời tin nhắn trung bình ( phút )',
+    averageMessagePerDay: 'Tin nhắn trung bình mỗi ngày',
+  },
 }

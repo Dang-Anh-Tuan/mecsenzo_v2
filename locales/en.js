@@ -101,4 +101,10 @@ export default {
     busy: 'Busy',
     videoCallEnd: 'This video call have been ended',
   },
+  chart: {
+    totalMessage: 'Total Message',
+    chartTotalMessage: 'Statistic total message',
+    timeReply: 'Average time reply ( minute )',
+    averageMessagePerDay: 'Average message per day',
+  },
 }
