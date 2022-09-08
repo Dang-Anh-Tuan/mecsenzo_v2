@@ -151,6 +151,23 @@ const getConversationOfUserRealtime = function (
   return unsubscribe
 }
 
+const getConversationIndividualByEmail = async function (email) {
+  const result = await useFirestoreQueryCondition('conversation', [
+    {
+      field: 'member',
+      operator: 'array-contains',
+      value: email,
+    },
+    {
+      field: 'type',
+      operator: '==',
+      value: 'individual',
+    },
+  ])
+
+  return result
+}
+
 export {
   createConversation,
   getIndividualConversationByMember,
@@ -161,4 +178,5 @@ export {
   updateConversation,
   getConversationOfUser,
   getConversationOfUserRealtime,
+  getConversationIndividualByEmail,
 }

@@ -48,11 +48,11 @@ const formatDate = function (
 
   if (month) {
     if (!formatStringDate) {
-      formatStringDate += `${formatTime(timestamp.getMonth())}`
+      formatStringDate += `${formatTime(timestamp.getMonth() + 1)}`
     } else if (!date) {
-      formatStringDate += ` ${formatTime(timestamp.getMonth())}`
+      formatStringDate += ` ${formatTime(timestamp.getMonth() + 1)}`
     } else {
-      formatStringDate += `/${formatTime(timestamp.getMonth())}`
+      formatStringDate += `/${formatTime(timestamp.getMonth() + 1)}`
     }
   }
 

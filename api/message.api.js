@@ -5,7 +5,7 @@ import {
   onSnapshot,
   setDoc,
 } from '@firebase/firestore'
-import { useFirestoreRealtimeQuery } from './core'
+import { useFirestoreQueryCondition, useFirestoreRealtimeQuery } from './core'
 import { constant } from '~/constants/constant'
 import { db } from '~/firebase/config'
 
@@ -95,10 +95,23 @@ const getMessageRealtime = function (idMessage, callback) {
   return unsubscribe
 }
 
+const getAllMessageByIdConversation = async function (idConversation) {
+  const result = await useFirestoreQueryCondition('message', [
+    {
+      field: 'conversation',
+      operator: '==',
+      value: idConversation,
+    },
+  ])
+
+  return result
+}
+
 export {
   saveMessage,
   getMessageByConversation,
   saveMessageVideoCall,
   updateMessageVideoCall,
   getMessageRealtime,
+  getAllMessageByIdConversation,
 }
