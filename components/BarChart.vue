@@ -60,13 +60,6 @@ export default {
       default: () => {},
     },
   },
-
-  mounted() {
-    const chartInstance = this.$refs.bar.getCurrentChart().canvas
-    const ctx = chartInstance.getContext('2d')
-
-    ctx.fillStyle = 'blue'
-  },
 }
 </script>
 
