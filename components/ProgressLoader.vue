@@ -63,12 +63,24 @@ export default {
         medium: 250,
         large: 520,
       },
+      totalLengthCircle: null,
     }
+  },
+
+  watch: {
+    percent: {
+      handler(newValue) {
+        const percentFixed = newValue.toFixed(0)
+        this.$refs.circlePercent.style.strokeDashoffset =
+          this.totalLengthCircle - (percentFixed / 100) * this.totalLengthCircle
+      },
+    },
   },
 
   mounted() {
     const radiusCircle = Number(this.$refs.circleAll.getAttribute('r'))
     const totalLengthCircle = 2 * Math.PI * radiusCircle
+    this.totalLengthCircle = totalLengthCircle
 
     this.$refs.container.style.width = this.sizeWidth[this.size] + 'px'
     this.$refs.container.style.height = this.sizeWidth[this.size] + 'px'
