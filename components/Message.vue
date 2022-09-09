@@ -119,7 +119,9 @@
               <p
                 v-if="message.status === 'cancel'"
                 :class="`text-[1rem]  truncate max-w-full ${
-                  isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                  isMyMessage(message)
+                    ? 'text-white'
+                    : 'text-[#333] dark:text-white'
                 }`"
               >
                 {{ $t('chatSide.cancelVideo') }}
@@ -127,7 +129,9 @@
               <div v-if="message.status === 'end'">
                 <p
                   :class="`text-[1rem]  truncate max-w-full ${
-                    isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                    isMyMessage(message)
+                      ? 'text-white'
+                      : 'text-[#333] dark:text-white'
                   }`"
                 >
                   <span class="hidden sm:inline-block md:hidden xl:inline-block"
