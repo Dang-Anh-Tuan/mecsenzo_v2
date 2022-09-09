@@ -111,7 +111,7 @@
             >
               <p
                 :class="`text-[1rem]  truncate max-w-full font-semibold ${
-                  isMyMessage(message) ? 'text-white' : 'text-[#333]'
+                  isMyMessage(message) ? 'text-white' : 'text-[#333] dark:text-white'
                 }`"
               >
                 {{ $t('chatSide.videoCall') }}
