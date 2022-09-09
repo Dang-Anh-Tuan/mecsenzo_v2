@@ -42,6 +42,12 @@ export default {
     }
   },
 
+  head() {
+    return {
+      title: this.$t('title.statistic'),
+    }
+  },
+
   computed: {
     ...mapGetters({
       getCurrentEmail: 'account/getAccount',

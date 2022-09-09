@@ -184,6 +184,7 @@
         <ProgressLoader size="large" :percent="percentUploadAvatar" />
       </div>
     </div>
+    <VideoCallPending />
   </header>
 </template>
 

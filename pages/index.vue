@@ -35,6 +35,12 @@ export default {
 
   middleware: ['check-auth', 'auth-required'],
 
+  head() {
+    return {
+      title: 'Mecsenzo',
+    }
+  },
+
   computed: {
     ...mapGetters({
       getShowSidebarConversation: 'sidebarConversation/getIsShow',

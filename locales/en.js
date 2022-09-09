@@ -107,4 +107,9 @@ export default {
     timeReply: 'Average time reply ( minute )',
     averageMessagePerDay: 'Average message per day',
   },
+  title: {
+    addFriend: 'Add Friend',
+    statistic: 'Statistic',
+    newMessage: 'New message from ',
+  },
 }

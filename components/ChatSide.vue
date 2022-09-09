@@ -174,6 +174,12 @@ export default {
     }
   },
 
+  head() {
+    return {
+      title: this.getTitlePage,
+    }
+  },
+
   computed: {
     ...mapGetters({
       getCurrentMembers: 'conversation/getCurrentMembers',
@@ -284,6 +290,16 @@ export default {
 
     getIsShowLoader() {
       return !this.conversationRealtime
+    },
+
+    getTitlePage() {
+      if (this.conversationRealtime) {
+        if (this.conversationRealtime.type === 'individual') {
+          return this.conversationRealtime.partnerUser.fullName
+        }
+        return this.conversationRealtime.name
+      }
+      return 'Mecsenzo'
     },
   },
 

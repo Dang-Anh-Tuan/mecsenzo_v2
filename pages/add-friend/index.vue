@@ -12,7 +12,7 @@ export default {
   components: { TabSide },
 
   middleware: ['check-auth', 'auth-required'],
-  
+
   data() {
     return {
       tabItems: [
@@ -25,6 +25,12 @@ export default {
           component: SearchFriend,
         },
       ],
+    }
+  },
+
+  head() {
+    return {
+      title: this.$t('title.addFriend'),
     }
   },
 }

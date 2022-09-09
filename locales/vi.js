@@ -107,4 +107,9 @@ export default {
     timeReply: 'Thời gian trả lời tin nhắn trung bình ( phút )',
     averageMessagePerDay: 'Tin nhắn trung bình mỗi ngày',
   },
+  title: {
+    addFriend: 'Thêm bạn',
+    statistic: 'Phân tích',
+    newMessage: 'Có tin nhắn mới từ ',
+  },
 }
