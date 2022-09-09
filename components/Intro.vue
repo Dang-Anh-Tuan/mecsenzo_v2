@@ -11,12 +11,12 @@
         version="1.1"
         width="1080"
         height="1080"
-        viewBox="0 0 1080 1080"
+        viewBox="-5 0 1080 1080"
         xml:space="preserve"
         class="w-[200px] h-[150px] flex items-center justify-center z-10"
       >
         <desc>Created with Fabric.js 4.2.0</desc>
-        <defs></defs>
+        <defs></defs> 
         <g
           id="9228069e-efc8-486f-889d-8e6172476e3b"
           transform="matrix(1 0 0 1 540 540)"
