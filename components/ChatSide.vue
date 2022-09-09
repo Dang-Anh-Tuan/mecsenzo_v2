@@ -112,6 +112,9 @@ import HeaderChatSide from './HeaderChatSide.vue'
 import PreviewReply from './PreviewReply.vue'
 import PreviewImageInput from './PreviewImageInput.vue'
 import ModalCallVideo from './ModalCallVideo.vue'
+import LoaderUser from './LoaderUser.vue'
+import PreviewVoiceChat from './PreviewVoiceChat.vue'
+import ChatSideFooter from './ChatSideFooter.vue'
 
 import {
   saveMessage,
@@ -139,6 +142,9 @@ export default {
     PreviewReply,
     PreviewImageInput,
     ModalCallVideo,
+    LoaderUser,
+    PreviewVoiceChat,
+    ChatSideFooter,
   },
 
   data() {

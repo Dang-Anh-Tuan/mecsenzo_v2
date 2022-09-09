@@ -28,9 +28,10 @@
           :class="`ml-2 rounded-[10px] max-w-full 
                 ${
                   message.reply.type === 'image'
-                    ? ''
+                    ? 'flex'
                     : 'bg-[#f6f9fa] dark:bg-[rgba(255,255,255,0.1)]'
                 }
+                ${isMyMessage(message) ? 'flex justify-end' : ''} 
                 `"
         >
           <div v-if="message.reply.type === 'text'" class="p-2">
@@ -48,7 +49,6 @@
           <div
             v-else-if="message.reply.type === 'image'"
             :class="`relative  max-w-[50%]
-            ${isMyMessage(message) ? 'flex justify-end' : ''} 
              `"
           >
             <img
