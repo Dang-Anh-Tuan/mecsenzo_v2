@@ -93,7 +93,7 @@
             </div>
             <div
               v-if="user"
-              class="flex justify-center items-center py-3 md:py-0"
+              class="w-full flex justify-center items-center py-3 md:py-0 dark:bg-dark_bg_nav dark:text-dark_text_strong"
             >
               <avatar
                 :is-have-avatar="!!avatar"
@@ -401,8 +401,6 @@ export default {
     setPercentUploadAvatar(percent) {
       this.percentUploadAvatar = percent
     },
-
-
   },
 }
 </script>
