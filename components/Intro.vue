@@ -3,7 +3,7 @@
     ref="intro"
     class="fixed w-[100vw] h-[100vh] top-0 left-0 bottom-0 right-0 overflow-hidden flex justify-center items-center z-[1000] bg-white select-none"
   >
-    <div class="flex items-center">
+    <div class="flex items-center flex-col sm:flex-row">
       <img src="@/assets/images/logo.png" alt="logo" class="w-[150px]" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
