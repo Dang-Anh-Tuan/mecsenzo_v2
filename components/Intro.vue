@@ -19,7 +19,7 @@
         <defs></defs> 
         <g
           id="9228069e-efc8-486f-889d-8e6172476e3b"
-          transform="matrix(1 0 0 1 540 540)"
+          transform="matrix(-10 0 0 1 540 540)"
         >
           <rect
             style="
@@ -35,8 +35,8 @@
               opacity: 1;
             "
             vector-effect="non-scaling-stroke"
-            x="-540"
-            y="-540"
+            x="0"
+            y="0"
             rx="0"
             ry="0"
             width="1080"
