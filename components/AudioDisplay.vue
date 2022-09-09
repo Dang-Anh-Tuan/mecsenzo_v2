@@ -3,7 +3,10 @@
     v-if="url"
     :class="`container-result ${isColorWhite ? 'container-result--white' : ''}`"
   >
-    <button class="btn-controller dark:text-white" @click="handleTogglePlayPreview">
+    <button
+      class="btn-controller dark:text-white"
+      @click="handleTogglePlayPreview"
+    >
       <fa
         v-if="isPreviewPause"
         icon="play"
@@ -15,9 +18,9 @@
       <div ref="processCurrent" class="process-current"></div>
     </div>
     <div
-      :class="`time-audio ${isColorWhite ? 'text-white' : 'text-[#888] dark:text-white'} ${
-        currentTimePreview && totalTimePreview ? 'time-audio--show' : ''
-      }`"
+      :class="`time-audio ${
+        isColorWhite ? 'text-white' : 'text-[#888] dark:text-white'
+      } ${currentTimePreview && totalTimePreview ? 'time-audio--show' : ''}`"
     >
       {{ Math.ceil(currentTimePreview) }}:{{ Math.ceil(totalTimePreview) }}
     </div>
@@ -125,5 +128,11 @@ export default {
 .container-result--white .process-current {
   color: #fff;
   background-color: #fff;
+}
+
+@media screen and (max-width: 678px) {
+  .process-audio {
+    width: 100px;
+  }
 }
 </style>
