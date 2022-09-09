@@ -119,7 +119,7 @@ export default {
     },
   },
 
-  emits: ['closeModal'],
+  emits: ['closeModal', 'clear-percent-upload', 'set-percent-upload'],
 
   data() {
     return {
@@ -223,12 +223,14 @@ export default {
       this.conversationBinding.thumb = urlAvatar
       this.handleCreateConversation()
       this.closeModal()
+      this.clearPercentUploadAvatar()
     },
 
     handleImageUpdateCompleteUpdateRoom(urlAvatar) {
       this.conversationBinding.thumb = urlAvatar
       this.handleUpdateConversation()
       this.closeModal()
+      this.clearPercentUploadAvatar()
     },
 
     handleSubmitForm() {
@@ -237,7 +239,8 @@ export default {
           uploadImage(
             `room-chat-thumb`,
             this.fileAvatar,
-            this.handleImageUpdateCompleteCreateRoom
+            this.handleImageUpdateCompleteCreateRoom,
+            this.setPercentUploadAvatar
           )
         } else {
           uploadImage(
@@ -253,6 +256,14 @@ export default {
         this.handleUpdateConversation()
         this.closeModal()
       }
+    },
+
+    setPercentUploadAvatar(percent) {
+      this.$emit('set-percent-upload', percent)
+    },
+
+    clearPercentUploadAvatar() {
+      this.$emit('clear-percent-upload')
     },
   },
 }
