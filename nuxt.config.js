@@ -113,9 +113,9 @@ export default {
     loaders: {
       vue: {
         transformAssetUrls: {
-          audio: 'src'
-        }
-      }
+          audio: 'src',
+        },
+      },
     },
     extend(config, ctx) {
       config.module.rules.push({
@@ -131,7 +131,8 @@ export default {
   env: {
     baseUrlAPI:
       'https://mecsenzo-default-rtdb.asia-southeast1.firebasedatabase.app',
-    firebaseAPIKey: process.env.API_KEY,
+    firebaseAPIKey:
+      process.env.API_KEY || 'AIzaSyAG4LxJnpv5afNK5ndQBUTmHvNI1gLdwkU',
   },
 
   ssr: false,
