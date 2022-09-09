@@ -1,5 +1,7 @@
 import Cookies from 'js-cookie'
 
+const firebaseAPIKey = 'AIzaSyAG4LxJnpv5afNK5ndQBUTmHvNI1gLdwkU'
+
 export const state = () => ({
   account: null,
   token: null,
@@ -28,10 +30,10 @@ export const mutations = {
 
 export const actions = {
   authenticateUser(context, payload) {
-    let urlApi = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.firebaseAPIKey}`
+    let urlApi = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseAPIKey}`
 
     if (payload.isLogin) {
-      urlApi = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.firebaseAPIKey}`
+      urlApi = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseAPIKey}`
     }
 
     return new Promise((resolve, reject) => {
