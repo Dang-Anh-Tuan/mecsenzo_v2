@@ -17,7 +17,7 @@
       <ValidationObserver v-slot="{ handleSubmit }">
         <form @submit.prevent="handleSubmit(onSubmitLogin)">
           <div class="mb-6">
-            <ValidationProvider v-slot="{ errors }" rules="required">
+            <ValidationProvider v-slot="{ errors }" rules="required|email">
               <input
                 id="exampleFormControlInput2"
                 v-model="email"

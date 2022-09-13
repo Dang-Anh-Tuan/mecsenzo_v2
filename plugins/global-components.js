@@ -27,17 +27,29 @@ extend('maximumLen', {
   params: ['length'],
 })
 
+const regexEmail =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+extend('email', {
+  validate(value) {
+    return value.toLowerCase().match(regexEmail)
+  },
+  params: ['length'],
+})
+
 localize({
   en: {
     messages: {
       required: 'Field is required',
       maximumLen: (_, { length }) => `Must least than ${length} characters`,
+      email: 'Email not valid',
     },
   },
   vi: {
     messages: {
       required: 'Không để trống',
       maximumLen: (_, { length }) => `Phải nhỏ hơn ${length} ký tự`,
+      email: 'Email không hợp lệ',
     },
   },
 })
